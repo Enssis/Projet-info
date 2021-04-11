@@ -7,25 +7,15 @@ import java.util.*;
  */
 public class Point {
 
+    public double posX;
+    public double posY;
+
     /**
      * Default constructor
      */
     public Point() {
     }
 
-    /**
-     * 
-     */
-    public double posX;
 
-    /**
-     * 
-     */
-    public double posY;
-
-    /**
-     * 
-     */
-    public NoeudSimple position;
 
 }
