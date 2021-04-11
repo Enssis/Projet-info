@@ -1,6 +1,7 @@
 package fr.insa.a6.utilities;
 
-import java.util.*;
+import fr.insa.a6.utilities.noeuds.Noeud;
+import fr.insa.a6.utilities.terrain.Terrain;
 
 /**
  * 

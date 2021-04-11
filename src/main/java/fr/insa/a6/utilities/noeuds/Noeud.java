@@ -1,4 +1,7 @@
-package fr.insa.a6.utilities;
+package fr.insa.a6.utilities.noeuds;
+
+import fr.insa.a6.utilities.Barres;
+import fr.insa.a6.utilities.Force;
 
 import java.util.*;
 

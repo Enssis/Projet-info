@@ -1,4 +1,6 @@
-package fr.insa.a6.utilities;
+package fr.insa.a6.utilities.terrain;
+
+import fr.insa.a6.utilities.Point;
 
 /**
  * 

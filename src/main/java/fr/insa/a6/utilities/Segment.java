@@ -13,5 +13,4 @@ public class Segment {
         extremites[1] = b;
     }
 
-
 }

@@ -1,6 +1,7 @@
-package fr.insa.a6.utilities;
+package fr.insa.a6.utilities.noeuds;
 
-import java.util.*;
+import fr.insa.a6.utilities.Point;
+import fr.insa.a6.utilities.noeuds.Noeud;
 
 /**
  * 
