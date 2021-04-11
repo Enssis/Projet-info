@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class Barres {
+public class Barres extends Segment{
 
     private Noeud[] extremites;
     public int id;
@@ -14,6 +14,7 @@ public class Barres {
      * Default constructor
      */
     public Barres() {
+        super();
     }
 
 

@@ -1,20 +1,17 @@
 package fr.insa.a6.utilities;
 
-import java.util.*;
-
-/**
- * 
- */
 public class Segment {
 
-    private PointTerrrain[] extremites;
+    private final Point[] extremites = new Point[2];
 
-    /**
-     * Default constructor
-     */
-    public Segment() {
+    public Segment(){
+
     }
 
+    public Segment(Point a, Point b){
+        extremites[0] = a;
+        extremites[1] = b;
+    }
 
 
 }
