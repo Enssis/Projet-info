@@ -7,22 +7,14 @@ import java.util.*;
  */
 public class Barres {
 
+    private Noeud[] extremites;
+    public int id;
+
     /**
      * Default constructor
      */
     public Barres() {
     }
 
-    /**
-     * 
-     */
-    public int id;
-
-
-
-    /**
-     * 
-     */
-    private Noeud[] extremites;
 
 }

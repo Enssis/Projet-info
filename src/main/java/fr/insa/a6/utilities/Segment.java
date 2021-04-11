@@ -7,6 +7,8 @@ import java.util.*;
  */
 public class Segment {
 
+    private PointTerrrain[] extremites;
+
     /**
      * Default constructor
      */

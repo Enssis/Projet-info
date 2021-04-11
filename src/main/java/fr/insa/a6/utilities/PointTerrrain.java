@@ -14,8 +14,12 @@ public class PointTerrrain extends Point {
      * Default constructor
      */
     public PointTerrrain() {
+        super();
     }
 
+    public PointTerrrain(double posX, double posY){
+        super(posX, posY);
+    }
 
 
 }

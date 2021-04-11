@@ -12,6 +12,8 @@ public class Terrain {
     private double yMin;
     private double yMax;
 
+    private Triangle[] triangles;
+
     /**
      * Default constructor
      */

@@ -9,7 +9,7 @@ public abstract class Noeud {
 
     private int id;
     private Force forceApplique;
-
+    private Barres linkedBarres;
 
     /**
      * Default constructor

@@ -14,6 +14,13 @@ public class Point {
      * Default constructor
      */
     public Point() {
+        posX = 0;
+        posY = 0;
+    }
+
+    public Point(double x, double y) {
+        posY = y;
+        posX = x;
     }
 
 
