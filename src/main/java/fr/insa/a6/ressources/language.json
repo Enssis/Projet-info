@@ -1,0 +1,17 @@
+{
+  "fr" : {
+    "new" : "Nouveau",
+    "open" : "Ouvrir",
+    "save" : "Sauvegarder",
+    "options" : "Options",
+    "files" : "Fichiers"
+
+  },
+  "en" : {
+    "new" : "New",
+    "open" : "Open",
+    "save" : "Save",
+    "options" : "Options",
+    "files" : "Files"
+  }
+}
