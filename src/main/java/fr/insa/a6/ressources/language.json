@@ -4,7 +4,8 @@
     "open" : "Ouvrir",
     "save" : "Sauvegarder",
     "options" : "Options",
-    "files" : "Fichiers"
+    "files" : "Fichiers",
+    "open recent" : "Ouvert recemment"
 
   },
   "en" : {
@@ -12,6 +13,7 @@
     "open" : "Open",
     "save" : "Save",
     "options" : "Options",
-    "files" : "Files"
+    "files" : "Files",
+    "open recent" : "Open recent"
   }
 }

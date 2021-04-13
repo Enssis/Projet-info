@@ -1,8 +1,10 @@
 package fr.insa.a6.graphic;
 
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -43,17 +45,42 @@ public class MyMenuBar extends MenuBar {
     //creation du menu File
     private void addFilesItems()
     {
+        //cree une nouvelle feuille de dessin (affiche une pop up de confirmation avant)
         MenuItem newMI = new MenuItem(traduction("new"));
+
+        //affiche le dossier contenant les projets
         MenuItem open = new MenuItem(traduction("open"));
+
+        //affiche les fichiers ouvert recemment
+        Menu openRecent = openRecent();
+
+        //sauvegarde le fichier dans l'emplacement de sauvegarde par defaut
         MenuItem save = new MenuItem(traduction("save"));
+
+        //affiche une pop up avec les options quand on clique dessus
         MenuItem options = new MenuItem(traduction("options"));
         options.setOnAction(e -> OptionWindow.display());
 
+        //creation du bouton de menu "File"
         files = new MenuButton(traduction("files"));
 
-        files.getItems().addAll(newMI, open, save, options);
+        files.getItems().addAll(newMI, open, openRecent, save, options);
     }
 
+    //retourne le menu avec la liste des nom des fichiers ouverts récemment
+    private Menu openRecent()
+    {
+        Menu openRecent = new Menu(traduction("open recent"));
+        JSONArray recentString = (JSONArray) jsonPreferences.get("open recent");
+        for (Object name : recentString) {
+            MenuItem item = new MenuItem((String) name);
+            openRecent.getItems().add(item);
+        }
+
+        return openRecent;
+    }
+
+    //retourne la traduction du mot dans le language défini dans les paramètres
     private String traduction(String word) {
         return (String) jsonLanguage.get(word);
     }
