@@ -1,9 +1,9 @@
 package fr.insa.a6;
 
-import fr.insa.a6.graphic.MainScene;
+import fr.insa.a6.graphic.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.json.simple.parser.ParseException;
+import org.json.simple.parser.*;
 
 import java.io.IOException;
 

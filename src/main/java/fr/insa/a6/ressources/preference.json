@@ -2,7 +2,7 @@
   "language" : "fr",
   "color" : "dark",
   "daltonien" : "false",
-  "save path" : "src/main/java/fr/insa/a6/ressources/sauvegardes",
+  "save path" : "src/main/resources/sauvegardes",
   "open recent" : [
     "test"
   ]

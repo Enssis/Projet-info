@@ -4,10 +4,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.simple.*;
+import org.json.simple.parser.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -20,6 +18,7 @@ public class MyMenuBar extends MenuBar {
     private JSONObject jsonLanguage;
 
     private MenuButton files;
+    private MenuButton calculation;
     
     public MyMenuBar() throws IOException, ParseException {
         super();
@@ -27,8 +26,9 @@ public class MyMenuBar extends MenuBar {
         jsonInit();
 
         addFilesItems();
+        calculation = new MenuButton(traduction("calculation"));
         
-        this.getMenus().addAll(files);
+        this.getMenus().addAll(files, calculation);
         
     }
 

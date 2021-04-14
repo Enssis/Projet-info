@@ -5,7 +5,8 @@
     "save" : "Sauvegarder",
     "options" : "Options",
     "files" : "Fichiers",
-    "open recent" : "Ouvert recemment"
+    "open recent" : "Ouvert recemment",
+    "calculation" : "Calculs"
 
   },
   "en" : {
@@ -14,6 +15,7 @@
     "save" : "Save",
     "options" : "Options",
     "files" : "Files",
-    "open recent" : "Open recent"
+    "open recent" : "Open recent",
+    "calculation" : "Calculation"
   }
 }
