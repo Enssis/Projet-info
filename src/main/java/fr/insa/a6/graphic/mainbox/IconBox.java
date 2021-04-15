@@ -133,7 +133,7 @@ public class IconBox extends VBox {
     }
 
     private void initSelect() {
-        selectBtn = new MyRadioButton("Selection");
+        selectBtn = new MyRadioButton("cazou");
         selectBtn.setToggleGroup(group);
         selectBtn.setSelected(true);
 
