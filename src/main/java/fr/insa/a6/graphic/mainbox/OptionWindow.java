@@ -1,4 +1,4 @@
-package fr.insa.a6.graphic;
+package fr.insa.a6.graphic.mainbox;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

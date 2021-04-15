@@ -1,6 +1,4 @@
-package fr.insa.a6.utilities.terrain;
-
-import java.util.*;
+package fr.insa.a6.treillis.terrain;
 
 /**
  * 

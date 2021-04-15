@@ -6,7 +6,17 @@
     "options" : "Options",
     "files" : "Fichiers",
     "open recent" : "Ouvert recemment",
-    "calculation" : "Calculs"
+    "calculation" : "Calculs",
+    "treillis" : "Treillis",
+    "ground" : "Terrain",
+    "design" : "Dessin",
+    "close" : "Fermer",
+    "node choice" : "Choix du type de noeud",
+    "choose node" : "Choisissez le noeud voulu",
+    "simple node" : "Noeud simple",
+    "double support" : "Appui Double",
+    "embedded support" : "Appui encastré",
+    "simple support" : "Appui simple"
 
   },
   "en" : {
@@ -16,6 +26,16 @@
     "options" : "Options",
     "files" : "Files",
     "open recent" : "Open recent",
-    "calculation" : "Calculation"
+    "calculation" : "Calculation",
+    "treillis" : "Treillis",
+    "ground" : "Ground",
+    "design" : "Design",
+    "close" : "Close",
+    "node choice" : "Choice of the node type",
+    "choose node" : "Choose the node wanted",
+    "simple node" : "Simple node",
+    "double support" : "Double support",
+    "embedded support" : "Embedded support",
+    "simple support" : "Simple support"
   }
 }

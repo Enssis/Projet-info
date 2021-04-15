@@ -1,6 +1,6 @@
 {
   "language" : "fr",
-  "color" : "dark",
+  "style" : "dark",
   "daltonien" : "false",
   "save path" : "src/main/resources/sauvegardes",
   "open recent" : [

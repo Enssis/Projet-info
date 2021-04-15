@@ -1,6 +1,6 @@
-package fr.insa.a6.utilities.terrain;
+package fr.insa.a6.treillis.terrain;
 
-import fr.insa.a6.utilities.Point;
+import fr.insa.a6.treillis.Point;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package fr.insa.a6.utilities;
+package fr.insa.a6.treillis;
 
 public class Segment {
 

@@ -1,4 +1,4 @@
-package fr.insa.a6.graphic;
+package fr.insa.a6.graphic.mainbox;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -10,6 +10,7 @@ public class MainScene extends BorderPane {
 
     private MyMenuBar menus;
     private IconBox icons;
+    private MainCanvas canvas;
 
     public MainScene() throws IOException, ParseException {
         super();
@@ -19,6 +20,9 @@ public class MainScene extends BorderPane {
 
         icons = new IconBox();
         this.setLeft(icons);
+
+        canvas = new MainCanvas();
+        this.setCenter(canvas);
 
     }
 

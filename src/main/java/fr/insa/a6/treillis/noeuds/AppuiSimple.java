@@ -1,6 +1,4 @@
-package fr.insa.a6.utilities.noeuds;
-
-import fr.insa.a6.utilities.noeuds.Appui;
+package fr.insa.a6.treillis.noeuds;
 
 /**
  * 

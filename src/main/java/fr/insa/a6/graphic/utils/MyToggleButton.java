@@ -1,4 +1,4 @@
-package fr.insa.a6.graphic;
+package fr.insa.a6.graphic.utils;
 
 import javafx.scene.control.ToggleButton;
 

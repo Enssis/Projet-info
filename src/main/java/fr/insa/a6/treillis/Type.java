@@ -1,6 +1,4 @@
-package fr.insa.a6.utilities;
-
-import java.util.*;
+package fr.insa.a6.treillis;
 
 /**
  * 

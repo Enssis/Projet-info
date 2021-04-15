@@ -1,6 +1,6 @@
 package fr.insa.a6;
 
-import fr.insa.a6.graphic.*;
+import fr.insa.a6.graphic.mainbox.MainScene;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.json.simple.parser.*;
@@ -21,7 +21,7 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) throws Exception {
 
-        stage.setScene(mainScene.getScene(200, 300));
+        stage.setScene(mainScene.getScene(500, 500));
         stage.show();
     }
 

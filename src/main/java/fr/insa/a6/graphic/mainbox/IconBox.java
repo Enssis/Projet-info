@@ -1,0 +1,173 @@
+package fr.insa.a6.graphic.mainbox;
+
+import fr.insa.a6.graphic.utils.*;
+import fr.insa.a6.utilities.Options;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
+import java.io.IOException;
+
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.json.simple.parser.*;
+
+public class IconBox extends VBox {
+
+    private Options optionsData = new Options();
+
+    private ToggleGroup group= new ToggleGroup();
+
+    private MyRadioButton selectBtn;
+
+    private MyLabel treillisLbl;
+    private MyRadioButton barreBtn;
+    private MyRadioButton noeudBtn;
+
+    private MyLabel terrainLbl;
+    private MyRadioButton pointTerrainBtn;
+    private MyRadioButton segmentTerrainBtn;
+
+    //types : 0 -> simple, 1 -> appuiDouble, 2 -> appuiEncastre, 3 -> appuiSimple
+    private String typeNoeud = "0";
+
+    public IconBox() throws IOException, ParseException {
+        super();
+        this.setAlignment(Pos.CENTER);
+
+        initSelect();
+
+        treillisLbl = new MyLabel(optionsData.traduction("treillis"));
+
+        initNoeud();
+        initBarre();
+
+        terrainLbl = new MyLabel(optionsData.traduction("ground"));
+
+        initPointTrn();
+        initSegmentTrn();
+
+        this.getChildren().addAll(selectBtn, treillisLbl, noeudBtn, barreBtn, terrainLbl, pointTerrainBtn, segmentTerrainBtn);
+
+    }
+
+    private void initNoeud() {
+        noeudBtn = new MyRadioButton("Noeud");
+        noeudBtn.setToggleGroup(group);
+
+        noeudBtn.setOnAction(actionEvent -> {
+            selectNoeud();
+        });
+    }
+
+    private void selectNoeud()
+    {
+
+        //pop up window de choix
+        Stage choixNoeud =new Stage();
+
+        choixNoeud.initModality(Modality.APPLICATION_MODAL);
+        choixNoeud.setTitle(optionsData.traduction("node choice"));
+        choixNoeud.setResizable(false);
+
+        //text devant les boutons
+        MyLabel label = new MyLabel(optionsData.traduction("choose node"));
+
+        //bouton de fermeture et confirmation du choix
+        MyButton fin = new MyButton(optionsData.traduction("close"));
+        fin.setOnAction(e -> {
+            System.out.println("type noeud : " + typeNoeud);
+            choixNoeud.close();
+        });
+
+        //radiobutton pour le choix du type de noeud
+        ToggleGroup tGroup = new ToggleGroup();
+
+        tGroup.selectedToggleProperty().addListener((observableValue, toggle, t1) -> {
+            if (tGroup.getSelectedToggle() != null) {
+                MyRadioButton button = (MyRadioButton) tGroup.getSelectedToggle();
+                typeNoeud = button.getInfo();
+            }
+        });
+
+        MyRadioButton noeudSimple = new MyRadioButton(optionsData.traduction("simple node"), "0");
+        noeudSimple.setToggleGroup(tGroup);
+        noeudSimple.setSelected(true);
+
+        MyRadioButton appuiDouble = new MyRadioButton(optionsData.traduction("double support"), "1");
+        appuiDouble.setToggleGroup(tGroup);
+
+        MyRadioButton appuiEncastre = new MyRadioButton(optionsData.traduction("embedded support"), "2");
+        appuiEncastre.setToggleGroup(tGroup);
+
+        MyRadioButton appuiSimple = new MyRadioButton(optionsData.traduction("simple support"), "3");
+        appuiSimple.setToggleGroup(tGroup);
+
+        //hbox contenant les boutons
+        HBox radioLayout = new HBox(5);
+        radioLayout.getChildren().addAll(noeudSimple, appuiDouble, appuiEncastre, appuiSimple);
+
+        //Vbox contenant tout les items
+        VBox layout= new VBox(5);
+        layout.getChildren().addAll(label, radioLayout, fin);
+        layout.setAlignment(Pos.CENTER);
+
+        int width = switch (optionsData.getLanguage()) {
+            case "en" -> 450;
+            case "fr" -> 400;
+            default -> 500;
+        };
+        Scene scene1= new Scene(layout, width, 100);
+
+        choixNoeud.setScene(scene1);
+        choixNoeud.showAndWait();
+
+    }
+
+    private void initSelect() {
+        selectBtn = new MyRadioButton("Selection");
+        selectBtn.setToggleGroup(group);
+        selectBtn.setSelected(true);
+
+        selectBtn.setOnAction(actionEvent -> {
+
+        });
+    }
+
+    private void initBarre() {
+        barreBtn = new MyRadioButton("Barre");
+        barreBtn.setToggleGroup(group);
+
+        barreBtn.setOnAction(actionEvent -> {
+
+        });
+    }
+
+    private void initPointTrn() {
+        pointTerrainBtn = new MyRadioButton("Point");
+        pointTerrainBtn.setToggleGroup(group);
+
+        pointTerrainBtn.setOnAction(actionEvent -> {
+
+        });
+    }
+
+    private void initSegmentTrn() {
+        segmentTerrainBtn = new MyRadioButton("Segment");
+        segmentTerrainBtn.setToggleGroup(group);
+
+        segmentTerrainBtn.setOnAction(actionEvent -> {
+
+        });
+    }
+
+
+}

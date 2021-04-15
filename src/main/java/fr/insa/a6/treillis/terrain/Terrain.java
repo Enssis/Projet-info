@@ -1,4 +1,4 @@
-package fr.insa.a6.utilities.terrain;
+package fr.insa.a6.treillis.terrain;
 
 /**
  * 

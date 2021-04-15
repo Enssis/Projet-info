@@ -1,6 +1,6 @@
-package fr.insa.a6.utilities.noeuds;
+package fr.insa.a6.treillis.noeuds;
 
-import fr.insa.a6.utilities.terrain.Triangle;
+import fr.insa.a6.treillis.terrain.Triangle;
 
 /**
  * 

@@ -1,9 +1,7 @@
-package fr.insa.a6.utilities.noeuds;
+package fr.insa.a6.treillis.noeuds;
 
-import fr.insa.a6.utilities.Barres;
-import fr.insa.a6.utilities.Force;
-
-import java.util.*;
+import fr.insa.a6.treillis.Barres;
+import fr.insa.a6.treillis.Force;
 
 /**
  * 
