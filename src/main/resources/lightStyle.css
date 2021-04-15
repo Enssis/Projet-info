@@ -1,0 +1,32 @@
+#iconBox {
+    -fx-background-color : #E4E7E6;
+    -fx-border-width: 0px 3px 0px 0px;
+    -fx-border-right-style: solid;
+    -fx-border-color: #87929b;
+}
+
+#myRB {
+    -fx-font-size:18pt;
+    -fx-font:bold 10pt"Arial";
+    -fx-padding:10;
+}
+
+#myRB .radio {
+    -fx-background-color: #AEB6BF;
+    -fx-border-color : transparent;
+}
+
+#myRB:selected .radio {
+    -fx-background-color: #5D6D7E;
+    -fx-border-color : transparent;
+}
+
+#myLabel {
+    -fx-font:bold 13pt"Arial";
+    -fx-padding:10;
+    -fx-border-width: 2px 0px 2px 0px;
+    -fx-border-right-style: solid;
+    -fx-border-color: #87929b;
+}
+
+

@@ -42,4 +42,8 @@ public class Options {
     public String getLanguage() {
         return language;
     }
+
+    public String getStyle() {
+        return style;
+    }
 }

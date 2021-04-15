@@ -1,46 +1,55 @@
 package fr.insa.a6.graphic.mainbox;
 
+import fr.insa.a6.graphic.utils.MyRadioButton;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class OptionWindow {
 
-public static void display()
-{
-    Stage optionWindow =new Stage();
 
-    optionWindow.initModality(Modality.APPLICATION_MODAL);
-    optionWindow.setTitle("Options");
+    public static void display() {
+        Stage optionWindow = new Stage();
 
-    BorderPane mainBP = new BorderPane();
+        optionWindow.initModality(Modality.APPLICATION_MODAL);
+        optionWindow.setTitle("Options");
 
-
-
-    Label label1= new Label("Pop up window now displayed");
+        BorderPane mainBP = new BorderPane();
 
 
-    Button button1= new Button("Close this pop up window");
+
+        ToggleGroup tgLangue = new ToggleGroup();
+
+        MyRadioButton rdAnglais = new MyRadioButton("Anglais");
+        MyRadioButton rdFrancais = new MyRadioButton("Français");
+        rdFrancais.setToggleGroup(tgLangue);
+        rdAnglais.setToggleGroup(tgLangue);
+
+        HBox hbLangue = new HBox(rdFrancais, rdAnglais);
 
 
-    button1.setOnAction(e -> optionWindow.close());
+        Button button1 = new Button("Close this pop up window");
 
-    VBox layout= new VBox(10);
 
-    layout.getChildren().addAll(label1, button1);
+        button1.setOnAction(e -> optionWindow.close());
 
-    layout.setAlignment(Pos.CENTER);
+        VBox layout = new VBox(10);
 
-    Scene scene1= new Scene(layout, 300, 250);
+        layout.getChildren().addAll(hbLangue, button1);
 
-    optionWindow.setScene(scene1);
+        layout.setAlignment(Pos.CENTER);
 
-    optionWindow.showAndWait();
+        Scene scene1 = new Scene(layout, 300, 250);
 
-}
+        optionWindow.setScene(scene1);
+
+        optionWindow.showAndWait();
+
+    }
 }

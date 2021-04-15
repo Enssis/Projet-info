@@ -16,7 +16,8 @@
     "simple node" : "Noeud simple",
     "double support" : "Appui Double",
     "embedded support" : "Appui encastré",
-    "simple support" : "Appui simple"
+    "simple support" : "Appui simple",
+    "choose" : "Choisir"
 
   },
   "en" : {
@@ -36,6 +37,7 @@
     "simple node" : "Simple node",
     "double support" : "Double support",
     "embedded support" : "Embedded support",
-    "simple support" : "Simple support"
+    "simple support" : "Simple support",
+    "choose" : "Choose"
   }
 }

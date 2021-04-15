@@ -6,6 +6,7 @@ public class MyLabel extends Label {
 
     public MyLabel(String name){
         super(name);
+        this.setId("myLabel");
     }
 
 }

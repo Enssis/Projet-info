@@ -8,6 +8,4 @@ public class MyButton extends Button {
         super(name);
     }
 
-
-
 }

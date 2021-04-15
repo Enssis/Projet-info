@@ -3,14 +3,9 @@ package fr.insa.a6.graphic.mainbox;
 import fr.insa.a6.graphic.utils.*;
 import fr.insa.a6.utilities.Options;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -39,9 +34,14 @@ public class IconBox extends VBox {
     //types : 0 -> simple, 1 -> appuiDouble, 2 -> appuiEncastre, 3 -> appuiSimple
     private String typeNoeud = "0";
 
+    private String style = "";
+
     public IconBox() throws IOException, ParseException {
         super();
         this.setAlignment(Pos.CENTER);
+        this.setId("iconBox");
+
+        style = optionsData.getStyle();
 
         initSelect();
 
@@ -59,8 +59,8 @@ public class IconBox extends VBox {
 
     }
 
-    private void initNoeud() {
-        noeudBtn = new MyRadioButton("Noeud");
+    private void initNoeud() throws IOException, ParseException {
+        noeudBtn = new MyRadioButton("Noeud", style);
         noeudBtn.setToggleGroup(group);
 
         noeudBtn.setOnAction(actionEvent -> {
@@ -68,8 +68,7 @@ public class IconBox extends VBox {
         });
     }
 
-    private void selectNoeud()
-    {
+    private void selectNoeud() {
 
         //pop up window de choix
         Stage choixNoeud =new Stage();
@@ -82,7 +81,7 @@ public class IconBox extends VBox {
         MyLabel label = new MyLabel(optionsData.traduction("choose node"));
 
         //bouton de fermeture et confirmation du choix
-        MyButton fin = new MyButton(optionsData.traduction("close"));
+        MyButton fin = new MyButton(optionsData.traduction("choose"));
         fin.setOnAction(e -> {
             System.out.println("type noeud : " + typeNoeud);
             choixNoeud.close();
@@ -98,17 +97,17 @@ public class IconBox extends VBox {
             }
         });
 
-        MyRadioButton noeudSimple = new MyRadioButton(optionsData.traduction("simple node"), "0");
+        MyRadioButton noeudSimple = new MyRadioButton(optionsData.traduction("simple node"), "0", style);
         noeudSimple.setToggleGroup(tGroup);
         noeudSimple.setSelected(true);
 
-        MyRadioButton appuiDouble = new MyRadioButton(optionsData.traduction("double support"), "1");
+        MyRadioButton appuiDouble = new MyRadioButton(optionsData.traduction("double support"), "1", style);
         appuiDouble.setToggleGroup(tGroup);
 
-        MyRadioButton appuiEncastre = new MyRadioButton(optionsData.traduction("embedded support"), "2");
+        MyRadioButton appuiEncastre = new MyRadioButton(optionsData.traduction("embedded support"), "2", style);
         appuiEncastre.setToggleGroup(tGroup);
 
-        MyRadioButton appuiSimple = new MyRadioButton(optionsData.traduction("simple support"), "3");
+        MyRadioButton appuiSimple = new MyRadioButton(optionsData.traduction("simple support"), "3", style);
         appuiSimple.setToggleGroup(tGroup);
 
         //hbox contenant les boutons
@@ -121,19 +120,20 @@ public class IconBox extends VBox {
         layout.setAlignment(Pos.CENTER);
 
         int width = switch (optionsData.getLanguage()) {
-            case "en" -> 450;
-            case "fr" -> 400;
-            default -> 500;
+            case "en" -> 500;
+            case "fr" -> 420;
+            default -> 600;
         };
-        Scene scene1= new Scene(layout, width, 100);
+        Scene scene = new Scene(layout, width, 100);
+        scene.getStylesheets().add("popUpLightStyle.css");
 
-        choixNoeud.setScene(scene1);
+        choixNoeud.setScene(scene);
         choixNoeud.showAndWait();
 
     }
 
-    private void initSelect() {
-        selectBtn = new MyRadioButton("cazou");
+    private void initSelect() throws IOException, ParseException {
+        selectBtn = new MyRadioButton("Selection", style);
         selectBtn.setToggleGroup(group);
         selectBtn.setSelected(true);
 
@@ -143,7 +143,7 @@ public class IconBox extends VBox {
     }
 
     private void initBarre() {
-        barreBtn = new MyRadioButton("Barre");
+        barreBtn = new MyRadioButton("Barre", style);
         barreBtn.setToggleGroup(group);
 
         barreBtn.setOnAction(actionEvent -> {
@@ -152,7 +152,7 @@ public class IconBox extends VBox {
     }
 
     private void initPointTrn() {
-        pointTerrainBtn = new MyRadioButton("Point");
+        pointTerrainBtn = new MyRadioButton("Point", style);
         pointTerrainBtn.setToggleGroup(group);
 
         pointTerrainBtn.setOnAction(actionEvent -> {
@@ -161,13 +161,12 @@ public class IconBox extends VBox {
     }
 
     private void initSegmentTrn() {
-        segmentTerrainBtn = new MyRadioButton("Segment");
+        segmentTerrainBtn = new MyRadioButton("Segment", style);
         segmentTerrainBtn.setToggleGroup(group);
 
         segmentTerrainBtn.setOnAction(actionEvent -> {
 
         });
     }
-
 
 }

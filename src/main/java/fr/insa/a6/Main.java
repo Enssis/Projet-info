@@ -2,6 +2,7 @@ package fr.insa.a6;
 
 import fr.insa.a6.graphic.mainbox.MainScene;
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.json.simple.parser.*;
 
@@ -21,7 +22,9 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) throws Exception {
 
-        stage.setScene(mainScene.getScene(500, 500));
+        Scene scene = mainScene.getScene(700, 700);
+        scene.getStylesheets().add("lightStyle.css");
+        stage.setScene(scene);
         stage.show();
     }
 
