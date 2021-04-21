@@ -1,7 +1,8 @@
 package fr.insa.a6.graphic.mainbox;
 
 import fr.insa.a6.graphic.utils.MenuButton;
-import fr.insa.a6.utilities.Options;
+import fr.insa.a6.utilities.*;
+
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;

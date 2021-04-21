@@ -1,10 +1,7 @@
 package fr.insa.a6.graphic.utils;
 
-import fr.insa.a6.utilities.Options;
 import javafx.scene.control.RadioButton;
 
-import java.io.IOException;
-import org.json.simple.parser.*;
 
 public class MyRadioButton extends RadioButton {
 
@@ -17,14 +14,7 @@ public class MyRadioButton extends RadioButton {
 
     }
 
-    public MyRadioButton(String name, String style) {
-        super(name);
-
-        this.setId("myRB");
-
-    }
-
-    public MyRadioButton(String name, String info, String style) {
+    public MyRadioButton(String name, String info) {
         super(name);
         this.info = info;
 

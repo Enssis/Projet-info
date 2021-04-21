@@ -3,9 +3,10 @@ package fr.insa.a6.utilities;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
-import java.io.FileNotFoundException;
+
 import java.io.FileReader;
 import java.io.IOException;
+import org.json.simple.parser.*;
 
 public class Options {
 
@@ -17,7 +18,11 @@ public class Options {
     private String style;
 
     public Options() throws IOException, ParseException {
-        jsonInit();
+        try {
+            jsonInit();
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     //initialisation des variables permettants la lecture des fichier json de langue et de preference

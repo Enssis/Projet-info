@@ -17,7 +17,8 @@
     "double support" : "Appui Double",
     "embedded support" : "Appui encastré",
     "simple support" : "Appui simple",
-    "choose" : "Choisir"
+    "choose" : "Choisir",
+    "delete" : "Supprimer"
 
   },
   "en" : {
@@ -38,6 +39,7 @@
     "double support" : "Double support",
     "embedded support" : "Embedded support",
     "simple support" : "Simple support",
-    "choose" : "Choose"
+    "choose" : "Choose",
+    "delete" : "Delete"
   }
 }

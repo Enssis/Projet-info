@@ -1,6 +1,5 @@
 package fr.insa.a6.graphic.mainbox;
 
-import fr.insa.a6.utilities.Options;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import org.json.simple.parser.*;
@@ -12,25 +11,36 @@ public class MainScene extends BorderPane {
     private MyMenuBar menus;
     private IconBox icons;
     private MainCanvas canvas;
+    private Scene scene;
 
-    private Options optionsData = new Options();
-
-    public MainScene() throws IOException, ParseException {
+    public MainScene(int w, int h) throws IOException, ParseException {
         super();
 
         menus = new MyMenuBar();
         this.setTop(menus);
 
-        icons = new IconBox();
-        this.setLeft(icons);
-
-        canvas = new MainCanvas();
+        canvas = new MainCanvas(w, h, this);
         this.setCenter(canvas);
 
+        icons = new IconBox(this);
+        this.setLeft(icons);
+
+        scene = new Scene(this, w, h);
+
+        //ajout des fonctions permettant l'ajustement de la taille du canvas
+        scene.widthProperty().addListener((observableValue, oldSceneWidth, newSceneWidth) -> {
+            canvas.setWidth(newSceneWidth.doubleValue());
+            canvas.redraw();
+        });
+
+        scene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> {
+            canvas.setHeight(newSceneHeight.doubleValue());
+            canvas.redraw();
+        });
+
     }
 
-    public Scene getScene(int w, int h){
-        return new Scene(this, w, h);
+    public MainCanvas getCanvas() {
+        return canvas;
     }
-
 }

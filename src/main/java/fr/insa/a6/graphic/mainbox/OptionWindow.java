@@ -1,6 +1,6 @@
 package fr.insa.a6.graphic.mainbox;
 
-import fr.insa.a6.graphic.utils.MyRadioButton;
+import fr.insa.a6.graphic.utils.*;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

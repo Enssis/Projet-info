@@ -1,7 +1,7 @@
 package fr.insa.a6.graphic.mainbox;
 
 import fr.insa.a6.graphic.utils.*;
-import fr.insa.a6.utilities.Options;
+import fr.insa.a6.utilities.*;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -30,18 +30,20 @@ public class IconBox extends VBox {
     private MyLabel terrainLbl;
     private MyRadioButton pointTerrainBtn;
     private MyRadioButton segmentTerrainBtn;
+    private MainScene mainScene;
+
+    private MainCanvas mainCanvas;
 
     //types : 0 -> simple, 1 -> appuiDouble, 2 -> appuiEncastre, 3 -> appuiSimple
     private String typeNoeud = "0";
 
-    private String style = "";
-
-    public IconBox() throws IOException, ParseException {
+    public IconBox(MainScene mainScene) throws IOException, ParseException {
         super();
         this.setAlignment(Pos.CENTER);
         this.setId("iconBox");
 
-        style = optionsData.getStyle();
+        this.mainScene = mainScene;
+        this.mainCanvas = mainScene.getCanvas();
 
         initSelect();
 
@@ -59,18 +61,20 @@ public class IconBox extends VBox {
 
     }
 
-    private void initNoeud() throws IOException, ParseException {
-        noeudBtn = new MyRadioButton("Noeud", style);
+    private void initNoeud() {
+        noeudBtn = new MyRadioButton("Noeud");
         noeudBtn.setToggleGroup(group);
 
         noeudBtn.setOnAction(actionEvent -> {
             selectNoeud();
+            mainCanvas.setSelectedButton(10);
+            mainCanvas.removeSelected();
         });
     }
 
+    //pop up de selection du type de noeud
     private void selectNoeud() {
 
-        //pop up window de choix
         Stage choixNoeud =new Stage();
 
         choixNoeud.initModality(Modality.APPLICATION_MODAL);
@@ -97,17 +101,17 @@ public class IconBox extends VBox {
             }
         });
 
-        MyRadioButton noeudSimple = new MyRadioButton(optionsData.traduction("simple node"), "0", style);
+        MyRadioButton noeudSimple = new MyRadioButton(optionsData.traduction("simple node"), "0");
         noeudSimple.setToggleGroup(tGroup);
         noeudSimple.setSelected(true);
 
-        MyRadioButton appuiDouble = new MyRadioButton(optionsData.traduction("double support"), "1", style);
+        MyRadioButton appuiDouble = new MyRadioButton(optionsData.traduction("double support"), "1");
         appuiDouble.setToggleGroup(tGroup);
 
-        MyRadioButton appuiEncastre = new MyRadioButton(optionsData.traduction("embedded support"), "2", style);
+        MyRadioButton appuiEncastre = new MyRadioButton(optionsData.traduction("embedded support"), "2");
         appuiEncastre.setToggleGroup(tGroup);
 
-        MyRadioButton appuiSimple = new MyRadioButton(optionsData.traduction("simple support"), "3", style);
+        MyRadioButton appuiSimple = new MyRadioButton(optionsData.traduction("simple support"), "3");
         appuiSimple.setToggleGroup(tGroup);
 
         //hbox contenant les boutons
@@ -132,40 +136,40 @@ public class IconBox extends VBox {
 
     }
 
-    private void initSelect() throws IOException, ParseException {
-        selectBtn = new MyRadioButton("Selection", style);
+    private void initSelect() {
+        selectBtn = new MyRadioButton("Selection");
         selectBtn.setToggleGroup(group);
         selectBtn.setSelected(true);
 
         selectBtn.setOnAction(actionEvent -> {
-
+            mainCanvas.setSelectedButton(0);
         });
     }
 
     private void initBarre() {
-        barreBtn = new MyRadioButton("Barre", style);
+        barreBtn = new MyRadioButton("Barre");
         barreBtn.setToggleGroup(group);
 
         barreBtn.setOnAction(actionEvent -> {
-
+            mainCanvas.removeSelected();
         });
     }
 
     private void initPointTrn() {
-        pointTerrainBtn = new MyRadioButton("Point", style);
+        pointTerrainBtn = new MyRadioButton("Point");
         pointTerrainBtn.setToggleGroup(group);
 
         pointTerrainBtn.setOnAction(actionEvent -> {
-
+            mainCanvas.removeSelected();
         });
     }
 
     private void initSegmentTrn() {
-        segmentTerrainBtn = new MyRadioButton("Segment", style);
+        segmentTerrainBtn = new MyRadioButton("Segment");
         segmentTerrainBtn.setToggleGroup(group);
 
         segmentTerrainBtn.setOnAction(actionEvent -> {
-
+            mainCanvas.removeSelected();
         });
     }
 
