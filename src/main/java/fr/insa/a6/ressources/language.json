@@ -18,7 +18,8 @@
     "embedded support" : "Appui encastré",
     "simple support" : "Appui simple",
     "choose" : "Choisir",
-    "delete" : "Supprimer"
+    "delete" : "Supprimer",
+    "deleteAll" : "Tout supprimer"
 
   },
   "en" : {
@@ -40,6 +41,7 @@
     "embedded support" : "Embedded support",
     "simple support" : "Simple support",
     "choose" : "Choose",
-    "delete" : "Delete"
+    "delete" : "Delete",
+    "deleteAll" : "Delete all"
   }
 }

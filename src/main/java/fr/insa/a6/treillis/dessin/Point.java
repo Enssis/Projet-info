@@ -1,17 +1,18 @@
-package fr.insa.a6.treillis;
+package fr.insa.a6.treillis.dessin;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * 
  */
-public class Point {
+public class Point extends Forme{
 
-    protected final double posX;
-    protected final double posY;
-    protected final int id;
-    private boolean selected = false;
+    protected double posX;
+    protected double posY;
 
     /**
      * Default constructor
@@ -28,6 +29,7 @@ public class Point {
         posY = y;
         posX = x;
         this.id = id;
+
     }
 
     public void draw(GraphicsContext gc){
@@ -58,16 +60,21 @@ public class Point {
         return id;
     }
 
+    public void setId(int id){
+        this.id = id;
+    }
+
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
 
-    public String[] getInfos(){
-        return new String[]
-                {"posX : " + posX ,
+    public ArrayList<String> getInfos(){
+        String[] str = new String[]{"posX : " + posX ,
                 "posY : " + posY,
                 "selected : " + selected
-                };
+        };
+        return new ArrayList<>(Arrays.asList(str));
+
 
     }
 }

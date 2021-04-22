@@ -1,6 +1,6 @@
 package fr.insa.a6.treillis.terrain;
 
-import fr.insa.a6.treillis.Segment;
+import fr.insa.a6.treillis.dessin.Segment;
 
 /**
  * 

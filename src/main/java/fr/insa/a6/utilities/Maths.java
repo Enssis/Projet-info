@@ -1,6 +1,6 @@
 package fr.insa.a6.utilities;
 
-import fr.insa.a6.treillis.Point;
+import fr.insa.a6.treillis.dessin.Point;
 
 public class Maths {
 

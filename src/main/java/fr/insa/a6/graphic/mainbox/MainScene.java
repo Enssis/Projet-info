@@ -1,7 +1,9 @@
 package fr.insa.a6.graphic.mainbox;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import org.json.simple.parser.*;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ public class MainScene extends BorderPane {
     private IconBox icons;
     private MainCanvas canvas;
     private Scene scene;
+    private InfoWindow infos;
 
     public MainScene(int w, int h) throws IOException, ParseException {
         super();
@@ -22,25 +25,29 @@ public class MainScene extends BorderPane {
         canvas = new MainCanvas(w, h, this);
         this.setCenter(canvas);
 
+        infos = new InfoWindow(canvas);
+        this.setRight(infos);
+
         icons = new IconBox(this);
         this.setLeft(icons);
 
-        scene = new Scene(this, w, h);
+        this.setCenter(canvas);
 
-        //ajout des fonctions permettant l'ajustement de la taille du canvas
-        scene.widthProperty().addListener((observableValue, oldSceneWidth, newSceneWidth) -> {
-            canvas.setWidth(newSceneWidth.doubleValue());
-            canvas.redraw();
-        });
+        //scene = new Scene(this, w, h);
 
-        scene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> {
-            canvas.setHeight(newSceneHeight.doubleValue());
-            canvas.redraw();
-        });
+
 
     }
 
     public MainCanvas getCanvas() {
         return canvas;
+    }
+
+    public InfoWindow getInfos() {
+        return infos;
+    }
+
+    public double getBorderWidth() {
+        return infos.getWidth() + icons.getWidth();
     }
 }
