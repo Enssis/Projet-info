@@ -7,7 +7,7 @@ import fr.insa.a6.treillis.Point;
  */
 public class NoeudSimple extends Noeud {
 
-    private final Point position;
+    private Point position;
 
     /**
      * Default constructor
