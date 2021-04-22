@@ -1,6 +1,6 @@
 package fr.insa.a6.treillis.noeuds;
 
-import fr.insa.a6.treillis.Point;
+import fr.insa.a6.treillis.dessin.Point;
 
 /**
  * 

@@ -17,7 +17,7 @@ public class Options {
     private String language;
     private String style;
 
-    public Options() throws IOException, ParseException {
+    public Options() {
         try {
             jsonInit();
         } catch (IOException | ParseException e) {

@@ -4,9 +4,13 @@ import javafx.scene.control.Label;
 
 public class MyLabel extends Label {
 
-    public MyLabel(String name){
+    public MyLabel(String name, String type){
         super(name);
-        this.setId("myLabel");
+        switch (type){
+            case "title" -> this.setId("labelTitle");
+            case "normal" -> this.setId("labelNormal");
+        }
+
     }
 
 }

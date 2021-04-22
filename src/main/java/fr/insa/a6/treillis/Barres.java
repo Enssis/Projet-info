@@ -1,5 +1,6 @@
 package fr.insa.a6.treillis;
 
+import fr.insa.a6.treillis.dessin.Segment;
 import fr.insa.a6.treillis.noeuds.Noeud;
 
 /**
