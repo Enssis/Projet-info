@@ -17,6 +17,11 @@ public abstract class Noeud extends Point {
      * Default constructor
      */
     public Noeud() {
+        
+    this.id = id;
+    this.forceApplique = forceApplique;
+    this.linkedBarres= linkedBarres;
+    
     }
 
 
