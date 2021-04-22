@@ -1,17 +1,12 @@
 package fr.insa.a6;
 
-import fr.insa.a6.graphic.mainbox.MainCanvas;
-import javafx.scene.canvas.Canvas;
+
 import fr.insa.a6.graphic.mainbox.MainScene;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.json.simple.parser.*;
 
-import java.awt.*;
 import java.io.IOException;
 
 public class Main extends Application{
@@ -28,12 +23,17 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) throws Exception {
 
-        mainScene = new MainScene(500, 500);
+        mainScene = new MainScene(700, 700);
 
-        Scene scene = mainScene.getScene();
+        Scene scene = new Scene(mainScene, 700, 700);
+
         scene.getStylesheets().add("lightStyle.css");
         stage.setScene(scene);
         stage.show();
     }
+
+
+
+
 
 }
