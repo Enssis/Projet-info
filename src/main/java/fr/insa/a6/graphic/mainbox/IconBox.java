@@ -47,12 +47,12 @@ public class IconBox extends VBox {
 
         initSelect();
 
-        treillisLbl = new MyLabel(optionsData.traduction("treillis"));
+        treillisLbl = new MyLabel(optionsData.traduction("treillis"), "title");
 
         initNoeud();
         initBarre();
 
-        terrainLbl = new MyLabel(optionsData.traduction("ground"));
+        terrainLbl = new MyLabel(optionsData.traduction("ground"), "title");
 
         initPointTrn();
         initSegmentTrn();
@@ -82,7 +82,7 @@ public class IconBox extends VBox {
         choixNoeud.setResizable(false);
 
         //text devant les boutons
-        MyLabel label = new MyLabel(optionsData.traduction("choose node"));
+        MyLabel label = new MyLabel(optionsData.traduction("choose node"), "title");
 
         //bouton de fermeture et confirmation du choix
         MyButton fin = new MyButton(optionsData.traduction("choose"));
@@ -152,6 +152,7 @@ public class IconBox extends VBox {
 
         barreBtn.setOnAction(actionEvent -> {
             mainCanvas.removeSelected();
+            mainCanvas.setSelectedButton(2);
         });
     }
 
@@ -161,6 +162,7 @@ public class IconBox extends VBox {
 
         pointTerrainBtn.setOnAction(actionEvent -> {
             mainCanvas.removeSelected();
+            mainCanvas.setSelectedButton(3);
         });
     }
 
@@ -170,6 +172,7 @@ public class IconBox extends VBox {
 
         segmentTerrainBtn.setOnAction(actionEvent -> {
             mainCanvas.removeSelected();
+            mainCanvas.setSelectedButton(4);
         });
     }
 

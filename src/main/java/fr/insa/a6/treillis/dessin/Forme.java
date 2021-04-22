@@ -1,0 +1,28 @@
+package fr.insa.a6.treillis.dessin;
+
+import javafx.scene.canvas.GraphicsContext;
+
+import java.util.ArrayList;
+
+public abstract class Forme {
+    protected boolean selected = false;
+    protected int id;
+
+    public abstract void draw(GraphicsContext gc);
+    public abstract void drawNear(GraphicsContext gc);
+
+    public abstract ArrayList<String> getInfos();
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public int getId() {
+        return id;
+
+    }
+}
