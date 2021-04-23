@@ -1,13 +1,9 @@
 package fr.insa.a6.graphic.mainbox;
 
-import fr.insa.a6.treillis.Treillis;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import fr.insa.a6.utilities.ActionCenter;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import org.json.simple.parser.*;
-
 import java.io.IOException;
+import org.json.simple.parser.*;
 
 public class MainScene extends BorderPane {
 
@@ -15,12 +11,13 @@ public class MainScene extends BorderPane {
     private IconBox icons;
     private MainCanvas canvas;
     private InfoWindow infos;
-    private Treillis treillis;
 
-    public MainScene(int w, int h, Treillis treillis) throws IOException, ParseException {
+    private ActionCenter actionCenter;
+
+    public MainScene(int w, int h, ActionCenter actionCenter) throws IOException, ParseException {
         super();
 
-        this.treillis = treillis;
+        this.actionCenter = actionCenter;
 
         menus = new MyMenuBar();
         this.setTop(menus);
@@ -28,7 +25,7 @@ public class MainScene extends BorderPane {
         canvas = new MainCanvas(w, h, this);
         this.setCenter(canvas);
 
-        infos = new InfoWindow(canvas);
+        infos = new InfoWindow(this);
         this.setRight(infos);
 
         icons = new IconBox(this);
@@ -50,7 +47,7 @@ public class MainScene extends BorderPane {
         return infos.getWidth() + icons.getWidth();
     }
 
-    public Treillis getTreillis() {
-        return treillis;
+    public ActionCenter getActionCenter() {
+        return actionCenter;
     }
 }

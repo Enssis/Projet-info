@@ -10,16 +10,18 @@ import javafx.scene.paint.Color;
 public class NoeudSimple extends Noeud {
 
 
-    public NoeudSimple() {
-
+    public NoeudSimple(double posX, double posY, int id) {
+        super(posX, posY, id);
     }
 
     public NoeudSimple(Point pos) {
+        super();
         this.posX = pos.getPosX();
         this.posY = pos.getPosY();
     }
 
     public NoeudSimple(double posX, double posY) {
+        super();
         this.posX = posX;
         this.posY = posY;
     }
@@ -28,6 +30,10 @@ public class NoeudSimple extends Noeud {
         if(selected){
             gc.setFill(Color.RED);
             gc.fillOval(posX - 5, posY - 5, 11, 11);
+        }else if(segmentSelected){
+            gc.setStroke(Color.DARKBLUE);
+            gc.setLineWidth(2);
+            gc.strokeOval(posX - 5, posY - 5, 11, 11);
         }else {
             gc.setStroke(Color.GRAY);
             gc.setLineWidth(2);

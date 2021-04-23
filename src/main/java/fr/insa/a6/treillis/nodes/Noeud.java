@@ -18,12 +18,21 @@ public abstract class Noeud extends Point {
      * Default constructor
      */
     public Noeud(int id, Force forceApplique, ArrayList<Barres> linkedBarres) {
-
         this.id = id;
         this.forceApplique = forceApplique;
         this.linkedBarres= linkedBarres;
-
     }
+
+    public Noeud (){
+        //rien du tout
+    }
+
+    public Noeud(double posX, double posY, int id){
+        this.posX = posX;
+        this.posY = posY;
+        this.id = id;
+    }
+
 
     public void addBarres(Barres barre){
         linkedBarres.add(barre);
@@ -33,7 +42,5 @@ public abstract class Noeud extends Point {
         linkedBarres.remove(barre);
     }
 
-    public Noeud (){
-        //rien du tout
-    }
+
 }

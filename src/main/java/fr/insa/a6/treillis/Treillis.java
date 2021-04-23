@@ -1,6 +1,7 @@
 package fr.insa.a6.treillis;
 
 import fr.insa.a6.treillis.nodes.Noeud;
+import fr.insa.a6.treillis.nodes.NoeudSimple;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.Numerateur;
 
@@ -12,9 +13,9 @@ import java.util.ArrayList;
  */
 public class Treillis {
 
-    private ArrayList<Terrain> terrains;
-    private ArrayList<Noeud> noeuds;
-    private ArrayList<Barres> barres;
+    private ArrayList<Terrain> terrains = new ArrayList<>();
+    private ArrayList<Noeud> noeuds = new ArrayList<>();
+    private ArrayList<Barres> barres = new ArrayList<>();
     private Type[] catalogueType;
     private Numerateur numerateur;
 
@@ -22,6 +23,7 @@ public class Treillis {
      * Default constructor
      */
     public Treillis() {
+        numerateur = new Numerateur();
     }
 
     
@@ -42,7 +44,27 @@ public class Treillis {
         noeuds.remove(noeud);
     }
 
+    public ArrayList<Noeud> getNoeuds() {
+        return noeuds;
+    }
+
+    public ArrayList<Barres> getBarres() {
+        return barres;
+    }
+
     public Numerateur getNumerateur() {
         return numerateur;
+    }
+
+    public NoeudSimple createNoeudSimple(double posX, double posY) {
+        NoeudSimple node = new NoeudSimple(posX, posY, numerateur.getNewId());
+        noeuds.add(node);
+        return node;
+    }
+
+    public Barres createBarre(Noeud pA, Noeud pB){
+        Barres b = new Barres(pA, pB, numerateur.getNewId());
+        barres.add(b);
+        return b;
     }
 }

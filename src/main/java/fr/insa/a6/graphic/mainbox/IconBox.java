@@ -9,11 +9,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
-
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.json.simple.parser.*;
+
 
 public class IconBox extends VBox {
 
@@ -37,7 +35,7 @@ public class IconBox extends VBox {
     //types : 0 -> simple, 1 -> appuiDouble, 2 -> appuiEncastre, 3 -> appuiSimple
     private String typeNoeud = "0";
 
-    public IconBox(MainScene mainScene) throws IOException, ParseException {
+    public IconBox(MainScene mainScene) {
         super();
         this.setAlignment(Pos.CENTER);
         this.setId("iconBox");
@@ -62,13 +60,14 @@ public class IconBox extends VBox {
     }
 
     private void initNoeud() {
+        ActionCenter ac = mainScene.getActionCenter();
         noeudBtn = new MyRadioButton("Noeud");
         noeudBtn.setToggleGroup(group);
 
         noeudBtn.setOnAction(actionEvent -> {
             selectNoeud();
-            mainCanvas.setSelectedButton(10);
-            mainCanvas.removeSelected();
+            ac.setSelectedButton(10);
+            ac.removeSelected();
         });
     }
 
@@ -137,42 +136,44 @@ public class IconBox extends VBox {
     }
 
     private void initSelect() {
+        ActionCenter ac = mainScene.getActionCenter();
         selectBtn = new MyRadioButton("Selection");
         selectBtn.setToggleGroup(group);
         selectBtn.setSelected(true);
 
-        selectBtn.setOnAction(actionEvent -> {
-            mainCanvas.setSelectedButton(0);
-        });
+        selectBtn.setOnAction(actionEvent -> ac.setSelectedButton(0));
     }
 
     private void initBarre() {
+        ActionCenter ac = mainScene.getActionCenter();
         barreBtn = new MyRadioButton("Barre");
         barreBtn.setToggleGroup(group);
 
         barreBtn.setOnAction(actionEvent -> {
-            mainCanvas.removeSelected();
-            mainCanvas.setSelectedButton(2);
+            ac.removeSelected();
+            ac.setSelectedButton(20);
         });
     }
 
     private void initPointTrn() {
+        ActionCenter ac = mainScene.getActionCenter();
         pointTerrainBtn = new MyRadioButton("Point");
         pointTerrainBtn.setToggleGroup(group);
 
         pointTerrainBtn.setOnAction(actionEvent -> {
-            mainCanvas.removeSelected();
-            mainCanvas.setSelectedButton(3);
+            ac.removeSelected();
+            ac.setSelectedButton(30);
         });
     }
 
     private void initSegmentTrn() {
+        ActionCenter ac = mainScene.getActionCenter();
         segmentTerrainBtn = new MyRadioButton("Segment");
         segmentTerrainBtn.setToggleGroup(group);
 
         segmentTerrainBtn.setOnAction(actionEvent -> {
-            mainCanvas.removeSelected();
-            mainCanvas.setSelectedButton(4);
+            ac.removeSelected();
+            ac.setSelectedButton(40);
         });
     }
 

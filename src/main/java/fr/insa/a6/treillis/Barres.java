@@ -1,21 +1,19 @@
 package fr.insa.a6.treillis;
 
-import fr.insa.a6.treillis.dessin.Noeud;
 import fr.insa.a6.treillis.dessin.Segment;
+import fr.insa.a6.treillis.nodes.Noeud;
 
 /**
  * 
  */
 public class Barres extends Segment {
 
-    private Noeud[] extremites;
-    public int id;
-
     /**
      * Default constructor
      */
-    public Barres() {
-        super();
+    public Barres(Noeud pA, Noeud pB, int id) {
+        super(pA, pB);
+        this.id = id;
     }
 
 

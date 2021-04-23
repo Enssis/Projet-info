@@ -13,6 +13,7 @@ public class Point extends Forme{
 
     protected double posX;
     protected double posY;
+    protected boolean segmentSelected;
 
     /**
      * Default constructor
@@ -36,7 +37,11 @@ public class Point extends Forme{
         if(selected){
             gc.setFill(Color.RED);
             gc.fillOval(posX - 5, posY - 5, 11, 11);
-        }else {
+        }else if(segmentSelected){
+            gc.setStroke(Color.DARKBLUE);
+            gc.setLineWidth(2);
+            gc.strokeOval(posX - 5, posY - 5, 11, 11);
+        }else{
             gc.setStroke(Color.GRAY);
             gc.setLineWidth(2);
             gc.strokeOval(posX - 5, posY - 5, 11, 11);
@@ -74,7 +79,9 @@ public class Point extends Forme{
                 "selected : " + selected
         };
         return new ArrayList<>(Arrays.asList(str));
+    }
 
-
+    public void setSegmentSelected(boolean segmentSelected) {
+        this.segmentSelected = segmentSelected;
     }
 }
