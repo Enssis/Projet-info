@@ -1,6 +1,6 @@
-package fr.insa.a6.treillis.noeuds;
+package fr.insa.a6.treillis.nodes;
 
-import fr.insa.a6.treillis.Point;
+import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.terrain.Triangle;
 
 /**
@@ -16,6 +16,7 @@ public abstract class Appui extends Noeud {
      * Default constructor
      */
     public Appui(){
+        super();
         this.associatedTriangle = associatedTriangle;
         this.position = position;
         

@@ -1,5 +1,6 @@
 package fr.insa.a6.graphic.mainbox;
 
+import fr.insa.a6.treillis.Treillis;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -13,11 +14,13 @@ public class MainScene extends BorderPane {
     private MyMenuBar menus;
     private IconBox icons;
     private MainCanvas canvas;
-    private Scene scene;
     private InfoWindow infos;
+    private Treillis treillis;
 
-    public MainScene(int w, int h) throws IOException, ParseException {
+    public MainScene(int w, int h, Treillis treillis) throws IOException, ParseException {
         super();
+
+        this.treillis = treillis;
 
         menus = new MyMenuBar();
         this.setTop(menus);
@@ -33,10 +36,6 @@ public class MainScene extends BorderPane {
 
         this.setCenter(canvas);
 
-        //scene = new Scene(this, w, h);
-
-
-
     }
 
     public MainCanvas getCanvas() {
@@ -49,5 +48,9 @@ public class MainScene extends BorderPane {
 
     public double getBorderWidth() {
         return infos.getWidth() + icons.getWidth();
+    }
+
+    public Treillis getTreillis() {
+        return treillis;
     }
 }

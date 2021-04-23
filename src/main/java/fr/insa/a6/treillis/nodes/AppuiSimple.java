@@ -1,4 +1,4 @@
-package fr.insa.a6.treillis.noeuds;
+package fr.insa.a6.treillis.nodes;
 
 /**
  * 
