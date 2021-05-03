@@ -3,13 +3,13 @@ package fr.insa.a6.utilities;
 import fr.insa.a6.graphic.Graphics;
 import fr.insa.a6.graphic.mainbox.MainCanvas;
 import fr.insa.a6.graphic.mainbox.MainScene;
-import fr.insa.a6.treillis.Barres;
 import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
 import fr.insa.a6.treillis.nodes.Noeud;
 import fr.insa.a6.treillis.nodes.NoeudSimple;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ public class ActionCenter {
 
     private MainScene mainScene;
     private Graphics graphics;
+    private Scene scene;
 
     private Treillis treillis;
 
@@ -42,9 +43,10 @@ public class ActionCenter {
 
     }
 
-    public void init(MainScene mainScene, Treillis treillis){
+    public void init(MainScene mainScene, Treillis treillis, Scene scene){
         this.mainScene = mainScene;
         this.treillis = treillis;
+        this.scene = scene;
 
         GraphicsContext gc = mainScene.getCanvas().getGraphicsContext();
         graphics.init(mainScene, gc, this);
@@ -63,8 +65,6 @@ public class ActionCenter {
             mouseY = mouseEvent.getY();
             switch (selectedButton/10) {
                 case 0, 2, 4 -> selection();
-                //case 2 -> selection();
-                //case 4 -> selection();
             }
             graphics.redraw(selectedButton);
         });
@@ -184,16 +184,21 @@ public class ActionCenter {
         graphics.removeInfos();
     }
 
-    //supprime un point
+    //supprime un element
     public void deleteForme(Forme f){
         if(f != null){
             graphics.remove(f.getId());
+            treillis.removeElement(f);
             curentSelect = null;
         }
     }
 
     public void deleteAllFormes() {
-        multipleSelect.forEach(f -> graphics.remove(f.getId()));
+        multipleSelect.forEach(f -> {
+            graphics.remove(f.getId());
+            treillis.removeElement(f);
+        });
+
         multipleSelect.clear();
         graphics.removeInfos();
         inMultSelect = false;

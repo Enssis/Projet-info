@@ -1,9 +1,1 @@
-{
-  "language" : "fr",
-  "style" : "dark",
-  "daltonien" : "false",
-  "save path" : "src/main/resources/sauvegardes",
-  "open recent" : [
-    "test"
-  ]
-}
+{"defaultW":1000,"defaultH":800,"keys":{"simple Node":"n","delete":"d"},"save path":"src\/main\/resources\/sauvegardes","open recent":["test"],"language":"fr","theme":"light","daltonien":false}

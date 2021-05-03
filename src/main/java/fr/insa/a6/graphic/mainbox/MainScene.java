@@ -43,10 +43,6 @@ public class MainScene extends BorderPane {
         return infos;
     }
 
-    public double getBorderWidth() {
-        return infos.getWidth() + icons.getWidth();
-    }
-
     public ActionCenter getActionCenter() {
         return actionCenter;
     }

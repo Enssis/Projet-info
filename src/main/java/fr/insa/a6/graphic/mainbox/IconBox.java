@@ -128,7 +128,7 @@ public class IconBox extends VBox {
             default -> 600;
         };
         Scene scene = new Scene(layout, width, 100);
-        scene.getStylesheets().add("popUpLightStyle.css");
+        scene.getStylesheets().add("stylesSheet/lightTheme/popUpLightStyle.css");
 
         choixNoeud.setScene(scene);
         choixNoeud.showAndWait();

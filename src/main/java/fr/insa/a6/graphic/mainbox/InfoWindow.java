@@ -7,8 +7,12 @@ import fr.insa.a6.utilities.*;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import org.json.simple.parser.*;
 
+
+//VBox avec les informations sur la selection en cours
 public class InfoWindow extends VBox {
 
     public MainScene mainScene;
@@ -20,6 +24,7 @@ public class InfoWindow extends VBox {
         this.setId("infoBox");
     }
 
+    //dessine les informations de l'élément sélectionné
     public void drawInfos(Forme f) {
         ActionCenter ac = mainScene.getActionCenter();
         removeInfos();
@@ -43,7 +48,8 @@ public class InfoWindow extends VBox {
         this.getChildren().clear();
     }
 
-    public void drawInfosMultiplePoint(int nbPoint, int nbSegment){
+    //dessine des informations général des élements selectionné (nombre et possibilité de tout supprimer)
+    public void drawInfosMultiplePoint(int nbPoint, int nbSegment) {
         ActionCenter ac = mainScene.getActionCenter();
         removeInfos();
 

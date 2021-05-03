@@ -1,5 +1,6 @@
 package fr.insa.a6.treillis;
 
+import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.nodes.Noeud;
 import fr.insa.a6.treillis.nodes.NoeudSimple;
 import fr.insa.a6.treillis.terrain.Terrain;
@@ -13,11 +14,11 @@ import java.util.ArrayList;
  */
 public class Treillis {
 
-    private ArrayList<Terrain> terrains = new ArrayList<>();
-    private ArrayList<Noeud> noeuds = new ArrayList<>();
-    private ArrayList<Barres> barres = new ArrayList<>();
+    private final ArrayList<Terrain> terrains = new ArrayList<>();
+    private final ArrayList<Noeud> noeuds = new ArrayList<>();
+    private final ArrayList<Barres> barres = new ArrayList<>();
     private Type[] catalogueType;
-    private Numerateur numerateur;
+    private final Numerateur numerateur;
 
     /**
      * Default constructor
@@ -66,5 +67,10 @@ public class Treillis {
         Barres b = new Barres(pA, pB, numerateur.getNewId());
         barres.add(b);
         return b;
+    }
+
+    public void removeElement(Forme f){
+        if(f instanceof Noeud) removeNoeuds((Noeud) f);
+        else if(f instanceof Barres) removeBarres((Barres) f);
     }
 }
