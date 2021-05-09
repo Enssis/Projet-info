@@ -55,10 +55,14 @@ public class Graphics {
         infoWindow.drawInfos(nearest);
     }
 
-    public void updateFormes(Treillis treillis){
-        ArrayList<Noeud> noeuds = treillis.getNoeuds();
+    public void resetFormes(){
+        formes = new HashMap<>();
+    }
 
-        for (Noeud n: noeuds) {
+    public void updateFormes(Treillis treillis){
+        HashMap<Integer, Noeud> noeuds = treillis.getNoeuds();
+
+        for (Noeud n: noeuds.values()) {
             if(!formes.containsValue(n)){
                 formes.put(n.getId(), n);
             }
@@ -90,8 +94,15 @@ public class Graphics {
                 canvas.getWidth(),
                 canvas.getHeight());
 
-        formes.forEach((k, f) -> f.draw(gc));
-
+        for (Forme f: formes.values()) {
+            if(selectedButton != 0) {
+                f.setSelected(false);
+            }
+            if(selectedButton != 20 && selectedButton != 40 && f instanceof Point){
+                ((Point) f).setSegmentSelected(false);
+            }
+            f.draw(gc);
+        }
 
         if(ac.isInMultSelect()){
             ArrayList<Forme> multipleSelect = ac.getMultipleSelect();
@@ -133,5 +144,10 @@ public class Graphics {
 
     public Forme[] getFormes() {
         return formes.values().toArray(new Forme[]{});
+    }
+
+    public void setMainScene(MainScene mainScene) {
+        this.mainScene = mainScene;
+        this.gc = mainScene.getCanvas().getGraphicsContext();
     }
 }

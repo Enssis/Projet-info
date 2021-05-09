@@ -16,5 +16,4 @@ public class Barres extends Segment {
         this.id = id;
     }
 
-
 }

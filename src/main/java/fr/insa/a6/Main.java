@@ -4,6 +4,7 @@ import fr.insa.a6.graphic.mainbox.MainScene;
 import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.utilities.ActionCenter;
 import fr.insa.a6.utilities.Options;
+import fr.insa.a6.utilities.Sauvegarde;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -11,8 +12,6 @@ import javafx.stage.Stage;
 
 public class Main extends Application{
 
-    private MainScene mainScene;
-    private Treillis treillis;
     private final ActionCenter actionCenter = new ActionCenter();
 
     public Main() {
@@ -28,13 +27,22 @@ public class Main extends Application{
 
         Options options = new Options();
 
-        mainScene = new MainScene(700, 700, actionCenter);
+        MainScene mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), actionCenter);
 
-        treillis = new Treillis();
+
+        String lastOpenPath = options.getLastOpen();
+        String[] nameS = lastOpenPath.split("/");
+        String name = nameS[nameS.length - 1].split("\\.")[0];
+        Treillis treillis;
+        if(lastOpenPath.equals("")){
+            treillis = new Treillis();
+        }else{
+           treillis = Sauvegarde.getTreillis(lastOpenPath);
+        }
 
         Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
 
-        actionCenter.init(mainScene, treillis, scene);
+        actionCenter.init(mainScene, treillis, stage, name);
 
         if(options.getTheme().equals("light")){
             scene.getStylesheets().add("stylesSheet/lightTheme/lightStyle.css");

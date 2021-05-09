@@ -1,6 +1,7 @@
 package fr.insa.a6.graphic.mainbox;
 
 import fr.insa.a6.graphic.utils.*;
+import fr.insa.a6.utilities.ActionCenter;
 import fr.insa.a6.utilities.Options;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
@@ -10,15 +11,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.io.IOException;
 
 public class OptionWindow {
 
-    @SuppressWarnings("unchecked")
-    public static void display() {
+    public static void display(ActionCenter actionCenter) {
         Stage optionWindow = new Stage();
 
         optionWindow.initModality(Modality.APPLICATION_MODAL);
@@ -86,8 +85,6 @@ public class OptionWindow {
 
         languageCB.getSelectionModel().select(i);
 
-        System.out.println(languageCB.getSelectionModel().selectedItemProperty().getValue());
-
         HBox languageHB = new HBox(10);
         languageHB.getChildren().addAll(languageLbl, languageCB);
         languageHB.setAlignment(Pos.CENTER);
@@ -104,7 +101,11 @@ public class OptionWindow {
 
             tempOptions.saveFile();
 
-            //action center reload
+            try {
+                actionCenter.reload(actionCenter.getName());
+            } catch (IOException | ParseException ioException) {
+                ioException.printStackTrace();
+            }
         });
 
         Button cancelBtn = new Button(options.traduction("cancel"));

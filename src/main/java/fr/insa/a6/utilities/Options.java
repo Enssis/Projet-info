@@ -26,6 +26,7 @@ public class Options {
     private String savePath;
     private ArrayList<String> openRecent;
     private HashMap<String, String> keys;
+    private String lastOpen;
 
     private final boolean onlyPreferences;
 
@@ -58,6 +59,7 @@ public class Options {
         savePath = (String) jsonPreferences.get("save path");
         openRecent = (ArrayList<String>) jsonPreferences.get("open recent");
         keys = (HashMap<String, String>) jsonPreferences.get("keys");
+        lastOpen = (String) jsonPreferences.get("lastOpen");
 
         if(!onlyPref) {
             JSONObject jsonLanguageFile = (JSONObject) jsonParser.parse(new FileReader("src/main/java/fr/insa/a6/ressources/language.json"));
@@ -101,6 +103,10 @@ public class Options {
         return savePath;
     }
 
+    public String getLastOpen() {
+        return lastOpen;
+    }
+
     public void setTheme(String newTheme){
         this.theme = newTheme;
     }
@@ -133,11 +139,16 @@ public class Options {
         this.savePath = savePath;
     }
 
+    public void setLastOpen(String lastOpen) {
+        this.lastOpen = lastOpen;
+    }
+
     public void addOpenRecent(String name){
         if(this.openRecent.size() == 5 ){
             this.openRecent.remove(0);
         }
         this.openRecent.add(name);
+        saveFile();
     }
 
     public void addKey(String effect, String key){
@@ -153,6 +164,7 @@ public class Options {
         jsonPreferences.put("save path", savePath);
         jsonPreferences.put("open recent", openRecent);
         jsonPreferences.put("keys", keys);
+        jsonPreferences.put("lastOpen", lastOpen);
 
         try {
             FileWriter file = new FileWriter("src/main/java/fr/insa/a6/ressources/preference.json");

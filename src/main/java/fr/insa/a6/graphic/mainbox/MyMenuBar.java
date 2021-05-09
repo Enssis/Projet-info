@@ -19,13 +19,16 @@ public class MyMenuBar extends MenuBar {
     private JSONObject jsonPreferences;
 
     private Options optionsData = new Options();
+    private ActionCenter actionCenter;
 
     private MenuButton files;
     private MenuButton calculation;
     private MenuButton dessin;
     
-    public MyMenuBar() throws IOException, ParseException {
+    public MyMenuBar(ActionCenter actionCenter) throws IOException, ParseException {
         super();
+
+        this.actionCenter = actionCenter;
 
         jsonInit();
 
@@ -49,6 +52,13 @@ public class MyMenuBar extends MenuBar {
     {
         //cree une nouvelle feuille de dessin (affiche une pop up de confirmation avant)
         MenuItem newMI = new MenuItem(optionsData.traduction("new"));
+        newMI.setOnAction(e -> {
+            try {
+                actionCenter.newTreillis();
+            } catch (IOException | ParseException ioException) {
+                ioException.printStackTrace();
+            }
+        });
 
         //affiche le dossier contenant les projets
         MenuItem open = new MenuItem(optionsData.traduction("open"));
@@ -58,10 +68,17 @@ public class MyMenuBar extends MenuBar {
 
         //sauvegarde le fichier dans l'emplacement de sauvegarde par defaut
         MenuItem save = new MenuItem(optionsData.traduction("save"));
+        save.setOnAction(e -> {
+            String name = "test" + (int) (Math.random() * 500); //TODO ajouter un moyen de nommer les fichiers
+            String path = optionsData.getSavePath() + name +".json";
+            actionCenter.saveAct(path);
+            optionsData.setLastOpen(path);
+            optionsData.addOpenRecent(name);
+        });
 
         //affiche une pop up avec les options quand on clique dessus
         MenuItem options = new MenuItem(optionsData.traduction("options"));
-        options.setOnAction(e -> OptionWindow.display());
+        options.setOnAction(e -> OptionWindow.display(actionCenter));
 
         //creation du bouton de menu "File"
         files = new MenuButton(optionsData.traduction("files"));
@@ -76,6 +93,13 @@ public class MyMenuBar extends MenuBar {
         JSONArray recentString = (JSONArray) jsonPreferences.get("open recent");
         for (Object name : recentString) {
             MenuItem item = new MenuItem((String) name);
+            item.setOnAction(e -> {
+                try {
+                    actionCenter.load((String) name);
+                } catch (IOException | ParseException ioException) {
+                    System.err.println("ERREUR NOM DU FICHIER");
+                }
+            });
             openRecent.getItems().add(item);
         }
 

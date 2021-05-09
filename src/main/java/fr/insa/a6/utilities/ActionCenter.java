@@ -3,16 +3,27 @@ package fr.insa.a6.utilities;
 import fr.insa.a6.graphic.Graphics;
 import fr.insa.a6.graphic.mainbox.MainCanvas;
 import fr.insa.a6.graphic.mainbox.MainScene;
+import fr.insa.a6.treillis.Barres;
 import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
 import fr.insa.a6.treillis.nodes.Noeud;
 import fr.insa.a6.treillis.nodes.NoeudSimple;
+import fr.insa.a6.treillis.terrain.Terrain;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.stage.Stage;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+
 
 public class ActionCenter {
 
@@ -28,7 +39,9 @@ public class ActionCenter {
 
     private MainScene mainScene;
     private Graphics graphics;
-    private Scene scene;
+    private Stage stage;
+    private Options options = new Options();
+    private String name;
 
     private Treillis treillis;
 
@@ -43,18 +56,68 @@ public class ActionCenter {
 
     }
 
-    public void init(MainScene mainScene, Treillis treillis, Scene scene){
+    //initialisation de la classe
+    // impossible de le faire dans son constructeur car cette classe a besoin de "mainscene" qui a besoin de
+    // cet "action center" pour etre initialisé
+    public void init(MainScene mainScene, Treillis treillis, Stage stage, String name){
         this.mainScene = mainScene;
         this.treillis = treillis;
-        this.scene = scene;
+        this.stage = stage;
+        this.name = name;
 
         GraphicsContext gc = mainScene.getCanvas().getGraphicsContext();
         graphics.init(mainScene, gc, this);
+        graphics.updateFormes(treillis);
         graphics.redraw(selectedButton);
 
         addMouseEvent();
     }
 
+    public void reload(String name) throws IOException, ParseException {
+
+
+        mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), this);
+        Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
+
+        graphics.setMainScene(mainScene);
+
+        if(options.getTheme().equals("light")){
+            scene.getStylesheets().add("stylesSheet/lightTheme/lightStyle.css");
+        }else{
+            scene.getStylesheets().add("stylesSheet/darkTheme/darkStyle.css");
+        }
+
+        stage.setScene(scene);
+        stage.show();
+        if(name.equals("")) name = "~Nouveau~";
+        stage.setTitle(name);
+        graphics.updateFormes(treillis);
+        graphics.redraw(selectedButton);
+
+        addMouseEvent();
+    }
+
+    public void load(String name) throws IOException, ParseException {
+        treillis = Sauvegarde.getTreillis(options.getSavePath() + name + ".json");
+        this.name = name;
+
+        graphics.resetFormes();
+        reload(name);
+    }
+
+    public void newTreillis() throws IOException, ParseException {
+        treillis = new Treillis();
+        this.name = "";
+
+        graphics.resetFormes();
+        reload("");
+    }
+
+
+    public void saveAct(String path)
+    {
+        Sauvegarde.saveTreillis(treillis, path);
+    }
 
     //ajout des fonctions appelés durant différentes actions de la souris
     private void addMouseEvent() {
@@ -125,7 +188,6 @@ public class ActionCenter {
 
     //fonction permettant la selection d'un point
     private void setSelected(){
-        System.out.println(selectedButton);
         if (nearest != null) {
             if (curentSelect != null) {
                 curentSelect.setSelected(false);
@@ -142,6 +204,7 @@ public class ActionCenter {
         }
     }
 
+    //fonction de création d'une barre
     private void addBarre(){
         segmentClick ++;
         Noeud p;
@@ -169,7 +232,7 @@ public class ActionCenter {
         this.selectedButton = selectedButton;
     }
 
-    //retire le point selectionner
+    //retire le point selectionné
     public void removeSelected() {
         if (curentSelect != null) {
             curentSelect.setSelected(false);
@@ -178,6 +241,7 @@ public class ActionCenter {
         curentSelect = null;
     }
 
+    //retire tout les points selectionnés
     public void removeSelectedAll() {
         multipleSelect.forEach(p -> p.setSelected(false));
         multipleSelect.clear();
@@ -193,6 +257,7 @@ public class ActionCenter {
         }
     }
 
+    //supprime les élements selectionés
     public void deleteAllFormes() {
         multipleSelect.forEach(f -> {
             graphics.remove(f.getId());
@@ -286,6 +351,10 @@ public class ActionCenter {
 
     public int getSelectedButton() {
         return selectedButton;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean isInMultSelect() {

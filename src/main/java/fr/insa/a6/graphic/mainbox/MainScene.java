@@ -19,7 +19,7 @@ public class MainScene extends BorderPane {
 
         this.actionCenter = actionCenter;
 
-        menus = new MyMenuBar();
+        menus = new MyMenuBar(actionCenter);
         this.setTop(menus);
 
         canvas = new MainCanvas(w, h, this);
