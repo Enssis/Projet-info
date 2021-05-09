@@ -16,4 +16,8 @@ public class Numerateur {
         currentId ++;
         return currentId;
     }
+
+    public int getCurrentId() {
+        return currentId;
+    }
 }

@@ -64,4 +64,11 @@ public class Segment extends Forme{
         return (double) ((int)(Maths.dist(pA, pB) * 100)) / 100;
     }
 
+    public Point getpA() {
+        return pA;
+    }
+
+    public Point getpB() {
+        return pB;
+    }
 }
