@@ -101,7 +101,7 @@ public class OptionWindow {
             tempOptions.saveFile();
 
             try {
-                actionCenter.reload(actionCenter.getName());
+                actionCenter.reload(actionCenter.getPath());
             } catch (IOException | ParseException ioException) {
                 ioException.printStackTrace();
             }

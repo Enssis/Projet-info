@@ -1,6 +1,8 @@
 package fr.insa.a6.treillis.terrain;
 
 import fr.insa.a6.treillis.dessin.Forme;
+import fr.insa.a6.treillis.dessin.Point;
+import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -12,18 +14,32 @@ import java.util.ArrayList;
 public class Triangle extends Forme {
 
     private int id;
-    private PointTerrain[] points = new PointTerrain[3];
-    private SegmentTerrain[] arretes;
-
-
-    public Triangle() {
-
-    }
+    private final PointTerrain[] points = new PointTerrain[3];
+    private final SegmentTerrain[] arretes = new SegmentTerrain[3];
 
     public Triangle(PointTerrain pt1, PointTerrain pt2, PointTerrain pt3, int id){
         points[0] = pt1;
         points[1] = pt2;
         points[2] = pt3;
+
+        pt1.getSegments().forEach(s -> {
+            if(s.getpA() == pt2 || s.getpB() == pt2){
+                arretes[0] = s;
+            }
+            if(s.getpA() == pt3 || s.getpB() == pt3){
+                arretes[1] = s;
+            }
+        });
+
+        pt2.getSegments().forEach(s -> {
+            if(s.getpA() == pt3 || s.getpB() == pt3){
+                arretes[2] = s;
+            }
+        });
+
+        for (PointTerrain point : points) {
+            point.addTriangle(this);
+        }
 
         this.id = id;
     }
@@ -64,11 +80,30 @@ public class Triangle extends Forme {
     }
 
     public String saveString() {
-        String save = "Triangle;" + id;
+        StringBuilder save = new StringBuilder("Triangle;" + id);
         for (PointTerrain point: points) {
-            save += ";(" + points[0].getPosX() + "," + points[0].getPosX() + ")";
+            save.append(";(").append(point.getPosX()).append(",").append(point.getPosY()).append(")");
         }
-        return save;
+        return save.toString();
     }
 
+    public PointTerrain[] getPoints() {
+        return points;
+    }
+
+    public SegmentTerrain[] getArretes() {
+        return arretes;
+    }
+
+    public Point getCenter(){
+        double px = 0;
+        double py = 0;
+
+        for (PointTerrain point : points) {
+            px += point.getPosX();
+            py += point.getPosY();
+        }
+        return new Point(px, py);
+
+    }
 }

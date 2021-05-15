@@ -93,6 +93,7 @@ public class Graphics {
     public void redraw(int selectedButton, boolean inDrawing) {
         MainCanvas canvas = mainScene.getCanvas();
 
+        //fond
         gc.setFill(Color.LIGHTCYAN);
         gc.fillRect(
                 0,
@@ -100,19 +101,22 @@ public class Graphics {
                 canvas.getWidth(),
                 canvas.getHeight());
 
+        //dessin du terrain
         Terrain terrain = ac.getTreillis().getTerrain();
         if(terrain != null) terrain.draw(gc, inDrawing);
 
+        //dessin des noeud et des barres
         for (Forme f: formes) {
             if(selectedButton != 0) {
                 f.setSelected(false);
             }
-            if(selectedButton != 20 && selectedButton != 40 && f instanceof Point){
+            if(selectedButton != 20 && selectedButton != 50 && f instanceof Point){
                 ((Point) f).setSegmentSelected(false);
             }
             f.draw(gc);
         }
 
+        //dessin des noeuds et barres selectionné + des infos associées
         if(ac.isInMultSelect()){
             ArrayList<Forme> multipleSelect = ac.getMultipleSelect();
             int nbPoint = 0;
@@ -124,6 +128,7 @@ public class Graphics {
             drawInfosMultiplePoint(nbPoint, nbSeg);
         }
 
+        //dessin de la zone de selection
         if (ac.isDrag()) {
             double mouseX = ac.getMouseX(), mouseY = ac.getMouseY();
             double dragMouseX = ac.getDragMouseX(), dragMouseY = ac.getDragMouseY();
@@ -140,7 +145,7 @@ public class Graphics {
                     Math.min(mouseY, dragMouseY),
                     Math.abs(dragMouseX - mouseX),
                     Math.abs(dragMouseY - mouseY));
-        }else if(selectedButton == 0 || selectedButton == 20){
+        }else if(selectedButton == 0 || selectedButton == 20 || selectedButton == 50){
             drawNear();
         }
         gc.setGlobalAlpha(1);
@@ -168,8 +173,8 @@ public class Graphics {
         formes.remove(f);
     }
 
-    public Forme[] getFormes() {
-        return formes.toArray(new Forme[]{});
+    public ArrayList<Forme> getFormes() {
+        return formes;
     }
 
     public void setMainScene(MainScene mainScene) {

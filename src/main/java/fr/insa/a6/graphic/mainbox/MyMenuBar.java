@@ -7,9 +7,11 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
+import javafx.stage.FileChooser;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -32,13 +34,23 @@ public class MyMenuBar extends MenuBar {
 
         addFilesItems();
 
-        MenuButton calculation = new MenuButton(optionsData.traduction("calculation"));
-        calculation.setOnAction(e -> actionCenter.setInDrawing(false));
+        MenuButton mode = new MenuButton(optionsData.traduction("mode"));
 
-        MenuButton drawing = new MenuButton(optionsData.traduction("design"));
-        drawing.setOnAction(e -> actionCenter.setInDrawing(true));
+        MenuItem calculation = new MenuItem(optionsData.traduction("calculation"));
+        calculation.setOnAction(e -> {
+            actionCenter.setInDrawing(false);
+            actionCenter.redraw();
+        });
 
-        this.getMenus().addAll(files, calculation, drawing);
+        MenuItem drawing = new MenuItem(optionsData.traduction("design"));
+        drawing.setOnAction(e -> {
+            actionCenter.setInDrawing(true);
+            actionCenter.redraw();
+        });
+
+        mode.getItems().addAll(calculation, drawing);
+
+        this.getMenus().addAll(files, mode);
         
     }
 
@@ -62,19 +74,54 @@ public class MyMenuBar extends MenuBar {
         });
 
         //affiche le dossier contenant les projets
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(optionsData.traduction("open project"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        fileChooser.initialDirectoryProperty().setValue(new File(optionsData.getSavePath()));
+
         MenuItem open = new MenuItem(optionsData.traduction("open"));
+        open.setOnAction(e -> {
+            try {
+                File file = fileChooser.showOpenDialog(actionCenter.getStage());
+                actionCenter.load(file.getPath());
+            } catch (IOException | ParseException exception) {
+                exception.printStackTrace();
+            }
+        });
+
 
         //affiche les fichiers ouvert recemment
         Menu openRecent = openRecent();
 
+        //sauvegarde le fichier la ou on veux
+
+        FileChooser fileChooser2 = new FileChooser();
+        fileChooser2.setTitle(optionsData.traduction("save as"));
+        fileChooser2.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        fileChooser2.initialDirectoryProperty().setValue(new File(optionsData.getSavePath()));
+
+        MenuItem saveAs = new MenuItem(optionsData.traduction("save as"));
+
+        saveAs.setOnAction(e -> {
+
+            File file = fileChooser2.showSaveDialog(actionCenter.getStage());
+            String path = file.getPath();
+            actionCenter.saveAct(path);
+            optionsData.setLastOpen(path);
+            optionsData.addOpenRecent(path);
+        });
+
         //sauvegarde le fichier dans l'emplacement de sauvegarde par defaut
         MenuItem save = new MenuItem(optionsData.traduction("save"));
         save.setOnAction(e -> {
-            String name = "test" + (int) (Math.random() * 500); //TODO ajouter un moyen de nommer les fichiers
-            String path = optionsData.getSavePath() + name +".txt";
+            String path = actionCenter.getPath();
+            if(path.equals("")){
+                String name = "untiled" + (int) (Math.random() * 50);
+                path = optionsData.getSavePath() + name +".txt";
+            }
             actionCenter.saveAct(path);
             optionsData.setLastOpen(path);
-            optionsData.addOpenRecent(name);
+            optionsData.addOpenRecent(path);
         });
 
         //affiche une pop up avec les options quand on clique dessus
@@ -84,7 +131,7 @@ public class MyMenuBar extends MenuBar {
         //creation du bouton de menu "File"
         files = new MenuButton(optionsData.traduction("files"));
 
-        files.getItems().addAll(newMI, open, openRecent, save, options);
+        files.getItems().addAll(newMI, open, openRecent, saveAs, save, options);
     }
 
     //retourne le menu avec la liste des nom des fichiers ouverts récemment
@@ -92,11 +139,16 @@ public class MyMenuBar extends MenuBar {
     {
         Menu openRecent = new Menu(optionsData.traduction("open recent"));
         JSONArray recentString = (JSONArray) jsonPreferences.get("open recent");
-        for (Object name : recentString) {
-            MenuItem item = new MenuItem((String) name);
+        for (Object path : recentString) {
+            File file = new File((String) path);
+            if(!file.exists()){
+                optionsData.removeOpenRecent((String) path);
+                continue;
+            }
+            MenuItem item = new MenuItem( ActionCenter.nameFromPath((String) path));
             item.setOnAction(e -> {
                 try {
-                    actionCenter.load((String) name);
+                    actionCenter.load((String) path);
                 } catch (IOException | ParseException ioException) {
                     System.err.println("ERREUR NOM DU FICHIER");
                 }

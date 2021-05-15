@@ -7,13 +7,8 @@ import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.Numerateur;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 
-/**
- * 
- */
 public class Treillis {
 
     private Terrain terrain;
@@ -22,9 +17,7 @@ public class Treillis {
     private final ArrayList<Type> catalogue;
     private final Numerateur numerateur;
 
-    /**
-     * Default constructor
-     */
+
     public Treillis() {
         numerateur = new Numerateur();
         noeuds = new ArrayList<>();
@@ -40,6 +33,7 @@ public class Treillis {
         this.catalogue = catalogue;
     }
 
+
     public void addBarres(Barres barre){
         barres.add(barre);
     }
@@ -53,7 +47,7 @@ public class Treillis {
     }
     
     public void removeNoeuds (Noeud noeud){
-        noeuds.remove(noeud.getId());
+        noeuds.remove(noeud);
     }
 
     public void setTerrain(Terrain terrain){
@@ -95,6 +89,10 @@ public class Treillis {
     }
 
     public void createBarre(Noeud pA, Noeud pB, Type type){
+        if(type == null) {
+            System.err.println("TYPE NULL");
+            return;
+        }
         Barres b = new Barres(pA, pB, type, numerateur.getNewBarreId());
         barres.add(b);
     }

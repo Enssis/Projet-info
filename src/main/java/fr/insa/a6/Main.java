@@ -31,18 +31,21 @@ public class Main extends Application{
 
 
         String lastOpenPath = options.getLastOpen();
-        String[] nameS = lastOpenPath.split("/");
-        String name = nameS[nameS.length - 1].split("\\.")[0];
+        String name = ActionCenter.nameFromPath(lastOpenPath);
         Treillis treillis;
         if(lastOpenPath.equals("")){
             treillis = new Treillis();
         }else{
            treillis = Sauvegarde.getTreillis(lastOpenPath);
+           if(treillis == null){
+               name = "";
+               treillis = new Treillis();
+           }
         }
 
         Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
 
-        actionCenter.init(mainScene, treillis, stage, name);
+        actionCenter.init(mainScene, treillis, stage, lastOpenPath);
 
         if(options.getTheme().equals("light")){
             scene.getStylesheets().add("stylesSheet/lightTheme/lightStyle.css");
@@ -50,6 +53,8 @@ public class Main extends Application{
             scene.getStylesheets().add("stylesSheet/darkTheme/darkStyle.css");
         }
 
+        if(name.equals("")) name = "~Nouveau~";
+        stage.setTitle(name);
         stage.setScene(scene);
         stage.show();
     }
