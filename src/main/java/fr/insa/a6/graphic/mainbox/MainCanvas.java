@@ -1,8 +1,6 @@
 package fr.insa.a6.graphic.mainbox;
 
 import fr.insa.a6.graphic.Graphics;
-import fr.insa.a6.treillis.dessin.Forme;
-import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.utilities.ActionCenter;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,20 +9,16 @@ import javafx.scene.layout.Pane;
 
 public class MainCanvas extends Pane {
 
-    private GraphicsContext gc;
+    private final GraphicsContext gc;
 
-    private MainScene mainScene;
-    private Canvas canvas;
-
-    private ActionCenter actionCenter;
-    private Graphics graphics;
+    private final ActionCenter actionCenter;
+    private final Graphics graphics;
 
     public MainCanvas(double width, double height, MainScene mainScene) {
         super();
         this.setPrefSize(width, height);
 
-        this.canvas = new Canvas();
-        this.mainScene = mainScene;
+        Canvas canvas = new Canvas();
         this.actionCenter = mainScene.getActionCenter();
         this.graphics = actionCenter.getGraphics();
 
@@ -35,11 +29,10 @@ public class MainCanvas extends Pane {
         canvas.heightProperty().bind(this.heightProperty());
         this.getChildren().add(canvas);
 
-        this.canvas.heightProperty().addListener((o) -> graphics.redraw(actionCenter.getSelectedButton()));
-        this.canvas.widthProperty().addListener((o) -> graphics.redraw(actionCenter.getSelectedButton()));
+        canvas.heightProperty().addListener((o) -> graphics.redraw(actionCenter.getSelectedButton(), actionCenter.isInDrawing()));
+        canvas.widthProperty().addListener((o) -> graphics.redraw(actionCenter.getSelectedButton(), actionCenter.isInDrawing()));
 
     }
-
 
     public GraphicsContext getGraphicsContext() {
         return gc;

@@ -24,7 +24,7 @@ public abstract class Noeud extends Point {
     }
 
     public Noeud (){
-        //rien du tout
+
     }
 
     public Noeud(double posX, double posY, int id){
@@ -32,7 +32,6 @@ public abstract class Noeud extends Point {
         this.posY = posY;
         this.id = id;
     }
-
 
     public void addBarres(Barres barre){
         linkedBarres.add(barre);
@@ -42,5 +41,6 @@ public abstract class Noeud extends Point {
         linkedBarres.remove(barre);
     }
 
+    public abstract String saveString();
 
 }

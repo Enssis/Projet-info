@@ -18,13 +18,11 @@ public class MyMenuBar extends MenuBar {
     // variables permettants la lecture des fichier json  de preference
     private JSONObject jsonPreferences;
 
-    private Options optionsData = new Options();
-    private ActionCenter actionCenter;
+    private final Options optionsData = new Options();
+    private final ActionCenter actionCenter;
 
     private MenuButton files;
-    private MenuButton calculation;
-    private MenuButton dessin;
-    
+
     public MyMenuBar(ActionCenter actionCenter) throws IOException, ParseException {
         super();
 
@@ -34,10 +32,13 @@ public class MyMenuBar extends MenuBar {
 
         addFilesItems();
 
-        calculation = new MenuButton(optionsData.traduction("calculation"));
-        dessin = new MenuButton(optionsData.traduction("design"));
+        MenuButton calculation = new MenuButton(optionsData.traduction("calculation"));
+        calculation.setOnAction(e -> actionCenter.setInDrawing(false));
 
-        this.getMenus().addAll(files, calculation, dessin);
+        MenuButton drawing = new MenuButton(optionsData.traduction("design"));
+        drawing.setOnAction(e -> actionCenter.setInDrawing(true));
+
+        this.getMenus().addAll(files, calculation, drawing);
         
     }
 
@@ -70,7 +71,7 @@ public class MyMenuBar extends MenuBar {
         MenuItem save = new MenuItem(optionsData.traduction("save"));
         save.setOnAction(e -> {
             String name = "test" + (int) (Math.random() * 500); //TODO ajouter un moyen de nommer les fichiers
-            String path = optionsData.getSavePath() + name +".json";
+            String path = optionsData.getSavePath() + name +".txt";
             actionCenter.saveAct(path);
             optionsData.setLastOpen(path);
             optionsData.addOpenRecent(name);

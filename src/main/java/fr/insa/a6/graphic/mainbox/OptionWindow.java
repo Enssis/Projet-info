@@ -76,11 +76,10 @@ public class OptionWindow {
         MyLabel languageLbl = new MyLabel(options.traduction("language") + " :", "title");
 
         ComboBox<Language> languageCB = new ComboBox<>(FXCollections.observableArrayList(new Language("English", "en"), new Language("Français", "fr")));
-        int i;
+        int i = -1;
         switch (options.getLanguage()){
             case "en" -> i = 0;
             case "fr" -> i = 1;
-            default -> i = 0;
         }
 
         languageCB.getSelectionModel().select(i);

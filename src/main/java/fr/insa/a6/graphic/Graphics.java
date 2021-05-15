@@ -9,6 +9,7 @@ import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
 import fr.insa.a6.treillis.nodes.Noeud;
+import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.ActionCenter;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -23,7 +24,7 @@ public class Graphics {
 
     private GraphicsContext gc;
     private MainScene mainScene;
-    private HashMap<Integer, Forme> formes = new HashMap<>();
+    private ArrayList<Forme> formes = new ArrayList<>();
     private ActionCenter ac;
 
     private InfoWindow infoWindow;
@@ -55,24 +56,28 @@ public class Graphics {
         infoWindow.drawInfos(nearest);
     }
 
+    public void drawInfos(Terrain terrain){
+        infoWindow.drawInfos(terrain);
+    }
+
     public void resetFormes(){
-        formes = new HashMap<>();
+        formes = new ArrayList<>();
     }
 
     public void updateFormes(Treillis treillis){
-        HashMap<Integer, Noeud> noeuds = treillis.getNoeuds();
+        ArrayList<Noeud> noeuds = treillis.getNoeuds();
 
-        for (Noeud n: noeuds.values()) {
-            if(!formes.containsValue(n)){
-                formes.put(n.getId(), n);
+        for (Noeud n: noeuds) {
+            if(!formes.contains(n)){
+                formes.add(n);
             }
         }
 
         ArrayList<Barres> barres = treillis.getBarres();
 
         for (Barres b: barres) {
-            if(!formes.containsValue(b)){
-                formes.put(b.getId(), b);
+            if(!formes.contains(b)){
+                formes.add(b);
             }
         }
     }
@@ -84,7 +89,8 @@ public class Graphics {
         }
     }
 
-    public void redraw(int selectedButton) {
+    //fonction de dessin principale
+    public void redraw(int selectedButton, boolean inDrawing) {
         MainCanvas canvas = mainScene.getCanvas();
 
         gc.setFill(Color.LIGHTCYAN);
@@ -94,7 +100,10 @@ public class Graphics {
                 canvas.getWidth(),
                 canvas.getHeight());
 
-        for (Forme f: formes.values()) {
+        Terrain terrain = ac.getTreillis().getTerrain();
+        if(terrain != null) terrain.draw(gc, inDrawing);
+
+        for (Forme f: formes) {
             if(selectedButton != 0) {
                 f.setSelected(false);
             }
@@ -135,15 +144,32 @@ public class Graphics {
             drawNear();
         }
         gc.setGlobalAlpha(1);
+        if(selectedButton == 30 && ac.getCurrentClick() == 1){
+            drawTerrainZone(ac.getMouseX(), ac.getMouseY(), ac.getTerrainX(), ac.getTerrainY());
+        }
 
     }
 
-    public void remove(int id){
-        formes.remove(id);
+    public void drawTerrainZone(double x1, double y1, double x2, double y2){
+
+        double x = Math.min(x1, x2), y = Math.min(y1, y2);
+        double w = Math.abs(x2 - x1), h = Math.abs(y2 - y1);
+
+        gc.setGlobalAlpha(0.5);
+        gc.setFill(Color.LIGHTGREEN);
+        gc.fillRect(x, y, w, h);
+        gc.setGlobalAlpha(1);
+
+        gc.setStroke(Color.GREEN);
+        gc.strokeRect(x, y, w, h);
+    }
+
+    public void remove(Forme f){
+        formes.remove(f);
     }
 
     public Forme[] getFormes() {
-        return formes.values().toArray(new Forme[]{});
+        return formes.toArray(new Forme[]{});
     }
 
     public void setMainScene(MainScene mainScene) {

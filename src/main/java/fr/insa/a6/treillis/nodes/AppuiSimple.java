@@ -11,4 +11,9 @@ public class AppuiSimple extends Appui {
     public AppuiSimple() {
     }
 
+    @Override
+    public String saveString() {
+        return null;
+    }
+
 }
