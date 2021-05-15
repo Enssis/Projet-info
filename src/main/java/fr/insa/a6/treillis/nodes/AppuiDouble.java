@@ -11,4 +11,9 @@ public class AppuiDouble extends Appui {
     public AppuiDouble() {
     }
 
+    @Override
+    public String saveString() {
+        return null;
+    }
+
 }

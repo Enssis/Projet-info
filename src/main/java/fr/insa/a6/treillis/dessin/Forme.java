@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
 
 public abstract class Forme {
+
     protected boolean selected = false;
     protected int id;
 

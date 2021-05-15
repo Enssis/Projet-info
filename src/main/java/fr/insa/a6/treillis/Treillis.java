@@ -7,6 +7,7 @@ import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.Numerateur;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -15,10 +16,10 @@ import java.util.HashMap;
  */
 public class Treillis {
 
-    private final ArrayList<Terrain> terrains;
-    private final HashMap<Integer, Noeud> noeuds;
+    private Terrain terrain;
+    private final ArrayList<Noeud> noeuds;
     private final ArrayList<Barres> barres;
-    private Type[] catalogueType;
+    private final ArrayList<Type> catalogue;
     private final Numerateur numerateur;
 
     /**
@@ -26,19 +27,19 @@ public class Treillis {
      */
     public Treillis() {
         numerateur = new Numerateur();
-        terrains = new ArrayList<>();
-        noeuds = new HashMap<>();
+        noeuds = new ArrayList<>();
         barres = new ArrayList<>();
+        catalogue = new ArrayList<>();
     }
 
-    public Treillis(ArrayList<Terrain> terrains, HashMap<Integer, Noeud> noeuds, ArrayList<Barres> barres, Numerateur numerateur) {
-        this.terrains = terrains;
+    public Treillis(Terrain terrain, ArrayList<Noeud> noeuds, ArrayList<Barres> barres, ArrayList<Type> catalogue, Numerateur numerateur) {
+        this.terrain = terrain;
         this.noeuds = noeuds;
         this.barres = barres;
         this.numerateur = numerateur;
+        this.catalogue = catalogue;
     }
-    
-    
+
     public void addBarres(Barres barre){
         barres.add(barre);
     }
@@ -48,14 +49,18 @@ public class Treillis {
     }
     
     public void addNoeuds(Noeud noeud){
-        noeuds.put(noeud.getId(), noeud);
+        noeuds.add(noeud);
     }
     
     public void removeNoeuds (Noeud noeud){
         noeuds.remove(noeud.getId());
     }
 
-    public HashMap<Integer, Noeud> getNoeuds() {
+    public void setTerrain(Terrain terrain){
+        this.terrain = terrain;
+    }
+
+    public ArrayList<Noeud> getNoeuds() {
         return noeuds;
     }
 
@@ -63,22 +68,34 @@ public class Treillis {
         return barres;
     }
 
-    public ArrayList<Terrain> getTerrains() {
-        return terrains;
+    public Terrain getTerrain() {
+        return terrain;
     }
 
     public Numerateur getNumerateur() {
         return numerateur;
     }
 
+    public ArrayList<Type> getCatalogue() {
+        return catalogue;
+    }
+
     public NoeudSimple createNoeudSimple(double posX, double posY) {
-        NoeudSimple node = new NoeudSimple(posX, posY, numerateur.getNewId());
-        noeuds.put(node.getId(), node);
+        NoeudSimple node = new NoeudSimple(posX, posY, numerateur.getNewNoeudId());
+        noeuds.add(node);
         return node;
     }
 
-    public void createBarre(Noeud pA, Noeud pB){
-        Barres b = new Barres(pA, pB, numerateur.getNewId());
+    public void addType(Type type){
+        catalogue.add(type);
+    }
+
+    public void createTerrain(double x1, double y1, double x2, double y2){
+        this.terrain = new Terrain(x1,y1, x2, y2);
+    }
+
+    public void createBarre(Noeud pA, Noeud pB, Type type){
+        Barres b = new Barres(pA, pB, type, numerateur.getNewBarreId());
         barres.add(b);
     }
 

@@ -3,6 +3,7 @@ package fr.insa.a6.graphic.mainbox;
 import fr.insa.a6.graphic.utils.MyLabel;
 import fr.insa.a6.graphic.utils.*;
 import fr.insa.a6.treillis.dessin.Forme;
+import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.*;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
@@ -24,7 +25,7 @@ public class InfoWindow extends VBox {
         this.setId("infoBox");
     }
 
-    //dessine les informations de l'élément sélectionné
+    //dessine les informations de la forme sélectionné
     public void drawInfos(Forme f) {
         ActionCenter ac = mainScene.getActionCenter();
         removeInfos();
@@ -41,7 +42,25 @@ public class InfoWindow extends VBox {
             removeInfos();
         });
         this.getChildren().add(delete);
+    }
 
+    //dessine les informations de l'élément sélectionné
+    public void drawInfos(Terrain t) {
+        ActionCenter ac = mainScene.getActionCenter();
+        removeInfos();
+        ArrayList<String> infos = t.getInfos();
+        for (String line : infos) {
+            MyLabel mL = new MyLabel(line, "normal");
+            this.getChildren().add(mL);
+        }
+
+        Options optionsData = new Options();
+        MyButton delete = new MyButton(optionsData.traduction("delete"));
+        delete.setOnAction(actionEvent -> {
+            ac.deleteTerrain(t);
+            removeInfos();
+        });
+        this.getChildren().add(delete);
     }
 
     public void removeInfos() {

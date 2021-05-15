@@ -3,8 +3,8 @@ package fr.insa.a6.utilities;
 import fr.insa.a6.graphic.Graphics;
 import fr.insa.a6.graphic.mainbox.MainCanvas;
 import fr.insa.a6.graphic.mainbox.MainScene;
-import fr.insa.a6.treillis.Barres;
 import fr.insa.a6.treillis.Treillis;
+import fr.insa.a6.treillis.Type;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
@@ -14,13 +14,8 @@ import fr.insa.a6.treillis.terrain.Terrain;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -29,11 +24,14 @@ public class ActionCenter {
 
     private Forme nearest, curentSelect;
     private ArrayList<Forme> multipleSelect = new ArrayList<>();
+    private Terrain selectedTerrain;
+
+    private Type barreType = null;
 
     private double mouseX, mouseY;
     private double dragMouseX, dragMouseY;
 
-    //bouttons de selections : 0 -> select ; 1x -> noeud; 2 -> barre; 3 -> pointTerrain; 4 -> segmentTerrain
+    //bouttons de selections : 0 -> select ; 1xx -> noeud; 2xx -> barre;  3xx -> terrain; 4xx -> pointTerrain; 5xx -> segmentTerrain
     //x : 0 -> Noeud Simple; 1 ->
     private int selectedButton = 0;
 
@@ -45,10 +43,14 @@ public class ActionCenter {
 
     private Treillis treillis;
 
-    private int segmentClick = 0;
+    private int currentClick = 0;
     private Point firstSegmentPoint = null;
 
+    private double terrainX, terrainY;
+
     private boolean inMultSelect = false, drag = false;
+
+    private boolean inDrawing = true;
 
     public ActionCenter() {
 
@@ -68,7 +70,7 @@ public class ActionCenter {
         GraphicsContext gc = mainScene.getCanvas().getGraphicsContext();
         graphics.init(mainScene, gc, this);
         graphics.updateFormes(treillis);
-        graphics.redraw(selectedButton);
+        graphics.redraw(selectedButton, inDrawing);
 
         addMouseEvent();
     }
@@ -92,7 +94,7 @@ public class ActionCenter {
         if(name.equals("")) name = "~Nouveau~";
         stage.setTitle(name);
         graphics.updateFormes(treillis);
-        graphics.redraw(selectedButton);
+        graphics.redraw(selectedButton, inDrawing);
 
         addMouseEvent();
     }
@@ -129,7 +131,7 @@ public class ActionCenter {
             switch (selectedButton/10) {
                 case 0, 2, 4 -> selection();
             }
-            graphics.redraw(selectedButton);
+            graphics.redraw(selectedButton, inDrawing);
         });
 
         canvas.setOnMousePressed(mouseEvent -> {
@@ -143,16 +145,17 @@ public class ActionCenter {
                 case 0 -> setSelected();
                 case 1 -> addNoeud();
                 case 2 -> addBarre();
-                case 3, 4 -> System.out.println("marche plus :/");
+                case 3 -> addTerrain();
+                case 4 -> addPointTrn();
+                case 5 -> System.out.println("marche plus :/");
             }
-
         });
 
         canvas.setOnMouseReleased(mouseEvent -> {
             dragMouseX = -1;
             dragMouseY = -1;
             drag = false;
-            graphics.redraw(selectedButton);
+            graphics.redraw(selectedButton, inDrawing);
         });
 
         canvas.setOnMouseDragged(mouseEvent -> {
@@ -162,7 +165,7 @@ public class ActionCenter {
                 dragMouseX = mouseEvent.getX();
                 dragMouseY = mouseEvent.getY();
                 dragSelection();
-                graphics.redraw(selectedButton);
+                graphics.redraw(selectedButton, inDrawing);
             }
         });
     }
@@ -182,16 +185,21 @@ public class ActionCenter {
     private NoeudSimple addNoeudSimple(double posX, double posY) {
         NoeudSimple ns = treillis.createNoeudSimple(posX, posY);
         graphics.updateFormes(treillis);
-        graphics.redraw(selectedButton);
+        graphics.redraw(selectedButton, inDrawing);
         return ns;
     }
 
     //fonction permettant la selection d'un point
     private void setSelected(){
+        Terrain tempTerrain = selectedTerrain;
+        if(selectedTerrain != null){
+            selectedTerrain.setSelected(false);
+        }
+        selectedTerrain = null;
+        if (curentSelect != null) {
+            curentSelect.setSelected(false);
+        }
         if (nearest != null) {
-            if (curentSelect != null) {
-                curentSelect.setSelected(false);
-            }
             if(nearest.equals(curentSelect)){
                 nearest.setSelected(false);
                 curentSelect = null;
@@ -201,12 +209,24 @@ public class ActionCenter {
                 curentSelect = nearest;
                 graphics.drawInfos(nearest);
             }
+        }else if(treillis.getTerrain() != null){
+            curentSelect = null;
+
+            if(selectedTerrain != null){
+                selectedTerrain.setSelected(false);
+                graphics.removeInfos();
+                selectedTerrain = null;
+            }else if(treillis.getTerrain().contain(mouseX, mouseY)){
+                selectedTerrain.setSelected(true);
+                graphics.drawInfos(selectedTerrain);
+
+            }
         }
     }
 
     //fonction de création d'une barre
     private void addBarre(){
-        segmentClick ++;
+        currentClick++;
         Noeud p;
         //test si on clique a coté d'un point ou pas
         //Besoin d'ajouter la vérification que le point est créable, et quel type de point
@@ -215,29 +235,54 @@ public class ActionCenter {
         }else{
             p = addNoeudSimple();
         }
-
-        if(segmentClick == 1){
+        if(currentClick == 1){
             p.setSegmentSelected(true);
             firstSegmentPoint = p;
         }else{
-            segmentClick = 0;
-            treillis.createBarre((Noeud) firstSegmentPoint, p);
+            currentClick = 0;
+            treillis.createBarre((Noeud) firstSegmentPoint, p, barreType);
             firstSegmentPoint.setSegmentSelected(false);
             graphics.updateFormes(treillis);
         }
-        graphics.redraw(selectedButton);
+        graphics.redraw(selectedButton, inDrawing);
+    }
+
+    private void addTerrain() {
+        currentClick ++;
+
+        if(currentClick == 1){
+            terrainX = mouseX;
+            terrainY = mouseY;
+        }else{
+            currentClick = 0;
+            treillis.createTerrain(Math.min(terrainX, mouseX), Math.min(terrainY, mouseY), Math.max(terrainX, mouseX), Math.max(terrainY, mouseY));
+        }
+    }
+
+    public void addPointTrn() {
+        Terrain terrain = treillis.getTerrain();
+        if(terrain.contain(mouseX, mouseY)){
+            terrain.addPoint(mouseX, mouseY);
+        }
     }
 
     public void setSelectedButton(int selectedButton) {
         this.selectedButton = selectedButton;
     }
 
+    public void setInDrawing(boolean inDrawing){
+        this.inDrawing = inDrawing;
+    }
+
     //retire le point selectionné
     public void removeSelected() {
         if (curentSelect != null) {
             curentSelect.setSelected(false);
-            mainScene.getInfos().removeInfos();
         }
+        if(selectedTerrain != null) {
+            selectedTerrain.setSelected(false);
+        }
+        mainScene.getInfos().removeInfos();
         curentSelect = null;
     }
 
@@ -251,7 +296,7 @@ public class ActionCenter {
     //supprime un element
     public void deleteForme(Forme f){
         if(f != null){
-            graphics.remove(f.getId());
+            graphics.remove(f);
             treillis.removeElement(f);
             curentSelect = null;
         }
@@ -260,14 +305,21 @@ public class ActionCenter {
     //supprime les élements selectionés
     public void deleteAllFormes() {
         multipleSelect.forEach(f -> {
-            graphics.remove(f.getId());
+            graphics.remove(f);
             treillis.removeElement(f);
         });
 
         multipleSelect.clear();
         graphics.removeInfos();
         inMultSelect = false;
-        graphics.redraw(selectedButton);
+        graphics.redraw(selectedButton, inDrawing);
+    }
+
+    public void deleteTerrain(Terrain t){
+        if(t != null){
+            treillis.setTerrain(null);
+            selectedTerrain = null;
+        }
     }
 
     public Graphics getGraphics() {
@@ -298,7 +350,9 @@ public class ActionCenter {
                 nearest = f;
                 bestDist = dist;
             }
-            if(bestDist == 15) nearest = null;
+            if(bestDist == 15) {
+                nearest = null;
+            }
         }
 
     }
@@ -355,6 +409,30 @@ public class ActionCenter {
 
     public String getName() {
         return name;
+    }
+
+    public double getTerrainX() {
+        return terrainX;
+    }
+
+    public double getTerrainY() {
+        return terrainY;
+    }
+
+    public int getCurrentClick() {
+        return currentClick;
+    }
+
+    public Treillis getTreillis() {
+        return treillis;
+    }
+
+    public void setBarreType(Type barreType) {
+        this.barreType = barreType;
+    }
+
+    public boolean isInDrawing() {
+        return inDrawing;
     }
 
     public boolean isInMultSelect() {

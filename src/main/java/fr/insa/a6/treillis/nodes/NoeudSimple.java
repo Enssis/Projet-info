@@ -14,10 +14,16 @@ public class NoeudSimple extends Noeud {
         super(posX, posY, id);
     }
 
-    public NoeudSimple(Point pos) {
+    @Override
+    public String saveString() {
+        return "NoeudSimple;"+ id +";(" + posX + "," + posY + ")";
+    }
+
+    public NoeudSimple(Point pos, int id) {
         super();
         this.posX = pos.getPosX();
         this.posY = pos.getPosY();
+        this.id = id;
     }
 
     public NoeudSimple(double posX, double posY) {

@@ -1,10 +1,14 @@
 package fr.insa.a6.graphic.mainbox;
 
 import fr.insa.a6.graphic.utils.*;
+import fr.insa.a6.treillis.Type;
 import fr.insa.a6.utilities.*;
 
+import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -26,11 +30,13 @@ public class IconBox extends VBox {
     private MyRadioButton noeudBtn;
 
     private MyLabel terrainLbl;
+    private MyRadioButton terrainBtn;
     private MyRadioButton pointTerrainBtn;
     private MyRadioButton segmentTerrainBtn;
     private MainScene mainScene;
 
     private MainCanvas mainCanvas;
+    private ActionCenter actionCenter;
 
     //types : 0 -> simple, 1 -> appuiDouble, 2 -> appuiEncastre, 3 -> appuiSimple
     private String typeNoeud = "0";
@@ -42,6 +48,7 @@ public class IconBox extends VBox {
 
         this.mainScene = mainScene;
         this.mainCanvas = mainScene.getCanvas();
+        this.actionCenter = mainScene.getActionCenter();
 
         initSelect();
 
@@ -52,22 +59,23 @@ public class IconBox extends VBox {
 
         terrainLbl = new MyLabel(optionsData.traduction("ground"), "title");
 
+        initTrn();
         initPointTrn();
         initSegmentTrn();
 
-        this.getChildren().addAll(selectBtn, treillisLbl, noeudBtn, barreBtn, terrainLbl, pointTerrainBtn, segmentTerrainBtn);
+
+        this.getChildren().addAll(selectBtn, treillisLbl, noeudBtn, barreBtn, terrainLbl, terrainBtn, pointTerrainBtn, segmentTerrainBtn);
 
     }
 
     private void initNoeud() {
-        ActionCenter ac = mainScene.getActionCenter();
         noeudBtn = new MyRadioButton("Noeud");
         noeudBtn.setToggleGroup(group);
 
         noeudBtn.setOnAction(actionEvent -> {
             selectNoeud();
-            ac.setSelectedButton(10);
-            ac.removeSelected();
+            actionCenter.setSelectedButton(10);
+            actionCenter.removeSelected();
         });
     }
 
@@ -136,44 +144,98 @@ public class IconBox extends VBox {
     }
 
     private void initSelect() {
-        ActionCenter ac = mainScene.getActionCenter();
         selectBtn = new MyRadioButton("Selection");
         selectBtn.setToggleGroup(group);
         selectBtn.setSelected(true);
 
-        selectBtn.setOnAction(actionEvent -> ac.setSelectedButton(0));
+        selectBtn.setOnAction(actionEvent -> actionCenter.setSelectedButton(0));
     }
 
     private void initBarre() {
-        ActionCenter ac = mainScene.getActionCenter();
         barreBtn = new MyRadioButton("Barre");
         barreBtn.setToggleGroup(group);
 
         barreBtn.setOnAction(actionEvent -> {
-            ac.removeSelected();
-            ac.setSelectedButton(20);
+            actionCenter.removeSelected();
+            typeChoicePopUp(null);
+            actionCenter.setSelectedButton(20);
+        });
+    }
+
+    //pop up de selection du type de la barre
+    public void typeChoicePopUp(Stage creator){
+        Stage typeChoice = new Stage();
+
+        typeChoice.initModality(Modality.APPLICATION_MODAL);
+        typeChoice.setTitle(optionsData.traduction("type choice"));
+        typeChoice.setResizable(false);
+
+        //type list
+        MyLabel typeLabel = new MyLabel(optionsData.traduction("type") + " :", "title");
+
+        ComboBox<Type> typeComboBox = new ComboBox<>(FXCollections.observableArrayList(actionCenter.getTreillis().getCatalogue()));
+
+        HBox typeHB = new HBox(10);
+        typeHB.getChildren().addAll(typeLabel, typeComboBox);
+        typeHB.setAlignment(Pos.CENTER);
+
+        //boutons
+        Button addTypeBtn = new Button(optionsData.traduction("add type"));
+        addTypeBtn.setOnAction(e -> {
+            Type.createTypePopUp(actionCenter, this, typeChoice);
+        });
+
+        Button chooseBtn = new Button(optionsData.traduction("choose"));
+        chooseBtn.setOnAction(e -> {
+            actionCenter.setBarreType(typeComboBox.getValue());
+            typeChoice.close();
+        });
+
+        HBox buttonHB = new HBox(10);
+        buttonHB.getChildren().addAll(addTypeBtn, chooseBtn);
+        buttonHB.setAlignment(Pos.CENTER);
+
+
+        VBox mainVB = new VBox(5);
+        mainVB.getChildren().addAll(typeHB, buttonHB);
+
+
+        Scene scene1 = new Scene(mainVB, 300, 300);
+
+        if(creator != null) creator.close();
+
+        typeChoice.setScene(scene1);
+        typeChoice.showAndWait();
+
+    }
+
+    public void initTrn(){
+        terrainBtn = new MyRadioButton(optionsData.traduction("ground"));
+        terrainBtn.setToggleGroup(group);
+
+        terrainBtn.setOnAction( actionEvent -> {
+            actionCenter.removeSelected();
+            actionCenter.setSelectedButton(30);
         });
     }
 
     private void initPointTrn() {
-        ActionCenter ac = mainScene.getActionCenter();
         pointTerrainBtn = new MyRadioButton("Point");
         pointTerrainBtn.setToggleGroup(group);
 
         pointTerrainBtn.setOnAction(actionEvent -> {
-            ac.removeSelected();
-            ac.setSelectedButton(30);
+            actionCenter.removeSelected();
+            actionCenter.setSelectedButton(40);
         });
     }
 
     private void initSegmentTrn() {
-        ActionCenter ac = mainScene.getActionCenter();
         segmentTerrainBtn = new MyRadioButton("Segment");
         segmentTerrainBtn.setToggleGroup(group);
 
         segmentTerrainBtn.setOnAction(actionEvent -> {
-            ac.removeSelected();
-            ac.setSelectedButton(40);
+            actionCenter.removeSelected();
+            actionCenter.setSelectedButton(50);
         });
     }
 

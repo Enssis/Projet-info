@@ -12,4 +12,9 @@ public class AppuiEncastre extends Appui {
 
     }
 
+    @Override
+    public String saveString() {
+        return null;
+    }
+
 }
