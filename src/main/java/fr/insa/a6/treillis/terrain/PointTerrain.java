@@ -4,17 +4,15 @@ import fr.insa.a6.treillis.dessin.Point;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+
 /**
  * 
  */
 public class PointTerrain extends Point {
 
-    private SegmentTerrain[] segments;
-    private Triangle[] triangles;
-
-    public PointTerrain() {
-        super();
-    }
+    private final ArrayList<SegmentTerrain> segments = new ArrayList<>();
+    private final ArrayList<Triangle> triangles = new ArrayList<>();
 
     public PointTerrain(Point p) {
         super(p.getPosX(), p.getPosY());
@@ -29,18 +27,44 @@ public class PointTerrain extends Point {
     }
 
     public void draw(GraphicsContext gc){
+        int size = 7;
+        int offset = (size - 1) / 2;
         if(selected){
-            gc.setFill(Color.RED);
-            gc.fillOval(posX - 5, posY - 5, 11, 11);
+            gc.setFill(Color.DARKRED);
+            gc.fillOval(posX - offset, posY - offset, size, size);
         }else if(segmentSelected){
             gc.setStroke(Color.DARKBLUE);
             gc.setLineWidth(2);
-            gc.strokeOval(posX - 5, posY - 5, 11, 11);
+            gc.strokeOval(posX - offset, posY - offset, size, size);
         }else{
-            gc.setStroke(Color.GRAY);
-            gc.setLineWidth(2);
-            gc.strokeOval(posX - 5, posY - 5, 11, 11);
+            gc.setFill(Color.BLACK);
+            gc.fillOval(posX - offset, posY - offset, size, size);
         }
     }
 
+    public void addTriangle(Triangle triangle){
+        triangles.add(triangle);
+    }
+
+    public void addSegments(SegmentTerrain segmentTerrain){
+        segments.add(segmentTerrain);
+    }
+
+    public ArrayList<Triangle> getTriangles() {
+        return triangles;
+    }
+
+    public ArrayList<SegmentTerrain> getSegments() {
+        return segments;
+    }
+
+    @Override
+    public void drawNear(GraphicsContext gc) {
+        gc.setFill(Color.LIGHTBLUE);
+        gc.fillOval(posX - 3, posY - 3,7, 7);
+    }
+
+    public boolean isPoint(PointTerrain pt){
+        return this.posX == pt.posX && this.posY == posY;
+    }
 }

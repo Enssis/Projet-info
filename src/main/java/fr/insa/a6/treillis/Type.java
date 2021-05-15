@@ -5,13 +5,17 @@ import fr.insa.a6.graphic.utils.MyLabel;
 import fr.insa.a6.graphic.utils.MyTextField;
 import fr.insa.a6.utilities.ActionCenter;
 import fr.insa.a6.utilities.Options;
+import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 /**
  * 
@@ -24,8 +28,10 @@ public class Type {
     private double lMax;
     private double rTension;
     private double rComp;
+    private String name;
 
-    public Type(double cout, double lMin, double lMax, double rTension, double rComp, int id) {
+    public Type(String name, double cout, double lMin, double lMax, double rTension, double rComp, int id) {
+        this.name = name;
         this.id = id;
         this.cout = cout;
         this.lMin = lMin;
@@ -34,21 +40,35 @@ public class Type {
         this.rComp = rComp;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public int getId() {
         return id;
     }
 
     public String saveString() {
-        return "TypeBarre;" + id + ";" + cout + ";" + lMin + ";" + lMax + ";" + rTension + ";" + rComp;
+        return "TypeBarre;" + id + ";" + cout + ";" + lMin + ";" + lMax + ";" + rTension + ";" + rComp + ";" + name;
     }
 
-    static public void createTypePopUp(ActionCenter ac, IconBox iconBox, Stage chooseStage){
+    static public void createTypePopUp(ActionCenter ac, ComboBox<Type> typeComboBox){
         Stage typeChoice = new Stage();
         Options options = new Options();
 
         typeChoice.initModality(Modality.APPLICATION_MODAL);
         typeChoice.setTitle(options.traduction("create type"));
         typeChoice.setResizable(false);
+
+
+        //name
+        MyLabel nameLbl = new MyLabel(options.traduction("name") + " :", "title");
+        MyTextField nameTF = new MyTextField();
+
+        HBox nameHB = new HBox(10);
+        nameHB.getChildren().addAll(nameLbl, nameTF);
+        nameHB.setAlignment(Pos.CENTER);
 
 
         //cout
@@ -97,21 +117,25 @@ public class Type {
 
 
         //buttons
+        //boutons d'ajout, ne fait rien si une case n'est pas remplie
         Button addTypeBtn = new Button(options.traduction("add type"));
         addTypeBtn.setOnAction(e -> {
             try {
                 Treillis treillis = ac.getTreillis();
-                Type type = new Type(Double.parseDouble(costTF.getText()), Double.parseDouble(lMinTF.getText()),
+                Type type = new Type(nameTF.getText(), Double.parseDouble(costTF.getText()), Double.parseDouble(lMinTF.getText()),
                         Double.parseDouble(lmaxTF.getText()), Double.parseDouble(rTensionTF.getText()),
                         Double.parseDouble(rCompTF.getText()), treillis.getNumerateur().getNewTypeId());
                 treillis.addType(type);
-                chooseStage.close();
-                iconBox.typeChoicePopUp(typeChoice);
+                ArrayList<Type> catalogue = treillis.getCatalogue();
+                typeComboBox.setItems(FXCollections.observableArrayList(catalogue));
+                typeComboBox.getSelectionModel().select(catalogue.get(catalogue.indexOf(type)));
+                typeChoice.close();
             }catch (NumberFormatException exception){
                 exception.printStackTrace();
             }
         });
 
+        //bouton pour annuler, ferme juste la fenetre
         Button cancelBtn = new Button(options.traduction("cancel"));
         cancelBtn.setOnAction(e -> typeChoice.close());
 
@@ -121,9 +145,9 @@ public class Type {
 
 
         VBox mainVB = new VBox(10);
-        mainVB.getChildren().addAll(costHB, lMinHB, lmaxHB, rTensionHB, rCompHB, buttonHB);
+        mainVB.getChildren().addAll(nameHB, costHB, lMinHB, lmaxHB, rTensionHB, rCompHB, buttonHB);
 
-        Scene scene1 = new Scene(mainVB, 300, 300);
+        Scene scene1 = new Scene(mainVB, 400, 250);
 
         typeChoice.setScene(scene1);
         typeChoice.showAndWait();

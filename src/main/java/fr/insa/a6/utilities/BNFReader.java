@@ -6,6 +6,7 @@ import fr.insa.a6.treillis.Type;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.nodes.*;
 import fr.insa.a6.treillis.terrain.PointTerrain;
+import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.treillis.terrain.Triangle;
 
@@ -51,13 +52,56 @@ public class BNFReader extends BufferedReader {
         numerateur = new Numerateur(noeudId, barreId, catalogueId, triangleId);
     }
 
-    private void addTriangle(String[] triangle){
-        triangleId = Integer.parseInt(triangle[1]);
-        PointTerrain pt1 = new PointTerrain(toPoint(triangle[2]));
-        PointTerrain pt2 = new PointTerrain(toPoint(triangle[3]));
-        PointTerrain pt3 = new PointTerrain(toPoint(triangle[4]));
+    private void addTriangle(String[] triangles){
+        triangleId = Integer.parseInt(triangles[1]);
+        PointTerrain pt1 = new PointTerrain(toPoint(triangles[2]));
+        PointTerrain pt2 = new PointTerrain(toPoint(triangles[3]));
+        PointTerrain pt3 = new PointTerrain(toPoint(triangles[4]));
 
-        terrain.addTriangle(new Triangle(pt1, pt2, pt3, triangleId));
+        for (PointTerrain p : terrain.getPointsTerrain()) {
+            if(p.isPoint(pt1)) pt1 = p;
+            if(p.isPoint(pt2)) pt2 = p;
+            if(p.isPoint(pt3)) pt3 = p;
+        }
+        terrain.addPoint(pt1);
+        terrain.addPoint(pt2);
+        terrain.addPoint(pt3);
+
+        SegmentTerrain st1 = new SegmentTerrain(pt1, pt2);
+        SegmentTerrain st2 = new SegmentTerrain(pt2, pt3);
+        SegmentTerrain st3 = new SegmentTerrain(pt3, pt1);
+
+        for (SegmentTerrain s : terrain.getSegmentsTerrain()) {
+            if(s.isSegment(st1)) st1 = s;
+            if(s.isSegment(st2)) st2 = s;
+            if(s.isSegment(st3)) st3 = s;
+        }
+
+        pt1.addSegments(st1);
+        pt1.addSegments(st3);
+
+        pt2.addSegments(st1);
+        pt2.addSegments(st2);
+
+        pt3.addSegments(st2);
+        pt3.addSegments(st3);
+
+        terrain.addSegment(st1);
+        terrain.addSegment(st2);
+        terrain.addSegment(st3);
+
+        Triangle triangle = new Triangle(pt1, pt2, pt3, triangleId);
+
+        terrain.addTriangle(triangle);
+
+        st1.addTriangle(triangle);
+        st2.addTriangle(triangle);
+        st3.addTriangle(triangle);
+
+        pt1.addTriangle(triangle);
+        pt2.addTriangle(triangle);
+        pt3.addTriangle(triangle);
+
     }
 
     private Point toPoint(String point){
@@ -69,7 +113,7 @@ public class BNFReader extends BufferedReader {
 
     private void addTypeBarre(String[] type){
         int id = Integer.parseInt(type[1]);
-        catalogue.put(id, new Type(Double.parseDouble(type[2]), Double.parseDouble(type[3]),
+        catalogue.put(id, new Type(type[7], Double.parseDouble(type[2]), Double.parseDouble(type[3]),
                 Double.parseDouble(type[4]), Double.parseDouble(type[5]),
                 Double.parseDouble(type[6]), id));
     }
@@ -78,17 +122,10 @@ public class BNFReader extends BufferedReader {
         Noeud noeud;
         noeudId = Integer.parseInt(strNoeud[1]);
         switch (strNoeud[0]){
-            case "AppuiDouble" -> {
-                noeud = new AppuiDouble();
-            }
-            case "AppuiSimple" -> {
-                noeud = new AppuiSimple();
-            }
+            case "AppuiDouble" -> noeud = new AppuiDouble();
+            case "AppuiSimple" -> noeud = new AppuiSimple();
             case "NoeudSimple" -> noeud = new NoeudSimple(toPoint(strNoeud[2]), noeudId);
-
-            case "AppuiEncastre" -> {
-                noeud = new AppuiEncastre();
-            }
+            case "AppuiEncastre" -> noeud = new AppuiEncastre();
             default -> noeud = new NoeudSimple(0,0,0);
         }
         noeuds.put(noeud.getId(), noeud);

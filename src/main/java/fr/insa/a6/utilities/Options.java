@@ -143,11 +143,15 @@ public class Options {
         this.lastOpen = lastOpen;
     }
 
-    public void addOpenRecent(String name){
+    public void removeOpenRecent(String path){
+        this.openRecent.remove(path);
+    }
+
+    public void addOpenRecent(String path){
         if(this.openRecent.size() == 5 ){
             this.openRecent.remove(0);
         }
-        this.openRecent.add(name);
+        this.openRecent.add(path);
         saveFile();
     }
 

@@ -17,7 +17,11 @@ public class Barres extends Segment {
     }
 
     public String saveString() {
-        return "Barre;" + id + ";" + type.getId() + ";" + pA.getId() + ";" + pB.getId();
+        int typeId;
+        if(type == null) typeId = -1;
+        else typeId = type.getId();
+
+        return "Barre;" + id + ";" + typeId + ";" + pA.getId() + ";" + pB.getId();
     }
 
 

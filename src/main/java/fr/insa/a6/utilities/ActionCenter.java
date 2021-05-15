@@ -10,7 +10,10 @@ import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
 import fr.insa.a6.treillis.nodes.Noeud;
 import fr.insa.a6.treillis.nodes.NoeudSimple;
+import fr.insa.a6.treillis.terrain.PointTerrain;
+import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
+import fr.insa.a6.treillis.terrain.Triangle;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
@@ -40,6 +43,7 @@ public class ActionCenter {
     private Stage stage;
     private Options options = new Options();
     private String name;
+    private String path;
 
     private Treillis treillis;
 
@@ -61,11 +65,12 @@ public class ActionCenter {
     //initialisation de la classe
     // impossible de le faire dans son constructeur car cette classe a besoin de "mainscene" qui a besoin de
     // cet "action center" pour etre initialisé
-    public void init(MainScene mainScene, Treillis treillis, Stage stage, String name){
+    public void init(MainScene mainScene, Treillis treillis, Stage stage, String path){
         this.mainScene = mainScene;
         this.treillis = treillis;
         this.stage = stage;
-        this.name = name;
+        this.path = path;
+        this.name = nameFromPath(path);
 
         GraphicsContext gc = mainScene.getCanvas().getGraphicsContext();
         graphics.init(mainScene, gc, this);
@@ -75,7 +80,7 @@ public class ActionCenter {
         addMouseEvent();
     }
 
-    public void reload(String name) throws IOException, ParseException {
+    public void reload(String path) throws IOException, ParseException {
 
 
         mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), this);
@@ -91,7 +96,7 @@ public class ActionCenter {
 
         stage.setScene(scene);
         stage.show();
-        if(name.equals("")) name = "~Nouveau~";
+        if(path.equals("")) name = "~Nouveau~";
         stage.setTitle(name);
         graphics.updateFormes(treillis);
         graphics.redraw(selectedButton, inDrawing);
@@ -99,12 +104,12 @@ public class ActionCenter {
         addMouseEvent();
     }
 
-    public void load(String name) throws IOException, ParseException {
-        treillis = Sauvegarde.getTreillis(options.getSavePath() + name + ".json");
-        this.name = name;
+    public void load(String path) throws IOException, ParseException {
+        treillis = Sauvegarde.getTreillis(path);
+        this.name = nameFromPath(path);
 
         graphics.resetFormes();
-        reload(name);
+        reload(path);
     }
 
     public void newTreillis() throws IOException, ParseException {
@@ -114,7 +119,6 @@ public class ActionCenter {
         graphics.resetFormes();
         reload("");
     }
-
 
     public void saveAct(String path)
     {
@@ -129,7 +133,7 @@ public class ActionCenter {
             mouseX = mouseEvent.getX();
             mouseY = mouseEvent.getY();
             switch (selectedButton/10) {
-                case 0, 2, 4 -> selection();
+                case 0, 2, 5 -> selection(selectedButton/10);
             }
             graphics.redraw(selectedButton, inDrawing);
         });
@@ -147,7 +151,7 @@ public class ActionCenter {
                 case 2 -> addBarre();
                 case 3 -> addTerrain();
                 case 4 -> addPointTrn();
-                case 5 -> System.out.println("marche plus :/");
+                case 5 -> addSegmentTrn();
             }
         });
 
@@ -191,11 +195,12 @@ public class ActionCenter {
 
     //fonction permettant la selection d'un point
     private void setSelected(){
-        Terrain tempTerrain = selectedTerrain;
         if(selectedTerrain != null){
             selectedTerrain.setSelected(false);
+            graphics.removeInfos();
+            selectedTerrain = null;
         }
-        selectedTerrain = null;
+
         if (curentSelect != null) {
             curentSelect.setSelected(false);
         }
@@ -212,12 +217,9 @@ public class ActionCenter {
         }else if(treillis.getTerrain() != null){
             curentSelect = null;
 
-            if(selectedTerrain != null){
-                selectedTerrain.setSelected(false);
-                graphics.removeInfos();
-                selectedTerrain = null;
-            }else if(treillis.getTerrain().contain(mouseX, mouseY)){
-                selectedTerrain.setSelected(true);
+            if(treillis.getTerrain().contain(mouseX, mouseY)){
+                selectedTerrain = treillis.getTerrain();
+                treillis.getTerrain().setSelected(true);
                 graphics.drawInfos(selectedTerrain);
 
             }
@@ -259,11 +261,46 @@ public class ActionCenter {
         }
     }
 
-    public void addPointTrn() {
+    public PointTerrain addPointTrn() {
         Terrain terrain = treillis.getTerrain();
+        PointTerrain pt = null;
         if(terrain.contain(mouseX, mouseY)){
-            terrain.addPoint(mouseX, mouseY);
+            boolean creable = true;
+            for (PointTerrain p : terrain.getPointsTerrain()) {
+                if(Maths.dist(p, new Point(mouseX, mouseY)) < 15) creable = false;
+            }
+            if(creable) pt = terrain.addPoint(mouseX, mouseY);
         }
+        graphics.redraw(selectedButton, inDrawing);
+        return pt;
+    }
+
+    public void addSegmentTrn(){
+        currentClick++;
+        PointTerrain p;
+        //test si on clique a coté d'un point ou pas
+        //Besoin d'ajouter la vérification que le point est créable, et quel type de point
+        if(nearest != null && nearest instanceof PointTerrain){
+            p = (PointTerrain) nearest;
+        }else{
+            p = addPointTrn();
+            if(p == null) {
+                currentClick --;
+                return;
+            }
+        }
+        if(currentClick == 1){
+            p.setSegmentSelected(true);
+            firstSegmentPoint = p;
+        }else{
+            currentClick = 0;
+            SegmentTerrain segmentTerrain = new SegmentTerrain((PointTerrain) firstSegmentPoint, p);
+            ((PointTerrain) firstSegmentPoint).addSegments(segmentTerrain);
+            p.addSegments(segmentTerrain);
+            treillis.getTerrain().addSegment(segmentTerrain, treillis);
+            firstSegmentPoint.setSegmentSelected(false);
+        }
+        graphics.redraw(selectedButton, inDrawing);
     }
 
     public void setSelectedButton(int selectedButton) {
@@ -295,10 +332,18 @@ public class ActionCenter {
 
     //supprime un element
     public void deleteForme(Forme f){
-        if(f != null){
-            graphics.remove(f);
-            treillis.removeElement(f);
-            curentSelect = null;
+        if(f != null) {
+            if (f instanceof PointTerrain || f instanceof Triangle || f instanceof SegmentTerrain) {
+                Terrain terrain = treillis.getTerrain();
+                if(terrain != null) {
+                    terrain.remove(f, false);
+                    graphics.redraw(selectedButton, inDrawing);
+                }
+            } else {
+                graphics.remove(f);
+                treillis.removeElement(f);
+                curentSelect = null;
+            }
         }
     }
 
@@ -330,18 +375,38 @@ public class ActionCenter {
         return nearest;
     }
 
-    public void selection(){
+    public void selection(int selectedButton){
 
         //ajoute les formes dans la selection
-        Forme[] formes = graphics.getFormes();
+
+        ArrayList<Forme> formes = new ArrayList<>();
+
+        formes.addAll(graphics.getFormes());
+        Terrain terrain = treillis.getTerrain();
+        if(terrain != null){
+            formes.addAll(terrain.getTriangles());
+            formes.addAll(terrain.getPointsTerrain());
+            formes.addAll(terrain.getSegmentsTerrain());
+        }
+
         double bestDist = 15;
 
         for (Forme f: formes) {
             Point p;
-            if(f instanceof Point) {
+            if(f instanceof Noeud && (selectedButton == 2 || selectedButton == 0)) {
                 p = (Point) f;
+            }else if(f instanceof PointTerrain && (selectedButton == 5 || selectedButton == 0)){
+                p = (Point) f;
+            }else if(selectedButton == 0){
+                if(f instanceof Segment){
+                    p = ((Segment) f).getCenter();
+                }else if(f instanceof Triangle){
+                    p = ((Triangle) f).getCenter();
+                }else {
+                    return;
+                }
             }else{
-                p = ((Segment) f).getCenter();
+                continue;
             }
 
             //trouve la forme le plus proche de la souris
@@ -358,7 +423,7 @@ public class ActionCenter {
     }
 
     private void dragSelection() {
-        Forme[] formes = graphics.getFormes();
+        ArrayList<Forme> formes = graphics.getFormes();
 
         for (Forme f: formes) {
             Point p;
@@ -381,6 +446,10 @@ public class ActionCenter {
                 }
             }
         }
+    }
+
+    public void redraw() {
+        graphics.redraw(selectedButton, inDrawing);
     }
 
     public boolean isDrag() {
@@ -427,6 +496,14 @@ public class ActionCenter {
         return treillis;
     }
 
+    public Stage getStage() {
+        return stage;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
     public void setBarreType(Type barreType) {
         this.barreType = barreType;
     }
@@ -441,5 +518,10 @@ public class ActionCenter {
 
     public ArrayList<Forme> getMultipleSelect() {
         return multipleSelect;
+    }
+
+    public static String nameFromPath(String path){
+        String[] nameS = path.split("\\\\");
+        return nameS[nameS.length - 1].split("\\.")[0];
     }
 }

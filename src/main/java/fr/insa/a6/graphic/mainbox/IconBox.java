@@ -181,9 +181,7 @@ public class IconBox extends VBox {
 
         //boutons
         Button addTypeBtn = new Button(optionsData.traduction("add type"));
-        addTypeBtn.setOnAction(e -> {
-            Type.createTypePopUp(actionCenter, this, typeChoice);
-        });
+        addTypeBtn.setOnAction(e -> Type.createTypePopUp(actionCenter, typeComboBox));
 
         Button chooseBtn = new Button(optionsData.traduction("choose"));
         chooseBtn.setOnAction(e -> {
@@ -200,7 +198,7 @@ public class IconBox extends VBox {
         mainVB.getChildren().addAll(typeHB, buttonHB);
 
 
-        Scene scene1 = new Scene(mainVB, 300, 300);
+        Scene scene1 = new Scene(mainVB, 300, 80);
 
         if(creator != null) creator.close();
 
