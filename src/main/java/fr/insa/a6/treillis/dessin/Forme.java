@@ -9,8 +9,8 @@ public abstract class Forme {
     protected boolean selected = false;
     protected int id;
 
-    public abstract void draw(GraphicsContext gc);
-    public abstract void drawNear(GraphicsContext gc);
+    public abstract void draw(GraphicsContext gc, Point origin);
+    public abstract void drawNear(GraphicsContext gc, Point origin);
 
     public abstract ArrayList<String> getInfos();
 

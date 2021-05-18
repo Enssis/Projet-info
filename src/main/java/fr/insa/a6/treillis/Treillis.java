@@ -1,9 +1,10 @@
 package fr.insa.a6.treillis;
 
 import fr.insa.a6.treillis.dessin.Forme;
-import fr.insa.a6.treillis.nodes.Noeud;
-import fr.insa.a6.treillis.nodes.NoeudSimple;
+import fr.insa.a6.treillis.nodes.*;
+import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
+import fr.insa.a6.treillis.terrain.Triangle;
 import fr.insa.a6.utilities.Numerateur;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Treillis {
         noeuds = new ArrayList<>();
         barres = new ArrayList<>();
         catalogue = new ArrayList<>();
+        terrain = new Terrain();
     }
 
     public Treillis(Terrain terrain, ArrayList<Noeud> noeuds, ArrayList<Barres> barres, ArrayList<Type> catalogue, Numerateur numerateur) {
@@ -32,7 +34,6 @@ public class Treillis {
         this.numerateur = numerateur;
         this.catalogue = catalogue;
     }
-
 
     public void addBarres(Barres barre){
         barres.add(barre);
@@ -80,12 +81,22 @@ public class Treillis {
         return node;
     }
 
+    public void createAppui(boolean simple, Triangle associatedTriangle, SegmentTerrain segmentTerrain, double posSegment){
+        Appui appui;
+        if(simple){
+            appui =  new AppuiSimple(associatedTriangle, segmentTerrain, posSegment, numerateur.getNewNoeudId());
+        }else{
+            appui = new AppuiDouble(associatedTriangle, segmentTerrain, posSegment, numerateur.getNewNoeudId());
+        }
+        noeuds.add(appui);
+    }
+
     public void addType(Type type){
         catalogue.add(type);
     }
 
-    public void createTerrain(double x1, double y1, double x2, double y2){
-        this.terrain = new Terrain(x1,y1, x2, y2);
+    public void updateTerrain(double x1, double y1, double x2, double y2){
+        this.terrain.setBorder(x1,y1, x2, y2);
     }
 
     public void createBarre(Noeud pA, Noeud pB, Type type){

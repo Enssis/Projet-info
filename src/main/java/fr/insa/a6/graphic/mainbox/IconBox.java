@@ -27,6 +27,7 @@ public class IconBox extends VBox {
 
     private MyLabel treillisLbl;
     private MyRadioButton barreBtn;
+    private MyButton choixNoeud;
     private MyRadioButton noeudBtn;
 
     private MyLabel terrainLbl;
@@ -38,11 +39,13 @@ public class IconBox extends VBox {
     private MainCanvas mainCanvas;
     private ActionCenter actionCenter;
 
-    //types : 0 -> simple, 1 -> appuiDouble, 2 -> appuiEncastre, 3 -> appuiSimple
+    //types : 0 -> simple, 1 -> appuiDouble, 2 -> appuiSimple, 3 -> appuiEncastre
     private String typeNoeud = "0";
+    private String name = optionsData.traduction("simple node");
+    private int choosedNoeud = 10;
 
     public IconBox(MainScene mainScene) {
-        super();
+        super(10);
         this.setAlignment(Pos.CENTER);
         this.setId("iconBox");
 
@@ -54,6 +57,11 @@ public class IconBox extends VBox {
 
         treillisLbl = new MyLabel(optionsData.traduction("treillis"), "title");
 
+        choixNoeud = new MyButton(optionsData.traduction("simple node"));
+        choixNoeud.setOnAction(a -> {
+            selectNoeud();
+        });
+
         initNoeud();
         initBarre();
 
@@ -64,7 +72,7 @@ public class IconBox extends VBox {
         initSegmentTrn();
 
 
-        this.getChildren().addAll(selectBtn, treillisLbl, noeudBtn, barreBtn, terrainLbl, terrainBtn, pointTerrainBtn, segmentTerrainBtn);
+        this.getChildren().addAll(selectBtn, treillisLbl, choixNoeud, noeudBtn, barreBtn, terrainLbl, terrainBtn, pointTerrainBtn, segmentTerrainBtn);
 
     }
 
@@ -73,15 +81,14 @@ public class IconBox extends VBox {
         noeudBtn.setToggleGroup(group);
 
         noeudBtn.setOnAction(actionEvent -> {
-            selectNoeud();
-            actionCenter.setSelectedButton(10);
+            System.out.println(choosedNoeud);
+            actionCenter.setSelectedButton(choosedNoeud);
             actionCenter.removeSelected();
         });
     }
 
     //pop up de selection du type de noeud
     private void selectNoeud() {
-
         Stage choixNoeud =new Stage();
 
         choixNoeud.initModality(Modality.APPLICATION_MODAL);
@@ -94,7 +101,9 @@ public class IconBox extends VBox {
         //bouton de fermeture et confirmation du choix
         MyButton fin = new MyButton(optionsData.traduction("choose"));
         fin.setOnAction(e -> {
-            System.out.println("type noeud : " + typeNoeud);
+            choosedNoeud = 10 + Integer.parseInt(typeNoeud);
+            if(actionCenter.getSelectedButton() / 10 == 1) actionCenter.setSelectedButton(choosedNoeud);
+            this.choixNoeud.setText(name);
             choixNoeud.close();
         });
 
@@ -105,6 +114,7 @@ public class IconBox extends VBox {
             if (tGroup.getSelectedToggle() != null) {
                 MyRadioButton button = (MyRadioButton) tGroup.getSelectedToggle();
                 typeNoeud = button.getInfo();
+                name = button.getName();
             }
         });
 
@@ -115,15 +125,16 @@ public class IconBox extends VBox {
         MyRadioButton appuiDouble = new MyRadioButton(optionsData.traduction("double support"), "1");
         appuiDouble.setToggleGroup(tGroup);
 
-        MyRadioButton appuiEncastre = new MyRadioButton(optionsData.traduction("embedded support"), "2");
-        appuiEncastre.setToggleGroup(tGroup);
-
-        MyRadioButton appuiSimple = new MyRadioButton(optionsData.traduction("simple support"), "3");
+        MyRadioButton appuiSimple = new MyRadioButton(optionsData.traduction("simple support"), "2");
         appuiSimple.setToggleGroup(tGroup);
+
+        MyRadioButton appuiEncastre = new MyRadioButton(optionsData.traduction("embedded support"), "3");
+        appuiEncastre.setDisable(true);
+        appuiEncastre.setToggleGroup(tGroup);
 
         //hbox contenant les boutons
         HBox radioLayout = new HBox(5);
-        radioLayout.getChildren().addAll(noeudSimple, appuiDouble, appuiEncastre, appuiSimple);
+        radioLayout.getChildren().addAll(noeudSimple, appuiDouble, appuiSimple, appuiEncastre);
 
         //Vbox contenant tout les items
         VBox layout= new VBox(5);

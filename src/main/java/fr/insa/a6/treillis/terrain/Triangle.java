@@ -13,27 +13,51 @@ import java.util.ArrayList;
  */
 public class Triangle extends Forme {
 
-    private int id;
+    private final int id;
     private final PointTerrain[] points = new PointTerrain[3];
-    private final SegmentTerrain[] arretes = new SegmentTerrain[3];
+    private final SegmentTerrain[] segment = new SegmentTerrain[3];
 
     public Triangle(PointTerrain pt1, PointTerrain pt2, PointTerrain pt3, int id){
-        points[0] = pt1;
-        points[1] = pt2;
-        points[2] = pt3;
+
+        double max = Maths.max(pt1.getPosX(), pt2.getPosX(), pt3.getPosX());
+        if(max == pt1.getPosX()){
+            points[0] = pt1;
+        }else if(max == pt2.getPosX()){
+            points[0] = pt2;
+        }else{
+            points[0] = pt3;
+        }
+
+        double min = Maths.min(pt1.getPosX(), pt2.getPosX(), pt3.getPosX());
+        if(min == pt1.getPosX()){
+            points[2] = pt1;
+        }else if(min == pt2.getPosX()){
+            points[2] = pt2;
+        }else{
+            points[2] = pt3;
+        }
+
+        if(pt1 != points[0] && pt1 != points[2]){
+            points[1] = pt1;
+        }else if(pt2 != points[0] && pt2 != points[2]){
+            points[1] = pt2;
+        }else{
+            points[1] = pt3;
+        }
+
 
         pt1.getSegments().forEach(s -> {
             if(s.getpA() == pt2 || s.getpB() == pt2){
-                arretes[0] = s;
+                segment[0] = s;
             }
             if(s.getpA() == pt3 || s.getpB() == pt3){
-                arretes[1] = s;
+                segment[1] = s;
             }
         });
 
         pt2.getSegments().forEach(s -> {
             if(s.getpA() == pt3 || s.getpB() == pt3){
-                arretes[2] = s;
+                segment[2] = s;
             }
         });
 
@@ -44,13 +68,13 @@ public class Triangle extends Forme {
         this.id = id;
     }
 
-    public void draw(GraphicsContext gc){
+    public void draw(GraphicsContext gc, Point origin){
         double[] px = new double[3];
         double[] py = new double[3];
 
         for (int i = 0; i < points.length; i ++) {
-            px[i] = points[i].getPosX();
-            py[i] = points[i].getPosY();
+            px[i] = points[i].getPosX() + origin.getPosX();
+            py[i] = points[i].getPosY() + origin.getPosY();
         }
 
         gc.setFill(Color.YELLOW);
@@ -63,7 +87,7 @@ public class Triangle extends Forme {
     }
 
     @Override
-    public void drawNear(GraphicsContext gc) {
+    public void drawNear(GraphicsContext gc, Point origin) {
     }
 
     @Override
@@ -91,8 +115,8 @@ public class Triangle extends Forme {
         return points;
     }
 
-    public SegmentTerrain[] getArretes() {
-        return arretes;
+    public SegmentTerrain[] getSegment() {
+        return segment;
     }
 
     public Point getCenter(){
@@ -105,5 +129,31 @@ public class Triangle extends Forme {
         }
         return new Point(px, py);
 
+    }
+
+    public boolean contain(double posX, double posY){
+        char[] pos = new char[3];
+        Point point = new Point(posX, posY);
+        boolean near = false;
+        for (int i = 0; i < pos.length; i++) {
+            double angle = (double) ((int) (Maths.angle(points[i], points[(i + 1) % 3], point) * 100)) / 100;
+            if(angle % Math.PI == 0.0){
+                pos[i] = 'c';
+            }else if(angle > 0){
+                pos[i] = 'p';
+            }else{
+                pos[i] = 'n';
+            }
+
+
+            double distS = segment[i].distTo(point);
+            if(distS != -1) near |= distS < 10;
+        }
+        boolean colineaire = false;
+        for (int i = 0; i < pos.length; i++) {
+            colineaire = colineaire || pos[0] == 'c' && Maths.between(point, points[i], points[(i + 1) % 3]);
+        }
+
+        return pos[0] == pos[1] && pos[1] == pos[2] || colineaire || near;
     }
 }

@@ -29,8 +29,8 @@ public class MainCanvas extends Pane {
         canvas.heightProperty().bind(this.heightProperty());
         this.getChildren().add(canvas);
 
-        canvas.heightProperty().addListener((o) -> graphics.redraw(actionCenter.getSelectedButton(), actionCenter.isInDrawing()));
-        canvas.widthProperty().addListener((o) -> graphics.redraw(actionCenter.getSelectedButton(), actionCenter.isInDrawing()));
+        canvas.heightProperty().addListener((o) -> graphics.draw(actionCenter.getSelectedButton(), actionCenter.isInDrawing()));
+        canvas.widthProperty().addListener((o) -> graphics.draw(actionCenter.getSelectedButton(), actionCenter.isInDrawing()));
 
     }
 
