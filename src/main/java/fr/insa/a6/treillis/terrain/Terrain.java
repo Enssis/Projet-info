@@ -3,6 +3,7 @@ package fr.insa.a6.treillis.terrain;
 import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
+import fr.insa.a6.utilities.ActionCenter;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -91,7 +92,7 @@ public class Terrain {
     }
 
     //ajoute un segment et vérifie si il peut pas créer un triangle avec les combinaisons de segments déjà en place
-    public void addSegment(SegmentTerrain s, Treillis treillis){
+    public void addSegment(SegmentTerrain s, Treillis treillis, ActionCenter actionCenter){
         segmentsTerrain.add(s);
         if(segmentsTerrain.size() > 2){
             PointTerrain pA = s.getpA();
@@ -118,6 +119,14 @@ public class Terrain {
                             if(p1.equals(p2)){
                                 Triangle triangle = new Triangle(pA, pB, p1, treillis.getNumerateur().getNewTriangleId());
                                 triangles.add(triangle);
+                                s.addTriangle(triangle);
+                                segment.addTriangle(triangle);
+                                segmentB.addTriangle(triangle);
+                                pA.addTriangle(triangle);
+                                pB.addTriangle(triangle);
+                                p1.addTriangle(triangle);
+                                treillis.updateNoeuds(actionCenter.getGraphics());
+                                actionCenter.redraw();
                             }
                         }
                     }

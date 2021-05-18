@@ -1,5 +1,6 @@
 package fr.insa.a6.treillis;
 
+import fr.insa.a6.graphic.Graphics;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.nodes.*;
 import fr.insa.a6.treillis.terrain.SegmentTerrain;
@@ -111,5 +112,25 @@ public class Treillis {
     public void removeElement(Forme f){
         if(f instanceof Noeud) removeNoeuds((Noeud) f);
         else if(f instanceof Barres) removeBarres((Barres) f);
+    }
+
+    public void updateNoeuds(Graphics graphics){
+        ArrayList<Noeud> toRemove = new ArrayList<>();
+        for (Noeud noeud : noeuds) {
+            if(!terrain.contain(noeud.getPosX(), noeud.getPosY())){
+                toRemove.add(noeud);
+                continue;
+            }
+            for (Triangle triangle : terrain.getTriangles()) {
+                if(triangle.contain(noeud.getPosX(), noeud.getPosY())){
+                    toRemove.add(noeud);
+                    break;
+                }
+            }
+        }
+        for (Noeud noeud : toRemove) {
+            noeuds.remove(noeud);
+            graphics.remove(noeud);
+        }
     }
 }

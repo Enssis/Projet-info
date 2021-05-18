@@ -255,7 +255,7 @@ public class ActionCenter {
 
     public void addAppui(boolean simple, double posX, double posY) {
         for (SegmentTerrain s : treillis.getTerrain().getSegmentsTerrain()) {
-
+            System.out.println(s.asOneTriangle());
             if(s.contain(posX, posY, 10) && s.asOneTriangle()){
                 treillis.createAppui(simple, s.getTriangles().get(0), s, Maths.dist(s.getpA(), posX, posY) / s.length());
                 graphics.updateFormes(treillis);
@@ -334,6 +334,10 @@ public class ActionCenter {
             currentClick = 0;
             treillis.updateTerrain(Math.min(terrainX, mouseX), Math.min(terrainY, mouseY),
                     Math.max(terrainX,mouseX), Math.max(terrainY, mouseY));
+
+            treillis.updateNoeuds(graphics);
+            graphics.updateFormes(treillis);
+            redraw();
         }
     }
 
@@ -374,7 +378,7 @@ public class ActionCenter {
             SegmentTerrain segmentTerrain = new SegmentTerrain((PointTerrain) firstSegmentPoint, p);
             ((PointTerrain) firstSegmentPoint).addSegments(segmentTerrain);
             p.addSegments(segmentTerrain);
-            treillis.getTerrain().addSegment(segmentTerrain, treillis);
+            treillis.getTerrain().addSegment(segmentTerrain, treillis, this);
             firstSegmentPoint.setSegmentSelected(false);
         }
         graphics.draw(selectedButton, inDrawing);
