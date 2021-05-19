@@ -17,7 +17,6 @@ import fr.insa.a6.treillis.terrain.Triangle;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
@@ -28,30 +27,31 @@ import java.util.ArrayList;
 
 public class ActionCenter {
 
-    private Forme nearest, curentSelect;
-    private ArrayList<Forme> multipleSelect = new ArrayList<>();
-    private Terrain selectedTerrain;
+    private Forme nearest, currentSelect;
+    private final ArrayList<Forme> multipleSelect = new ArrayList<>();
+    private Terrain terrain;
 
     private Type barreType = null;
 
     private double mouseX, mouseY;
     private double dragMouseX, dragMouseY;
 
-    //bouttons de selections : 0 -> select ; 1xx -> noeud; 2xx -> barre;  3xx -> terrain; 4xx -> pointTerrain; 5xx -> segmentTerrain
+    //bouttons de selections : 0 -> select ; 1x -> noeud; 2x -> barre;  3x -> terrain; 4x -> triangle terrain
     //x : 0 -> Noeud Simple; 1 -> Appui double; 2 -> appui simple
     private int selectedButton = 0;
+    private int selectedNoeud = 0;
 
     private MainScene mainScene;
-    private Graphics graphics;
+    private final Graphics graphics;
     private Stage stage;
-    private Options options = new Options();
+    private final Options options = new Options();
     private String name;
     private String path;
 
     private Treillis treillis;
 
     private int currentClick = 0;
-    private Point firstSegmentPoint = null;
+    private Point firstSegmentPoint = null, secondSegmentPoint = null;
 
     private double terrainX, terrainY;
 
@@ -74,6 +74,7 @@ public class ActionCenter {
         this.stage = stage;
         this.path = path;
         this.name = nameFromPath(path);
+        this.terrain = treillis.getTerrain();
 
         GraphicsContext gc = mainScene.getCanvas().getGraphicsContext();
         graphics.init(mainScene, gc, this);
@@ -138,7 +139,7 @@ public class ActionCenter {
             mouseX = mouseEvent.getX();
             mouseY = mouseEvent.getY();
             switch (selectedButton/10) {
-                case 0, 2, 5 -> selection(selectedButton/10);
+                case 0, 2, 4 -> selection(selectedButton/10);
             }
             graphics.draw(selectedButton, inDrawing);
         });
@@ -155,8 +156,7 @@ public class ActionCenter {
                     case 1 -> addNoeud();
                     case 2 -> addBarre();
                     case 3 -> addTerrain();
-                    case 4 -> addPointTrn();
-                    case 5 -> addSegmentTrn();
+                    case 4 -> addSegmentTrn();
                 }
             }
         });
@@ -204,18 +204,24 @@ public class ActionCenter {
     private void addKeyboardEvent() {
         mainScene.setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ESCAPE){
-                currentClick = 0;
-                firstSegmentPoint.setSegmentSelected(false);
-                removeSelected();
-                removeSelectedAll();
-
-                graphics.draw(selectedButton, inDrawing);
+                cancelButton();
             }
         });
     }
 
+    public void cancelButton(){
+        currentClick = 0;
+        firstSegmentPoint.setSegmentSelected(false);
+        secondSegmentPoint.setSegmentSelected(false);
+        removeSelected();
+        removeSelectedAll();
+        terrain.update();
+
+        graphics.draw(selectedButton, inDrawing);
+    }
+
     private void addNoeud(){
-        if(treillis.getTerrain().contain(mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY())) {
+        if(terrain.contain(mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY())) {
             switch (selectedButton) {
                 case 10 -> addNoeudSimple();
                 case 11 -> addAppui(false);
@@ -234,7 +240,6 @@ public class ActionCenter {
         for (Noeud p : treillis.getNoeuds()) {
             if(Maths.dist(p, new Point(posX, posY)) < 15) creable = false;
         }
-        Terrain terrain = treillis.getTerrain();
         if(terrain != null) {
             for (Triangle triangle : terrain.getTriangles()) {
                 if (triangle.contain(posX, posY)) creable = false;
@@ -254,7 +259,7 @@ public class ActionCenter {
     }
 
     public void addAppui(boolean simple, double posX, double posY) {
-        for (SegmentTerrain s : treillis.getTerrain().getSegmentsTerrain()) {
+        for (SegmentTerrain s : terrain.getSegments()) {
             System.out.println(s.asOneTriangle());
             if(s.contain(posX, posY, 10) && s.asOneTriangle()){
                 treillis.createAppui(simple, s.getTriangles().get(0), s, Maths.dist(s.getpA(), posX, posY) / s.length());
@@ -266,33 +271,30 @@ public class ActionCenter {
 
     //fonction permettant la selection d'un point
     private void setSelected(){
-        if(selectedTerrain != null){
-            selectedTerrain.setSelected(false);
+        if(terrain.isSelected()){
+            terrain.setSelected(false);
             graphics.removeInfos();
-            selectedTerrain = null;
         }
 
-        if (curentSelect != null) {
-            curentSelect.setSelected(false);
+        if (currentSelect != null) {
+            currentSelect.setSelected(false);
         }
         if (nearest != null) {
-            if(nearest.equals(curentSelect)){
+            if(nearest.equals(currentSelect)){
                 nearest.setSelected(false);
-                curentSelect = null;
+                currentSelect = null;
                 graphics.removeInfos();
             }else {
                 nearest.setSelected(true);
-                curentSelect = nearest;
+                currentSelect = nearest;
                 graphics.drawInfos(nearest);
             }
-        }else if(treillis.getTerrain() != null){
-            curentSelect = null;
+        }else if(terrain != null){
+            currentSelect = null;
 
-            if(treillis.getTerrain().contain(mouseX, mouseY)){
-                selectedTerrain = treillis.getTerrain();
-                treillis.getTerrain().setSelected(true);
-                graphics.drawInfos(selectedTerrain);
-
+            if(terrain.contain(mouseX, mouseY)){
+                terrain.setSelected(true);
+                graphics.drawInfos(terrain);
             }
         }
     }
@@ -343,11 +345,10 @@ public class ActionCenter {
 
     public PointTerrain addPointTrn() {
         double px = mouseX - graphics.getOrigin().getPosX(), py = mouseY - graphics.getOrigin().getPosY();
-        Terrain terrain = treillis.getTerrain();
         PointTerrain pt = null;
 
         boolean creable = true;
-        for (PointTerrain p : terrain.getPointsTerrain()) {
+        for (PointTerrain p : terrain.getPoints()) {
             if(Maths.dist(p, new Point(px, py)) < 15) creable = false;
         }
         if(creable) pt = terrain.addPoint(px, py);
@@ -373,19 +374,28 @@ public class ActionCenter {
         if(currentClick == 1){
             p.setSegmentSelected(true);
             firstSegmentPoint = p;
+        }else if(currentClick == 2){
+            p.setSegmentSelected(true);
+            secondSegmentPoint = p;
         }else{
             currentClick = 0;
-            SegmentTerrain segmentTerrain = new SegmentTerrain((PointTerrain) firstSegmentPoint, p);
-            ((PointTerrain) firstSegmentPoint).addSegments(segmentTerrain);
-            p.addSegments(segmentTerrain);
-            treillis.getTerrain().addSegment(segmentTerrain, treillis, this);
+            Triangle triangle = new Triangle((PointTerrain) firstSegmentPoint, (PointTerrain) secondSegmentPoint, p, treillis.getNumerateur().getNewTriangleId(), terrain);
+            System.out.println(triangle.getId());
+            terrain.addTriangle(triangle);
+
+            treillis.updateNoeuds(graphics);
             firstSegmentPoint.setSegmentSelected(false);
+            secondSegmentPoint.setSegmentSelected(false);
         }
-        graphics.draw(selectedButton, inDrawing);
+        redraw();
     }
 
     public void setSelectedButton(int selectedButton) {
         this.selectedButton = selectedButton;
+    }
+
+    public void setSelectedNoeud(int selectedNoeud) {
+        this.selectedNoeud = selectedNoeud;
     }
 
     public void setInDrawing(boolean inDrawing){
@@ -394,14 +404,14 @@ public class ActionCenter {
 
     //retire le point selectionné
     public void removeSelected() {
-        if (curentSelect != null) {
-            curentSelect.setSelected(false);
+        if (currentSelect != null) {
+            currentSelect.setSelected(false);
         }
-        if(selectedTerrain != null) {
-            selectedTerrain.setSelected(false);
+        if(terrain != null) {
+            terrain.setSelected(false);
         }
         mainScene.getInfos().removeInfos();
-        curentSelect = null;
+        currentSelect = null;
     }
 
     //retire tout les points selectionnés
@@ -415,7 +425,6 @@ public class ActionCenter {
     public void deleteForme(Forme f){
         if(f != null) {
             if (f instanceof PointTerrain || f instanceof Triangle || f instanceof SegmentTerrain) {
-                Terrain terrain = treillis.getTerrain();
                 if(terrain != null) {
                     terrain.remove(f, false);
                     graphics.draw(selectedButton, inDrawing);
@@ -423,7 +432,7 @@ public class ActionCenter {
             } else {
                 graphics.remove(f);
                 treillis.removeElement(f);
-                curentSelect = null;
+                currentSelect = null;
             }
         }
     }
@@ -464,8 +473,8 @@ public class ActionCenter {
         Terrain terrain = treillis.getTerrain();
         if(terrain != null){
             formes.addAll(terrain.getTriangles());
-            formes.addAll(terrain.getPointsTerrain());
-            formes.addAll(terrain.getSegmentsTerrain());
+            formes.addAll(terrain.getPoints());
+            formes.addAll(terrain.getSegments());
         }
 
         double bestDist = 15;
@@ -474,7 +483,7 @@ public class ActionCenter {
             Point p;
             if(f instanceof Noeud && (selectedButton == 2 || selectedButton == 0)) {
                 p = (Point) f;
-            }else if(f instanceof PointTerrain && (selectedButton == 5 || selectedButton == 0)){
+            }else if(f instanceof PointTerrain && (selectedButton == 4 || selectedButton == 0)){
                 p = (Point) f;
             }else if(selectedButton == 0){
                 if(f instanceof Segment){

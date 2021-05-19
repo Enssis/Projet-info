@@ -58,7 +58,7 @@ public class BNFReader extends BufferedReader {
         PointTerrain pt2 = new PointTerrain(toPoint(triangles[3]));
         PointTerrain pt3 = new PointTerrain(toPoint(triangles[4]));
 
-        for (PointTerrain p : terrain.getPointsTerrain()) {
+        for (PointTerrain p : terrain.getPoints()) {
             if(p.isPoint(pt1)) pt1 = p;
             if(p.isPoint(pt2)) pt2 = p;
             if(p.isPoint(pt3)) pt3 = p;
@@ -67,41 +67,9 @@ public class BNFReader extends BufferedReader {
         terrain.addPoint(pt2);
         terrain.addPoint(pt3);
 
-        SegmentTerrain st1 = new SegmentTerrain(pt1, pt2);
-        SegmentTerrain st2 = new SegmentTerrain(pt2, pt3);
-        SegmentTerrain st3 = new SegmentTerrain(pt3, pt1);
-
-        for (SegmentTerrain s : terrain.getSegmentsTerrain()) {
-            if(s.isSegment(st1)) st1 = s;
-            if(s.isSegment(st2)) st2 = s;
-            if(s.isSegment(st3)) st3 = s;
-        }
-
-        pt1.addSegments(st1);
-        pt1.addSegments(st3);
-
-        pt2.addSegments(st1);
-        pt2.addSegments(st2);
-
-        pt3.addSegments(st2);
-        pt3.addSegments(st3);
-
-        terrain.addSegment(st1);
-        terrain.addSegment(st2);
-        terrain.addSegment(st3);
-
-        Triangle triangle = new Triangle(pt1, pt2, pt3, triangleId);
+        Triangle triangle = new Triangle(pt1, pt2, pt3, triangleId, terrain);
 
         terrain.addTriangle(triangle);
-
-        st1.addTriangle(triangle);
-        st2.addTriangle(triangle);
-        st3.addTriangle(triangle);
-
-        pt1.addTriangle(triangle);
-        pt2.addTriangle(triangle);
-        pt3.addTriangle(triangle);
-
     }
 
     private Point toPoint(String point){
@@ -124,18 +92,18 @@ public class BNFReader extends BufferedReader {
         switch (strNoeud[0]){
             case "AppuiDouble" -> {
                 Triangle triangle = terrain.getTriangle(Integer.parseInt(strNoeud[2]));
-                if(triangle != null) noeud = new AppuiDouble(triangle, triangle.getSegment()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
+                if(triangle != null) noeud = new AppuiDouble(triangle, triangle.getSegments()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
                 else noeud = null;
             }
             case "AppuiSimple" -> {
                 Triangle triangle = terrain.getTriangle(Integer.parseInt(strNoeud[2]));
-                if(triangle != null) noeud = new AppuiSimple(triangle, triangle.getSegment()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
+                if(triangle != null) noeud = new AppuiSimple(triangle, triangle.getSegments()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
                 else noeud = null;
             }
             case "NoeudSimple" -> noeud = new NoeudSimple(toPoint(strNoeud[2]), noeudId);
             case "AppuiEncastre" -> {
                 Triangle triangle = terrain.getTriangle(Integer.parseInt(strNoeud[2]));
-                if(triangle != null) noeud = new AppuiEncastre(triangle, triangle.getSegment()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
+                if(triangle != null) noeud = new AppuiEncastre(triangle, triangle.getSegments()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
                 else noeud = null;
             }
             default -> noeud = new NoeudSimple(0,0,0);

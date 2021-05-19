@@ -15,9 +15,9 @@ public class Triangle extends Forme {
 
     private final int id;
     private final PointTerrain[] points = new PointTerrain[3];
-    private final SegmentTerrain[] segment = new SegmentTerrain[3];
+    private final SegmentTerrain[] segments = new SegmentTerrain[3];
 
-    public Triangle(PointTerrain pt1, PointTerrain pt2, PointTerrain pt3, int id){
+    public Triangle(PointTerrain pt1, PointTerrain pt2, PointTerrain pt3, int id, Terrain terrain){
 
         double max = Maths.max(pt1.getPosX(), pt2.getPosX(), pt3.getPosX());
         if(max == pt1.getPosX()){
@@ -46,26 +46,34 @@ public class Triangle extends Forme {
         }
 
 
-        pt1.getSegments().forEach(s -> {
-            if(s.getpA() == pt2 || s.getpB() == pt2){
-                segment[0] = s;
-            }
-            if(s.getpA() == pt3 || s.getpB() == pt3){
-                segment[1] = s;
-            }
-        });
+        for (int i = 0; i < points.length; i++) {
+            SegmentTerrain s = new SegmentTerrain(points[i], points[(i + 1) % 3]);
+            SegmentTerrain tempSegment;
+            if((tempSegment = terrain.asSegment(s)) != null) s = tempSegment;
+            else terrain.addSegment(s);
 
-        pt2.getSegments().forEach(s -> {
-            if(s.getpA() == pt3 || s.getpB() == pt3){
-                segment[2] = s;
-            }
-        });
+            points[i].addSegments(s);
+            points[(i + 1) % 3].addSegments(s);
+
+            segments[i] = s;
+        }
 
         for (PointTerrain point : points) {
             point.addTriangle(this);
+            point.setSelected(false);
         }
 
+        for (SegmentTerrain segment : segments) {
+            segment.addTriangle(this);
+        }
+
+        System.out.println(id);
         this.id = id;
+    }
+
+    @Override
+    public int getId() {
+        return id;
     }
 
     public void draw(GraphicsContext gc, Point origin){
@@ -115,8 +123,8 @@ public class Triangle extends Forme {
         return points;
     }
 
-    public SegmentTerrain[] getSegment() {
-        return segment;
+    public SegmentTerrain[] getSegments() {
+        return segments;
     }
 
     public Point getCenter(){
@@ -146,7 +154,7 @@ public class Triangle extends Forme {
             }
 
 
-            double distS = segment[i].distTo(point);
+            double distS = segments[i].distTo(point);
             if(distS != -1) near |= distS < 10;
         }
         boolean colineaire = false;

@@ -51,8 +51,8 @@ public abstract class Appui extends Noeud {
     @Override
     public String saveString() {
         int segmentNbr = 0;
-        for (int i = 0; i < associatedTriangle.getSegment().length; i++) {
-            if(associatedTriangle.getSegment()[i].equals(segmentTerrain)){
+        for (int i = 0; i < associatedTriangle.getSegments().length; i++) {
+            if(associatedTriangle.getSegments()[i].equals(segmentTerrain)){
                 segmentNbr = i;
                 break;
             }

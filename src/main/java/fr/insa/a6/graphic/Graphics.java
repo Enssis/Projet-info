@@ -24,8 +24,8 @@ public class Graphics {
     private MainScene mainScene;
     private ArrayList<Forme> formes = new ArrayList<>();
     private ActionCenter ac;
-    private Point origin = new Point(0,0);
-    private Point lastOrigin = new Point(origin.getPosX(), origin.getPosY());
+    private final Point origin = new Point(0,0);
+    private final Point lastOrigin = new Point(origin.getPosX(), origin.getPosY());
     private double scale = 1;
 
     private InfoWindow infoWindow;
@@ -112,7 +112,7 @@ public class Graphics {
             if(selectedButton != 0) {
                 f.setSelected(false);
             }
-            if(selectedButton != 20 && selectedButton != 50 && f instanceof Point){
+            if(selectedButton != 20 && selectedButton != 40 && f instanceof Point){
                 ((Point) f).setSegmentSelected(false);
             }
             f.draw(gc, origin);
@@ -147,7 +147,7 @@ public class Graphics {
                     Math.min(mouseY, dragMouseY),
                     Math.abs(dragMouseX - mouseX),
                     Math.abs(dragMouseY - mouseY));
-        }else if(selectedButton == 0 || selectedButton == 20 || selectedButton == 50){
+        }else if(selectedButton == 0 || selectedButton == 20 || selectedButton == 40){
             drawNear();
         }
         gc.setGlobalAlpha(1);

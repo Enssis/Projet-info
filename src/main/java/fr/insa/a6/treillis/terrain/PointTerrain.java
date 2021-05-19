@@ -43,6 +43,10 @@ public class PointTerrain extends Point {
         }
     }
 
+    public boolean asTriangle(){
+        return triangles.size() > 0;
+    }
+
     public void addTriangle(Triangle triangle){
         triangles.add(triangle);
     }

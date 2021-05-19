@@ -8,6 +8,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class Terrain {
 
@@ -17,23 +19,16 @@ public class Terrain {
     private double yMax;
     private boolean selected = false;
 
-    private ArrayList<Triangle> triangles;
+    private HashMap<Integer, Triangle> triangles = new HashMap<>();
 
-    ArrayList<PointTerrain> pointsTerrain;
-    ArrayList<SegmentTerrain> segmentsTerrain;
+    private final ArrayList<PointTerrain> points = new ArrayList<>();
+    private final ArrayList<SegmentTerrain> segments = new ArrayList<>();
 
     public Terrain() {
-        pointsTerrain = new ArrayList<>();
-        segmentsTerrain = new ArrayList<>();
-        triangles = new ArrayList<>();
     }
 
     //constructeur auto
     public Terrain(double xMin, double yMin, double xMax, double yMax) {
-        pointsTerrain = new ArrayList<>();
-        segmentsTerrain = new ArrayList<>();
-        triangles = new ArrayList<>();
-
         this.xMin = xMin;
         this.yMin = yMin;
         this.xMax = xMax;
@@ -45,113 +40,84 @@ public class Terrain {
     }
 
     //get et set
-
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
 
-    public ArrayList<Triangle> getTriangles() {
-        return triangles;
+    public Collection<Triangle> getTriangles() {
+        return triangles.values();
     }
 
-    public ArrayList<SegmentTerrain> getSegmentsTerrain() {
-        return segmentsTerrain;
+    public ArrayList<PointTerrain> getPoints() {
+        return points;
     }
 
-    public ArrayList<PointTerrain> getPointsTerrain() {
-        return pointsTerrain;
+    public ArrayList<SegmentTerrain> getSegments() {
+        return segments;
     }
 
     public Triangle getTriangle(int id){
-        for (Triangle triangle : triangles) {
-            if(triangle.getId() == id){
-                return triangle;
-            }
-        }
-        return null;
+        return triangles.get(id);
     }
 
     public void addTriangle(Triangle t){
-        triangles.add(t);
+        triangles.put(t.getId(), t);
     }
 
     public PointTerrain addPoint(double x, double y){
         PointTerrain pt = new PointTerrain(x, y);
-        pointsTerrain.add(pt);
+        points.add(pt);
         return pt;
     }
 
     public void addPoint(PointTerrain pt){
-        if(pointsTerrain.contains(pt)) return;
-        pointsTerrain.add(pt);
+        if(points.contains(pt)) return;
+        points.add(pt);
     }
 
     public void addSegment(SegmentTerrain s){
-        if(segmentsTerrain.contains(s)) return;
-        segmentsTerrain.add(s);
+        if(segments.contains(s)) return;
+        segments.add(s);
     }
 
-    //ajoute un segment et vérifie si il peut pas créer un triangle avec les combinaisons de segments déjà en place
-    public void addSegment(SegmentTerrain s, Treillis treillis, ActionCenter actionCenter){
-        segmentsTerrain.add(s);
-        if(segmentsTerrain.size() > 2){
-            PointTerrain pA = s.getpA();
-            PointTerrain pB = s.getpB();
+    public boolean isSelected() {
+        return selected;
+    }
 
-            for (SegmentTerrain segment : pA.getSegments()) {
-                if(segment != s){
+    public SegmentTerrain asSegment(SegmentTerrain s) {
+        for (SegmentTerrain segment : segments) {
+            if(s.isSegment(segment)) return segment;
+        }
+        return null;
+    }
 
-                    PointTerrain p1;
-                    if(segment.getpA() != pA){
-                        p1 = segment.getpA();
-                    }else{
-                        p1 = segment.getpB();
-                    }
-                    for (SegmentTerrain segmentB : pB.getSegments()) {
-                        if(segmentB != s){
-
-                            PointTerrain p2;
-                            if(segmentB.getpA() != pB){
-                                p2 = segmentB.getpA();
-                            }else{
-                                p2 = segmentB.getpB();
-                            }
-                            if(p1.equals(p2)){
-                                Triangle triangle = new Triangle(pA, pB, p1, treillis.getNumerateur().getNewTriangleId());
-                                triangles.add(triangle);
-                                s.addTriangle(triangle);
-                                segment.addTriangle(triangle);
-                                segmentB.addTriangle(triangle);
-                                pA.addTriangle(triangle);
-                                pB.addTriangle(triangle);
-                                p1.addTriangle(triangle);
-                                treillis.updateNoeuds(actionCenter.getGraphics());
-                                actionCenter.redraw();
-                            }
-                        }
-                    }
-                }
-            }
+    public void update(){
+        ArrayList<PointTerrain> pointTerrain = new ArrayList<>();
+        for (PointTerrain point : points) {
+            if (!point.asTriangle()) pointTerrain.add(point);
+        }
+        for (PointTerrain pt : pointTerrain) {
+            remove(pt, false);
         }
     }
 
     public void remove(Forme f, boolean last){
         if(f instanceof Triangle){
-            triangles.remove(f);
+            triangles.remove(f.getId());
             if(last) return;
-            for (SegmentTerrain arrete : ((Triangle) f).getSegment()) {
-                remove(arrete, true);
+            for (SegmentTerrain segment : ((Triangle) f).getSegments()) {
+                remove(segment, true);
             }
             for (PointTerrain point : ((Triangle) f).getPoints()) {
                 remove(point, true);
             }
         }else if(f instanceof PointTerrain){
-            pointsTerrain.remove((PointTerrain) f);
+            points.remove((PointTerrain) f);
             if (last) return;
             ((PointTerrain) f).getSegments().forEach(s -> remove(s, true));
             ((PointTerrain) f).getTriangles().forEach(t -> remove(t, true));
         }else if(f instanceof SegmentTerrain){
-            segmentsTerrain.remove(f);
+            segments.remove(f);
             if(last) return;
             ((SegmentTerrain) f).getTriangles().forEach(t -> remove(t, true));
         }
@@ -183,9 +149,9 @@ public class Terrain {
             }
             gc.strokeRect(xMin + origin.getPosX(), yMin + origin.getPosY(), xMax - xMin, yMax - yMin);
         }
-        if(triangles.size() > 0) triangles.forEach(t -> t.draw(gc, origin));
-        if(pointsTerrain.size() > 0) pointsTerrain.forEach(p -> p.draw(gc, origin));
-        if(segmentsTerrain.size() > 0) segmentsTerrain.forEach(s -> s.draw(gc, origin));
+        if(triangles.size() > 0) triangles.values().forEach(t -> t.draw(gc, origin));
+        if(points.size() > 0) points.forEach(p -> p.draw(gc, origin));
+        if(segments.size() > 0) segments.forEach(s -> s.draw(gc, origin));
     }
 
     public String saveString() {
