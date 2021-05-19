@@ -43,6 +43,15 @@ public class Segment extends Forme{
                 pB.getPosX() + origin.getPosX(), pB.getPosY() + origin.getPosY());
     }
 
+    public static void drawGhost(GraphicsContext gc, Point pA, Point pB, Point origin) {
+        gc.setStroke(Color.GRAY);
+        gc.setGlobalAlpha(0.3);
+        gc.setLineWidth(3);
+        gc.strokeLine(pA.getPosX() + origin.getPosX(), pA.getPosY() + origin.getPosY(),
+                pB.getPosX() + origin.getPosX(), pB.getPosY() + origin.getPosY());
+        gc.setGlobalAlpha(1);
+    }
+
     @Override
     public ArrayList<String> getInfos() {
         ArrayList<String> infos = new ArrayList<>();
@@ -55,6 +64,7 @@ public class Segment extends Forme{
         return infos;
 
     }
+
 
     public Point getCenter(){
         double posX = (pA.getPosX() + pB.getPosX()) / 2;

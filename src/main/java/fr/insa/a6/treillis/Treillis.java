@@ -121,10 +121,16 @@ public class Treillis {
                 toRemove.add(noeud);
                 continue;
             }
-            for (Triangle triangle : terrain.getTriangles()) {
-                if(triangle.contain(noeud.getPosX(), noeud.getPosY())){
+            if(noeud instanceof NoeudSimple) {
+                for (Triangle triangle : terrain.getTriangles()) {
+                    if (triangle.contain(noeud.getPosX(), noeud.getPosY())) {
+                        toRemove.add(noeud);
+                        break;
+                    }
+                }
+            }else{
+                if(!((Appui) noeud).getSegmentTerrain().asOneTriangle()){
                     toRemove.add(noeud);
-                    break;
                 }
             }
         }
