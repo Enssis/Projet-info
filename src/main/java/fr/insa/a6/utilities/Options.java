@@ -46,7 +46,7 @@ public class Options {
 
 
     //initialisation des variables permettants la lecture des fichier json de langue et de preference
-    private void jsonInit(boolean onlyPref) throws IOException, ParseException {
+    public void jsonInit(boolean onlyPref) throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
         jsonPreferences = (JSONObject) jsonParser.parse(new FileReader("src/main/java/fr/insa/a6/ressources/preference.json"));
 
@@ -148,11 +148,18 @@ public class Options {
     }
 
     public void addOpenRecent(String path){
-        if(this.openRecent.size() == 5 ){
-            this.openRecent.remove(0);
+        for (int i = 0; i < openRecent.size(); i++) {
+            if(openRecent.get(i).equals(path)){
+                openRecent.remove(i);
+                openRecent.add(0, path);
+                return;
+            }
         }
-        this.openRecent.add(path);
-        saveFile();
+
+        if(this.openRecent.size() == 5 ){
+            this.openRecent.remove(4);
+        }
+        this.openRecent.add(0, path);
     }
 
     public void addKey(String effect, String key){

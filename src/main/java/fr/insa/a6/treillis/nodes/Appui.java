@@ -1,33 +1,73 @@
 package fr.insa.a6.treillis.nodes;
 
 import fr.insa.a6.treillis.dessin.Point;
+import fr.insa.a6.treillis.terrain.PointTerrain;
+import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Triangle;
+import fr.insa.a6.utilities.Maths;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.transform.Rotate;
 
 /**
  * 
  */
 public abstract class Appui extends Noeud {
 
-    private Triangle associatedTriangle;
-    private Point position;
-    
+    private final Triangle associatedTriangle;
+    private final PointTerrain segmentPoint;
+    private SegmentTerrain segmentTerrain;
+    private final double posSegment;
+    protected Image image;
 
-    /**
-     * Default constructor
-     */
-    public Appui(){
+    public Appui(Triangle associatedTriangle, SegmentTerrain segmentTerrain, double posSegment, int id){
         super();
         this.associatedTriangle = associatedTriangle;
-        this.position = position;
-        
-        double angle;
-        double abs;
-        double ord;
-        
-//        Triangle associatedTriangle;
-//        Point position;
-        
+        this.id = id;
+        this.segmentTerrain = segmentTerrain;
+        this.segmentPoint = segmentTerrain.getpA();
+        this.posSegment = posSegment;
+
+        this.posX = segmentPoint.getPosX() + (segmentTerrain.getpB().getPosX() - segmentPoint.getPosX()) * posSegment;
+        this.posY = segmentPoint.getPosY() + (segmentTerrain.getpB().getPosY() - segmentPoint.getPosY()) * posSegment;
     }
 
+    public double getPosSegment() {
+        return posSegment;
+    }
 
+    public PointTerrain getSegmentPoint() {
+        return segmentPoint;
+    }
+
+    public Triangle getAssociatedTriangle() {
+        return associatedTriangle;
+    }
+
+    public SegmentTerrain getSegmentTerrain() {
+        return segmentTerrain;
+    }
+
+    @Override
+    public String saveString() {
+        int segmentNbr = 0;
+        for (int i = 0; i < associatedTriangle.getSegment().length; i++) {
+            if(associatedTriangle.getSegment()[i].equals(segmentTerrain)){
+                segmentNbr = i;
+                break;
+            }
+        }
+        return id + ";" + associatedTriangle.getId() + ";" + segmentNbr + ";" + posSegment;
+    }
+
+    //dessine l'image corrrespondante à l'appui avec rotation
+    @Override
+    public void draw(GraphicsContext gc, Point origin) {
+        gc.save();
+        // angle de rotation et point pivot
+        Rotate r = new Rotate(Maths.angle(segmentTerrain.getpB(), segmentTerrain.getpA()) * 360 / (2 * Math.PI), posX + origin.getPosX(), posY + origin.getPosY());
+        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+        gc.drawImage(image, posX - image.getWidth()/2 + origin.getPosX(), posY + origin.getPosY());
+        gc.restore();
+    }
 }

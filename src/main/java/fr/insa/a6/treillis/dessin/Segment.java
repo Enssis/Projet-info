@@ -24,21 +24,32 @@ public class Segment extends Forme{
         pB = b;
     }
 
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, Point origin) {
         if(selected){
             gc.setStroke(Color.RED);
         }else {
             gc.setStroke(Color.GRAY);
         }
         gc.setLineWidth(3);
-        gc.strokeLine(pA.getPosX(), pA.getPosY(), pB.getPosX(), pB.getPosY());
+        gc.strokeLine(pA.getPosX() + origin.getPosX(), pA.getPosY() + origin.getPosY(),
+                pB.getPosX() + origin.getPosX(), pB.getPosY() + origin.getPosY());
     }
 
     @Override
-    public void drawNear(GraphicsContext gc) {
+    public void drawNear(GraphicsContext gc, Point origin) {
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(1);
-        gc.strokeLine(pA.getPosX(), pA.getPosY(), pB.getPosX(), pB.getPosY());
+        gc.strokeLine(pA.getPosX() + origin.getPosX(), pA.getPosY() + origin.getPosY(),
+                pB.getPosX() + origin.getPosX(), pB.getPosY() + origin.getPosY());
+    }
+
+    public static void drawGhost(GraphicsContext gc, Point pA, Point pB, Point origin) {
+        gc.setStroke(Color.GRAY);
+        gc.setGlobalAlpha(0.3);
+        gc.setLineWidth(3);
+        gc.strokeLine(pA.getPosX() + origin.getPosX(), pA.getPosY() + origin.getPosY(),
+                pB.getPosX() + origin.getPosX(), pB.getPosY() + origin.getPosY());
+        gc.setGlobalAlpha(1);
     }
 
     @Override
@@ -48,11 +59,12 @@ public class Segment extends Forme{
         infos.addAll(pA.getInfos());
         infos.add("Deuxieme extrémitée : ");
         infos.addAll(pB.getInfos());
-        infos.add("Longueur : " + length());
+        infos.add("Longueur : " + lengthInfo());
 
         return infos;
 
     }
+
 
     public Point getCenter(){
         double posX = (pA.getPosX() + pB.getPosX()) / 2;
@@ -60,8 +72,12 @@ public class Segment extends Forme{
         return new Point(posX, posY);
     }
 
-    public double length(){
+    public double lengthInfo(){
         return (double) ((int)(Maths.dist(pA, pB) * 100)) / 100;
+    }
+
+    public double length(){
+        return Maths.dist(pA, pB);
     }
 
     public Point getpA() {

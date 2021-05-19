@@ -26,19 +26,20 @@ public class PointTerrain extends Point {
         super(posX, posY, id);
     }
 
-    public void draw(GraphicsContext gc){
+    @Override
+    public void draw(GraphicsContext gc, Point origin){
         int size = 7;
         int offset = (size - 1) / 2;
         if(selected){
             gc.setFill(Color.DARKRED);
-            gc.fillOval(posX - offset, posY - offset, size, size);
+            gc.fillOval(posX - offset + origin.getPosX(), posY - offset + origin.getPosY(), size, size);
         }else if(segmentSelected){
             gc.setStroke(Color.DARKBLUE);
             gc.setLineWidth(2);
-            gc.strokeOval(posX - offset, posY - offset, size, size);
+            gc.strokeOval(posX - offset + origin.getPosX(), posY - offset + origin.getPosY(), size, size);
         }else{
             gc.setFill(Color.BLACK);
-            gc.fillOval(posX - offset, posY - offset, size, size);
+            gc.fillOval(posX - offset + origin.getPosX(), posY - offset + origin.getPosY(), size, size);
         }
     }
 
@@ -59,9 +60,9 @@ public class PointTerrain extends Point {
     }
 
     @Override
-    public void drawNear(GraphicsContext gc) {
+    public void drawNear(GraphicsContext gc, Point origin) {
         gc.setFill(Color.LIGHTBLUE);
-        gc.fillOval(posX - 3, posY - 3,7, 7);
+        gc.fillOval(posX - 3 + origin.getPosX(), posY - 3 + origin.getPosY(),7, 7);
     }
 
     public boolean isPoint(PointTerrain pt){

@@ -122,13 +122,25 @@ public class BNFReader extends BufferedReader {
         Noeud noeud;
         noeudId = Integer.parseInt(strNoeud[1]);
         switch (strNoeud[0]){
-            case "AppuiDouble" -> noeud = new AppuiDouble();
-            case "AppuiSimple" -> noeud = new AppuiSimple();
+            case "AppuiDouble" -> {
+                Triangle triangle = terrain.getTriangle(Integer.parseInt(strNoeud[2]));
+                if(triangle != null) noeud = new AppuiDouble(triangle, triangle.getSegment()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
+                else noeud = null;
+            }
+            case "AppuiSimple" -> {
+                Triangle triangle = terrain.getTriangle(Integer.parseInt(strNoeud[2]));
+                if(triangle != null) noeud = new AppuiSimple(triangle, triangle.getSegment()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
+                else noeud = null;
+            }
             case "NoeudSimple" -> noeud = new NoeudSimple(toPoint(strNoeud[2]), noeudId);
-            case "AppuiEncastre" -> noeud = new AppuiEncastre();
+            case "AppuiEncastre" -> {
+                Triangle triangle = terrain.getTriangle(Integer.parseInt(strNoeud[2]));
+                if(triangle != null) noeud = new AppuiEncastre(triangle, triangle.getSegment()[Integer.parseInt(strNoeud[3])], Double.parseDouble(strNoeud[4]), noeudId);
+                else noeud = null;
+            }
             default -> noeud = new NoeudSimple(0,0,0);
         }
-        noeuds.put(noeud.getId(), noeud);
+        if(noeud != null) noeuds.put(noeud.getId(), noeud);
     }
 
     public void addBarre(String[] strBarre){

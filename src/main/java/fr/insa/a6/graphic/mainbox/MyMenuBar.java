@@ -83,7 +83,12 @@ public class MyMenuBar extends MenuBar {
         open.setOnAction(e -> {
             try {
                 File file = fileChooser.showOpenDialog(actionCenter.getStage());
-                actionCenter.load(file.getPath());
+                String path = file.getPath();
+                actionCenter.load(path);
+                optionsData.jsonInit(true);
+                optionsData.addOpenRecent(path);
+                optionsData.setLastOpen(path);
+                optionsData.saveFile();
             } catch (IOException | ParseException exception) {
                 exception.printStackTrace();
             }
@@ -107,8 +112,15 @@ public class MyMenuBar extends MenuBar {
             File file = fileChooser2.showSaveDialog(actionCenter.getStage());
             String path = file.getPath();
             actionCenter.saveAct(path);
+            try {
+                optionsData.jsonInit(true);
+            } catch (IOException | ParseException ioException) {
+                ioException.printStackTrace();
+            }
             optionsData.setLastOpen(path);
             optionsData.addOpenRecent(path);
+            optionsData.setSavePath(path);
+            optionsData.saveFile();
         });
 
         //sauvegarde le fichier dans l'emplacement de sauvegarde par defaut
@@ -120,8 +132,19 @@ public class MyMenuBar extends MenuBar {
                 path = optionsData.getSavePath() + name +".txt";
             }
             actionCenter.saveAct(path);
+            try {
+                optionsData.jsonInit(true);
+            } catch (IOException | ParseException ioException) {
+                ioException.printStackTrace();
+            }
+            try {
+                optionsData.jsonInit(true);
+            } catch (IOException | ParseException ioException) {
+                ioException.printStackTrace();
+            }
             optionsData.setLastOpen(path);
             optionsData.addOpenRecent(path);
+            optionsData.saveFile();
         });
 
         //affiche une pop up avec les options quand on clique dessus
@@ -149,6 +172,10 @@ public class MyMenuBar extends MenuBar {
             item.setOnAction(e -> {
                 try {
                     actionCenter.load((String) path);
+                    optionsData.jsonInit(true);
+                    optionsData.addOpenRecent((String) path);
+                    optionsData.setLastOpen((String) path);
+                    optionsData.saveFile();
                 } catch (IOException | ParseException ioException) {
                     System.err.println("ERREUR NOM DU FICHIER");
                 }

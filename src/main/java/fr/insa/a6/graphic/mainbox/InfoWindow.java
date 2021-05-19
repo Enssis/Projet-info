@@ -57,7 +57,7 @@ public class InfoWindow extends VBox {
         Options optionsData = new Options();
         MyButton delete = new MyButton(optionsData.traduction("delete"));
         delete.setOnAction(actionEvent -> {
-            ac.deleteTerrain(t);
+            ac.deleteZoneConstru(t);
             removeInfos();
         });
         this.getChildren().add(delete);

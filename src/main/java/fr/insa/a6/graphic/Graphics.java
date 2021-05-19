@@ -14,9 +14,7 @@ import fr.insa.a6.utilities.ActionCenter;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 // class s'occupant principalement de tout ce qui se réfère au dessin sur le canvas
@@ -26,6 +24,9 @@ public class Graphics {
     private MainScene mainScene;
     private ArrayList<Forme> formes = new ArrayList<>();
     private ActionCenter ac;
+    private Point origin = new Point(0,0);
+    private Point lastOrigin = new Point(origin.getPosX(), origin.getPosY());
+    private double scale = 1;
 
     private InfoWindow infoWindow;
 
@@ -85,12 +86,13 @@ public class Graphics {
     private void drawNear(){
         Forme nearest = ac.getNearest();
         if(nearest != null){
-            nearest.drawNear(gc);
+            nearest.drawNear(gc, origin);
         }
     }
 
     //fonction de dessin principale
-    public void redraw(int selectedButton, boolean inDrawing) {
+    public void draw(int selectedButton, boolean inDrawing) {
+
         MainCanvas canvas = mainScene.getCanvas();
 
         //fond
@@ -103,7 +105,7 @@ public class Graphics {
 
         //dessin du terrain
         Terrain terrain = ac.getTreillis().getTerrain();
-        if(terrain != null) terrain.draw(gc, inDrawing);
+        if(terrain != null) terrain.draw(gc, inDrawing, origin);
 
         //dessin des noeud et des barres
         for (Forme f: formes) {
@@ -113,7 +115,7 @@ public class Graphics {
             if(selectedButton != 20 && selectedButton != 50 && f instanceof Point){
                 ((Point) f).setSegmentSelected(false);
             }
-            f.draw(gc);
+            f.draw(gc, origin);
         }
 
         //dessin des noeuds et barres selectionné + des infos associées
@@ -150,7 +152,7 @@ public class Graphics {
         }
         gc.setGlobalAlpha(1);
         if(selectedButton == 30 && ac.getCurrentClick() == 1){
-            drawTerrainZone(ac.getMouseX(), ac.getMouseY(), ac.getTerrainX(), ac.getTerrainY());
+            drawTerrainZone(ac.getMouseX() - origin.getPosX(), ac.getMouseY() - origin.getPosY(), ac.getTerrainX(), ac.getTerrainY());
         }
 
     }
@@ -180,5 +182,27 @@ public class Graphics {
     public void setMainScene(MainScene mainScene) {
         this.mainScene = mainScene;
         this.gc = mainScene.getCanvas().getGraphicsContext();
+    }
+
+    public void moveOrigin(double x, double y, double newX, double newY){
+        origin.setPosX(lastOrigin.getPosX() + (newX - x));
+        origin.setPosY(lastOrigin.getPosY() + (newY - y));
+    }
+
+    public void updateLastOrigin() {
+        this.lastOrigin.setPosX(origin.getPosX());
+        this.lastOrigin.setPosY(origin.getPosY());
+    }
+
+    public double getScale() {
+        return scale;
+    }
+
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
+    public Point getOrigin() {
+        return origin;
     }
 }
