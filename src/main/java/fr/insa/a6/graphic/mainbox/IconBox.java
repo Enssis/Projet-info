@@ -32,7 +32,7 @@ public class IconBox extends VBox {
 
     private MyLabel terrainLbl;
     private MyRadioButton terrainBtn;
-    private MyRadioButton pointTerrainBtn;
+    private MyRadioButton triangleTerrainBtn;
     private MyRadioButton segmentTerrainBtn;
     private MainScene mainScene;
 
@@ -68,11 +68,10 @@ public class IconBox extends VBox {
         terrainLbl = new MyLabel(optionsData.traduction("ground"), "title");
 
         initTrn();
-        initPointTrn();
-        initSegmentTrn();
+        initTriangleTrn();
 
 
-        this.getChildren().addAll(selectBtn, treillisLbl, choixNoeud, noeudBtn, barreBtn, terrainLbl, terrainBtn, pointTerrainBtn, segmentTerrainBtn);
+        this.getChildren().addAll(selectBtn, treillisLbl, choixNoeud, noeudBtn, barreBtn, terrainLbl, terrainBtn, triangleTerrainBtn);
 
     }
 
@@ -89,7 +88,7 @@ public class IconBox extends VBox {
 
     //pop up de selection du type de noeud
     private void selectNoeud() {
-        Stage choixNoeud =new Stage();
+        Stage choixNoeud = new Stage();
 
         choixNoeud.initModality(Modality.APPLICATION_MODAL);
         choixNoeud.setTitle(optionsData.traduction("node choice"));
@@ -219,7 +218,7 @@ public class IconBox extends VBox {
     }
 
     public void initTrn(){
-        terrainBtn = new MyRadioButton(optionsData.traduction("ground"));
+        terrainBtn = new MyRadioButton(optionsData.traduction("constructible area"));
         terrainBtn.setToggleGroup(group);
 
         terrainBtn.setOnAction( actionEvent -> {
@@ -228,23 +227,13 @@ public class IconBox extends VBox {
         });
     }
 
-    private void initPointTrn() {
-        pointTerrainBtn = new MyRadioButton("Point");
-        pointTerrainBtn.setToggleGroup(group);
+    private void initTriangleTrn() {
+        triangleTerrainBtn = new MyRadioButton(optionsData.traduction("triangle"));
+        triangleTerrainBtn.setToggleGroup(group);
 
-        pointTerrainBtn.setOnAction(actionEvent -> {
+        triangleTerrainBtn.setOnAction(actionEvent -> {
             actionCenter.removeSelected();
             actionCenter.setSelectedButton(40);
-        });
-    }
-
-    private void initSegmentTrn() {
-        segmentTerrainBtn = new MyRadioButton("Segment");
-        segmentTerrainBtn.setToggleGroup(group);
-
-        segmentTerrainBtn.setOnAction(actionEvent -> {
-            actionCenter.removeSelected();
-            actionCenter.setSelectedButton(50);
         });
     }
 
