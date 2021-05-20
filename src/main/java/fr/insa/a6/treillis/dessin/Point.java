@@ -53,11 +53,11 @@ public class Point extends Forme{
         gc.fillOval(posX - 5 + origin.posX, posY - 5 + origin.posY,11, 11);
     }
 
-    public void drawGhost(GraphicsContext gc, Point pA, Point origin) {
+    public void drawGhost(GraphicsContext gc, Point origin) {
         gc.setStroke(Color.GRAY);
-        gc.setGlobalAlpha(0.3);
+        gc.setGlobalAlpha(0.5);
         gc.setLineWidth(2);
-        gc.strokeOval(pA.getPosX() - 5 + origin.posX, pA.getPosY() - 5 + origin.posY, 11, 11);
+        gc.strokeOval(posX - 5 + origin.posX, posY - 5 + origin.posY, 11, 11);
         gc.setGlobalAlpha(1);
     }
 

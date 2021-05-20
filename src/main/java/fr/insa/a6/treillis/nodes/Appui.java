@@ -1,8 +1,10 @@
 package fr.insa.a6.treillis.nodes;
 
+import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.terrain.PointTerrain;
 import fr.insa.a6.treillis.terrain.SegmentTerrain;
+import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.treillis.terrain.Triangle;
 import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
@@ -46,6 +48,15 @@ public abstract class Appui extends Noeud {
 
     public SegmentTerrain getSegmentTerrain() {
         return segmentTerrain;
+    }
+
+    public static SegmentTerrain isCreable(Terrain terrain, double posX, double posY){
+        for (SegmentTerrain s : terrain.getSegments()) {
+            if(s.contain(posX, posY, 10) && s.asOneTriangle()){
+                return s;
+            }
+        }
+        return null;
     }
 
     @Override

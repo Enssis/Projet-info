@@ -34,13 +34,20 @@ public class PointTerrain extends Point {
             gc.setFill(Color.DARKRED);
             gc.fillOval(posX - offset + origin.getPosX(), posY - offset + origin.getPosY(), size, size);
         }else if(segmentSelected){
-            gc.setStroke(Color.DARKBLUE);
-            gc.setLineWidth(2);
-            gc.strokeOval(posX - offset + origin.getPosX(), posY - offset + origin.getPosY(), size, size);
+            drawGhost(gc, origin);
         }else{
             gc.setFill(Color.BLACK);
             gc.fillOval(posX - offset + origin.getPosX(), posY - offset + origin.getPosY(), size, size);
         }
+    }
+
+    public void drawGhost(GraphicsContext gc, Point origin) {
+        int size = 7;
+        int offset = (size - 1) / 2;
+        gc.setGlobalAlpha(0.5);
+        gc.setFill(Color.DARKBLUE);
+        gc.fillOval(posX - offset + origin.getPosX(), posY - offset + origin.getPosY(), size, size);
+        gc.setGlobalAlpha(0.5);
     }
 
     public boolean asTriangle(){
