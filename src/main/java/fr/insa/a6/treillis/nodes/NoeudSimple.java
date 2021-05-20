@@ -1,6 +1,9 @@
 package fr.insa.a6.treillis.nodes;
 
+import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Point;
+import fr.insa.a6.treillis.terrain.Triangle;
+import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -50,6 +53,17 @@ public class NoeudSimple extends Noeud {
     public void drawNear(GraphicsContext gc) {
         gc.setFill(Color.BLUE);
         gc.fillOval(posX - 2, posY - 2,5, 5);
+    }
+
+    public static boolean isCreable(Treillis treillis, double posX, double posY){
+        boolean creable = true;
+        for (Noeud p : treillis.getNoeuds()) {
+            if(Maths.dist(p, new Point(posX, posY)) < 15) creable = false;
+        }
+        for (Triangle triangle : treillis.getTerrain().getTriangles()) {
+            if (triangle.contain(posX, posY)) creable = false;
+        }
+        return creable;
     }
 
 }

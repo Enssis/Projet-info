@@ -35,6 +35,15 @@ public class SegmentTerrain extends Segment {
         super.drawNear(gc, origin);
     }
 
+    public static void drawGhost(GraphicsContext gc, Point origin, Point pA, Point pB){
+        gc.setGlobalAlpha(0.5);
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2);
+        gc.strokeLine(pA.getPosX() + origin.getPosX(), pA.getPosY() + origin.getPosY(),
+                pB.getPosX() + origin.getPosX(), pB.getPosY() + origin.getPosY());
+        gc.setGlobalAlpha(1);
+    }
+
     public ArrayList<Triangle> getTriangles() {
         return triangles;
     }

@@ -82,7 +82,7 @@ public class Treillis {
         return node;
     }
 
-    public void createAppui(boolean simple, Triangle associatedTriangle, SegmentTerrain segmentTerrain, double posSegment){
+    public Appui createAppui(boolean simple, Triangle associatedTriangle, SegmentTerrain segmentTerrain, double posSegment){
         Appui appui;
         if(simple){
             appui =  new AppuiSimple(associatedTriangle, segmentTerrain, posSegment, numerateur.getNewNoeudId());
@@ -90,6 +90,7 @@ public class Treillis {
             appui = new AppuiDouble(associatedTriangle, segmentTerrain, posSegment, numerateur.getNewNoeudId());
         }
         noeuds.add(appui);
+        return appui;
     }
 
     public void addType(Type type){

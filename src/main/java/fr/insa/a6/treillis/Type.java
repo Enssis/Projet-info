@@ -22,13 +22,13 @@ import java.util.ArrayList;
  */
 public class Type {
 
-    private int id;
-    private double cout;
-    private double lMin;
-    private double lMax;
-    private double rTension;
-    private double rComp;
-    private String name;
+    private final int id;
+    private final double cout;
+    private final double lMin;
+    private final double lMax;
+    private final double rTension;
+    private final double rComp;
+    private final String name;
 
     public Type(String name, double cout, double lMin, double lMax, double rTension, double rComp, int id) {
         this.name = name;

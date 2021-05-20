@@ -9,6 +9,7 @@ import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
 import fr.insa.a6.treillis.nodes.Noeud;
+import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.ActionCenter;
 import javafx.scene.canvas.GraphicsContext;
@@ -92,6 +93,7 @@ public class Graphics {
 
     //fonction de dessin principale
     public void draw(int selectedButton, boolean inDrawing) {
+        Point mousePoint = new Point(ac.getMouseX(), ac.getMouseY());
 
         MainCanvas canvas = mainScene.getCanvas();
 
@@ -153,6 +155,20 @@ public class Graphics {
         gc.setGlobalAlpha(1);
         if(selectedButton == 30 && ac.getCurrentClick() == 1){
             drawTerrainZone(ac.getMouseX() - origin.getPosX(), ac.getMouseY() - origin.getPosY(), ac.getTerrainX(), ac.getTerrainY());
+        }
+
+        if(selectedButton == 40 ) {
+            if (ac.getCurrentClick() >= 1 && ac.getFirstSegmentPoint() != null){
+                SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), mousePoint);
+            }
+            if(ac.getCurrentClick() == 2 && ac.getSecondSegmentPoint() != null && ac.getFirstSegmentPoint() != null){
+                SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), ac.getSecondSegmentPoint());
+                SegmentTerrain.drawGhost(gc, origin, ac.getSecondSegmentPoint(), mousePoint);
+            }
+        }
+
+        if(selectedButton != 0 && selectedButton != 30){
+            mousePoint.drawGhost(gc, origin);
         }
 
     }

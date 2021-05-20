@@ -8,6 +8,7 @@ import fr.insa.a6.treillis.Type;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
+import fr.insa.a6.treillis.nodes.Appui;
 import fr.insa.a6.treillis.nodes.Noeud;
 import fr.insa.a6.treillis.nodes.NoeudSimple;
 import fr.insa.a6.treillis.terrain.PointTerrain;
@@ -156,7 +157,7 @@ public class ActionCenter {
                     case 1 -> addNoeud();
                     case 2 -> addBarre();
                     case 3 -> addTerrain();
-                    case 4 -> addSegmentTrn();
+                    case 4 -> addTriangleTrn();
                 }
             }
         });
@@ -231,21 +232,26 @@ public class ActionCenter {
         }
     }
 
+    //fonction de creation de noeud pour les barres
+    //construit par defaut un noeud simple ou sinon un appui simple s'ilne ne peut
+    public Noeud createNoeudBarre(){
+        Noeud noeudRes = null;
+        double posX = mouseX - graphics.getOrigin().getPosX(), posY = mouseY - graphics.getOrigin().getPosY();
+        if(terrain.contain(posX, posY)) {
+            noeudRes = addNoeudSimple();
+            if(noeudRes == null){
+                noeudRes = testAppui(true, posX, posY);
+            }
+        }
+        return noeudRes;
+    }
+
     private NoeudSimple addNoeudSimple() {
         return addNoeudSimple(mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY());
     }
 
     private NoeudSimple addNoeudSimple(double posX, double posY) {
-        boolean creable = true;
-        for (Noeud p : treillis.getNoeuds()) {
-            if(Maths.dist(p, new Point(posX, posY)) < 15) creable = false;
-        }
-        if(terrain != null) {
-            for (Triangle triangle : terrain.getTriangles()) {
-                if (triangle.contain(posX, posY)) creable = false;
-            }
-        }
-        if(creable) {
+        if(NoeudSimple.isCreable(treillis, posX, posY)) {
             NoeudSimple ns = treillis.createNoeudSimple(posX, posY);
             graphics.updateFormes(treillis);
             graphics.draw(selectedButton, inDrawing);
@@ -255,18 +261,23 @@ public class ActionCenter {
     }
 
     public void addAppui(boolean simple) {
-        addAppui(simple, mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY());
+        testAppui(simple, mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY());
     }
 
-    public void addAppui(boolean simple, double posX, double posY) {
-        for (SegmentTerrain s : terrain.getSegments()) {
-            System.out.println(s.asOneTriangle());
-            if(s.contain(posX, posY, 10) && s.asOneTriangle()){
-                treillis.createAppui(simple, s.getTriangles().get(0), s, Maths.dist(s.getpA(), posX, posY) / s.length());
-                graphics.updateFormes(treillis);
-                graphics.draw(selectedButton, inDrawing);
-            }
+    //test si il est possible de creer un appui, et si oui alors il le crée
+    public Appui testAppui(boolean simple, double posX, double posY){
+        SegmentTerrain segment = Appui.isCreable(terrain, posX, posY);
+        if(segment != null) {
+            return createAppui(simple, posX, posY, segment);
         }
+        return null;
+    }
+
+    public Appui createAppui(boolean simple, double posX, double posY, SegmentTerrain segment) {
+            Appui appui = treillis.createAppui(simple, segment.getTriangles().get(0), segment, Maths.dist(segment.getpA(), posX, posY) / segment.length());
+            graphics.updateFormes(treillis);
+            graphics.draw(selectedButton, inDrawing);
+            return appui;
     }
 
     //fonction permettant la selection d'un point
@@ -308,7 +319,7 @@ public class ActionCenter {
         if(nearest != null && nearest instanceof Noeud){
             p = (Noeud) nearest;
         }else{
-            p = addNoeudSimple();
+            p = createNoeudBarre();
             if(p == null){
                 currentClick --;
                 return;
@@ -318,6 +329,10 @@ public class ActionCenter {
             p.setSegmentSelected(true);
             firstSegmentPoint = p;
         }else{
+            if(firstSegmentPoint.equals(p)){
+                currentClick--;
+                return;
+            }
             currentClick = 0;
             treillis.createBarre((Noeud) firstSegmentPoint, p, barreType);
             firstSegmentPoint.setSegmentSelected(false);
@@ -357,7 +372,7 @@ public class ActionCenter {
         return pt;
     }
 
-    public void addSegmentTrn(){
+    public void addTriangleTrn(){
         currentClick++;
         PointTerrain p;
         //test si on clique a coté d'un point ou pas
@@ -375,9 +390,17 @@ public class ActionCenter {
             p.setSegmentSelected(true);
             firstSegmentPoint = p;
         }else if(currentClick == 2){
+            if(firstSegmentPoint.equals(p)){
+                currentClick--;
+                return;
+            }
             p.setSegmentSelected(true);
             secondSegmentPoint = p;
         }else{
+            if(secondSegmentPoint.equals(p) || firstSegmentPoint.equals(p)){
+                currentClick--;
+                return;
+            }
             currentClick = 0;
             Triangle triangle = new Triangle((PointTerrain) firstSegmentPoint, (PointTerrain) secondSegmentPoint, p, treillis.getNumerateur().getNewTriangleId(), terrain);
             System.out.println(triangle.getId());
@@ -590,6 +613,14 @@ public class ActionCenter {
 
     public String getPath() {
         return path;
+    }
+
+    public Point getFirstSegmentPoint() {
+        return firstSegmentPoint;
+    }
+
+    public Point getSecondSegmentPoint() {
+        return secondSegmentPoint;
     }
 
     public void setBarreType(Type barreType) {
