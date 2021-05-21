@@ -1,14 +1,14 @@
 package fr.insa.a6.utilities;
 
+import javafx.stage.FileChooser;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
-
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -28,6 +28,7 @@ public class Options {
     private HashMap<String, String> keys;
     private String lastOpen;
 
+    //variable pour savoir si on veut seulement les infos du dossier préférence ou aussi avoir la traduction
     private final boolean onlyPreferences;
 
     public Options(){
@@ -36,37 +37,36 @@ public class Options {
 
     public Options(boolean onlyPref) {
         this.onlyPreferences = onlyPref;
-        try {
-            jsonInit(onlyPref);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
+        jsonInit(onlyPref);
     }
 
 
 
     //initialisation des variables permettants la lecture des fichier json de langue et de preference
-    public void jsonInit(boolean onlyPref) throws IOException, ParseException {
-        JSONParser jsonParser = new JSONParser();
-        jsonPreferences = (JSONObject) jsonParser.parse(new FileReader("src/main/java/fr/insa/a6/ressources/preference.json"));
+    public void jsonInit(boolean onlyPref){
+        try {
+            JSONParser jsonParser = new JSONParser();
+            jsonPreferences = (JSONObject) jsonParser.parse(new FileReader("src/main/java/fr/insa/a6/ressources/preference.json"));
 
-        //recupere les préfernece enregistrées
-        language = (String) jsonPreferences.get("language");
-        theme = (String) jsonPreferences.get("theme");
-        daltonien = (boolean) jsonPreferences.get("daltonien");
-        defaultH = (long) jsonPreferences.get("defaultH");
-        defaultW = (long) jsonPreferences.get("defaultW");
-        savePath = (String) jsonPreferences.get("save path");
-        openRecent = (ArrayList<String>) jsonPreferences.get("open recent");
-        keys = (HashMap<String, String>) jsonPreferences.get("keys");
-        lastOpen = (String) jsonPreferences.get("lastOpen");
+            //recupere les préfernece enregistrées
+            language = (String) jsonPreferences.get("language");
+            theme = (String) jsonPreferences.get("theme");
+            daltonien = (boolean) jsonPreferences.get("daltonien");
+            defaultH = (long) jsonPreferences.get("defaultH");
+            defaultW = (long) jsonPreferences.get("defaultW");
+            savePath = (String) jsonPreferences.get("save path");
+            openRecent = (ArrayList<String>) jsonPreferences.get("open recent");
+            keys = (HashMap<String, String>) jsonPreferences.get("keys");
+            lastOpen = (String) jsonPreferences.get("lastOpen");
 
-        if(!onlyPref) {
-            JSONObject jsonLanguageFile = (JSONObject) jsonParser.parse(new FileReader("src/main/java/fr/insa/a6/ressources/language.json"));
-            //recupere la liste de mot traduit dans la bonne langue
-            jsonLanguage = (JSONObject) jsonLanguageFile.get(language);
+            if (!onlyPref) {
+                JSONObject jsonLanguageFile = (JSONObject) jsonParser.parse(new FileReader("src/main/java/fr/insa/a6/ressources/language.json"));
+                //recupere la liste de mot traduit dans la bonne langue
+                jsonLanguage = (JSONObject) jsonLanguageFile.get(language);
+            }
+        }catch (IOException | ParseException ioException){
+            ioException.printStackTrace();
         }
-
     }
 
     //retourne la traduction du mot dans le language défini dans les paramètres
@@ -100,6 +100,7 @@ public class Options {
     }
 
     public String getSavePath() {
+        if(savePath.equals("")) return "src/main/resources";
         return savePath;
     }
 
@@ -185,6 +186,22 @@ public class Options {
             e.printStackTrace();
         }
 
+    }
+
+    public void updatePath(String path, boolean save) {
+        jsonInit(true);
+        addOpenRecent(path);
+        setLastOpen(path);
+        if(save) setSavePath(path);
+        saveFile();
+    }
+
+    public FileChooser getFileChooser(String title){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        fileChooser.initialDirectoryProperty().setValue(new File(getSavePath()));
+        return fileChooser;
     }
 
 

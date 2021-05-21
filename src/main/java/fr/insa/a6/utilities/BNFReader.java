@@ -26,14 +26,13 @@ public class BNFReader extends BufferedReader {
 
     private ArrayList<HashMap<String, String>> file = new ArrayList<>();
 
-    public BNFReader(Reader in, int sz) throws IOException {
-        super(in, sz);
-        initFile();
-    }
-
-    public BNFReader(Reader in) throws IOException {
+    public BNFReader(Reader in) {
         super(in);
-        initFile();
+        try {
+            initFile();
+        }catch (IOException ioException){
+            ioException.printStackTrace();
+        }
     }
 
     private void initFile() throws IOException {

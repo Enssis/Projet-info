@@ -6,6 +6,7 @@ public class MyButton extends Button {
 
     public MyButton(String name) {
         super(name);
+        this.setId("myBtn");
     }
 
 }

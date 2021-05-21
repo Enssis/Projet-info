@@ -8,26 +8,26 @@ import fr.insa.a6.utilities.*;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import org.json.simple.parser.*;
 
 
 //VBox avec les informations sur la selection en cours
 public class InfoWindow extends VBox {
 
-    public MainScene mainScene;
+    private final MainScene mainScene;
+    private final ActionCenter actionCenter;
+    private final Options optionsData = new Options();
 
     public InfoWindow(MainScene mainScene) {
         super();
         this.mainScene = mainScene;
+        this.actionCenter = mainScene.getActionCenter();
         this.setAlignment(Pos.CENTER);
         this.setId("infoBox");
     }
 
     //dessine les informations de la forme sélectionné
     public void drawInfos(Forme f) {
-        ActionCenter ac = mainScene.getActionCenter();
         removeInfos();
         ArrayList<String> infos = f.getInfos();
         for (String line : infos) {
@@ -35,10 +35,9 @@ public class InfoWindow extends VBox {
             this.getChildren().add(mL);
         }
 
-        Options optionsData = new Options();
         MyButton delete = new MyButton(optionsData.traduction("delete"));
         delete.setOnAction(actionEvent -> {
-            ac.deleteForme(f);
+            actionCenter.deleteForme(f);
             removeInfos();
         });
         this.getChildren().add(delete);
@@ -46,7 +45,6 @@ public class InfoWindow extends VBox {
 
     //dessine les informations de l'élément sélectionné
     public void drawInfos(Terrain t) {
-        ActionCenter ac = mainScene.getActionCenter();
         removeInfos();
         ArrayList<String> infos = t.getInfos();
         for (String line : infos) {
@@ -54,10 +52,9 @@ public class InfoWindow extends VBox {
             this.getChildren().add(mL);
         }
 
-        Options optionsData = new Options();
         MyButton delete = new MyButton(optionsData.traduction("delete"));
         delete.setOnAction(actionEvent -> {
-            ac.deleteZoneConstru(t);
+            actionCenter.deleteZoneConstru(t);
             removeInfos();
         });
         this.getChildren().add(delete);
@@ -69,7 +66,6 @@ public class InfoWindow extends VBox {
 
     //dessine des informations général des élements selectionné (nombre et possibilité de tout supprimer)
     public void drawInfosMultiplePoint(int nbPoint, int nbSegment) {
-        ActionCenter ac = mainScene.getActionCenter();
         removeInfos();
 
         MyLabel mLP = new MyLabel("nombre de points : " + nbPoint, "normal");
@@ -78,13 +74,21 @@ public class InfoWindow extends VBox {
         Options optionsData = new Options();
         MyButton delete = new MyButton(optionsData.traduction("deleteAll"));
         delete.setOnAction(actionEvent -> {
-            ac.deleteAllFormes();
+            actionCenter.deleteAllFormes();
             removeInfos();
         });
         this.getChildren().addAll(mLP, mLS, delete);
 
     }
 
+
+    public void drawCalculInfo(){
+        removeInfos();
+
+        MyLabel priceLbl = new MyLabel(optionsData.traduction("treillis price") + " : " + actionCenter.getCost() + " €", "normal");
+
+        this.getChildren().addAll(priceLbl);
+    }
 
 
 }

@@ -8,7 +8,7 @@ import fr.insa.a6.treillis.nodes.Noeud;
  */
 public class Barres extends Segment {
 
-    private Type type;
+    private final Type type;
 
     public Barres(Noeud pA, Noeud pB, Type type, int id) {
         super(pA, pB);
@@ -24,5 +24,7 @@ public class Barres extends Segment {
         return "Barre;" + id + ";" + typeId + ";" + pA.getId() + ";" + pB.getId();
     }
 
-
+    public Type getType() {
+        return type;
+    }
 }
