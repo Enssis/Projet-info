@@ -153,4 +153,8 @@ public class Type {
         typeChoice.showAndWait();
 
     }
+
+    public double getCout() {
+        return cout;
+    }
 }

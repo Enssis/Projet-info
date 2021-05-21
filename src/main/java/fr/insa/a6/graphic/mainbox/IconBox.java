@@ -27,13 +27,13 @@ public class IconBox extends VBox {
 
     private MyLabel treillisLbl;
     private MyRadioButton barreBtn;
+    private VBox typeBox;
     private MyButton choixNoeud;
     private MyRadioButton noeudBtn;
 
     private MyLabel terrainLbl;
     private MyRadioButton terrainBtn;
     private MyRadioButton triangleTerrainBtn;
-    private MyRadioButton segmentTerrainBtn;
     private MainScene mainScene;
 
     private MainCanvas mainCanvas;
@@ -55,7 +55,7 @@ public class IconBox extends VBox {
 
         initSelect();
 
-        treillisLbl = new MyLabel(optionsData.traduction("treillis"), "title");
+        treillisLbl = new MyLabel("      " + optionsData.traduction("treillis") + "      ", "title");
 
         choixNoeud = new MyButton(optionsData.traduction("simple node"));
         choixNoeud.setOnAction(a -> {
@@ -64,14 +64,15 @@ public class IconBox extends VBox {
 
         initNoeud();
         initBarre();
+        initTypeBarre();
 
-        terrainLbl = new MyLabel(optionsData.traduction("ground"), "title");
+        terrainLbl = new MyLabel("      " + optionsData.traduction("ground") + "      ", "title");
 
         initTrn();
         initTriangleTrn();
 
 
-        this.getChildren().addAll(selectBtn, treillisLbl, choixNoeud, noeudBtn, barreBtn, terrainLbl, terrainBtn, triangleTerrainBtn);
+        this.getChildren().addAll(selectBtn, treillisLbl, noeudBtn, choixNoeud, barreBtn, typeBox, terrainLbl, terrainBtn, triangleTerrainBtn);
 
     }
 
@@ -167,53 +168,33 @@ public class IconBox extends VBox {
 
         barreBtn.setOnAction(actionEvent -> {
             actionCenter.removeSelected();
-            typeChoicePopUp(null);
             actionCenter.setSelectedButton(20);
         });
     }
 
-    //pop up de selection du type de la barre
-    public void typeChoicePopUp(Stage creator){
-        Stage typeChoice = new Stage();
-
-        typeChoice.initModality(Modality.APPLICATION_MODAL);
-        typeChoice.setTitle(optionsData.traduction("type choice"));
-        typeChoice.setResizable(false);
-
+    public void initTypeBarre() {
         //type list
-        MyLabel typeLabel = new MyLabel(optionsData.traduction("type") + " :", "title");
+        MyLabel typeLabel = new MyLabel(optionsData.traduction("type") + " :", "normal");
 
         ComboBox<Type> typeComboBox = new ComboBox<>(FXCollections.observableArrayList(actionCenter.getTreillis().getCatalogue()));
+        typeComboBox.setId("typeCB");
 
         HBox typeHB = new HBox(10);
         typeHB.getChildren().addAll(typeLabel, typeComboBox);
         typeHB.setAlignment(Pos.CENTER);
 
         //boutons
-        Button addTypeBtn = new Button(optionsData.traduction("add type"));
+        MyButton addTypeBtn = new MyButton(optionsData.traduction("add type"));
         addTypeBtn.setOnAction(e -> Type.createTypePopUp(actionCenter, typeComboBox));
 
-        Button chooseBtn = new Button(optionsData.traduction("choose"));
-        chooseBtn.setOnAction(e -> {
-            actionCenter.setBarreType(typeComboBox.getValue());
-            typeChoice.close();
-        });
-
-        HBox buttonHB = new HBox(10);
-        buttonHB.getChildren().addAll(addTypeBtn, chooseBtn);
-        buttonHB.setAlignment(Pos.CENTER);
+        MyButton chooseBtn = new MyButton(optionsData.traduction("choose"));
+        chooseBtn.setOnAction(e -> actionCenter.setBarreType(typeComboBox.getValue()));
 
 
-        VBox mainVB = new VBox(5);
-        mainVB.getChildren().addAll(typeHB, buttonHB);
-
-
-        Scene scene1 = new Scene(mainVB, 300, 80);
-
-        if(creator != null) creator.close();
-
-        typeChoice.setScene(scene1);
-        typeChoice.showAndWait();
+        typeBox = new VBox(5);
+        typeBox.getChildren().addAll(typeHB, addTypeBtn, chooseBtn);
+        typeBox.setAlignment(Pos.CENTER);
+        typeBox.setId("typeBox");
 
     }
 

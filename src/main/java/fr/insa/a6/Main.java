@@ -4,7 +4,7 @@ import fr.insa.a6.graphic.mainbox.MainScene;
 import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.utilities.ActionCenter;
 import fr.insa.a6.utilities.Options;
-import fr.insa.a6.utilities.Sauvegarde;
+import fr.insa.a6.utilities.Save;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -12,23 +12,16 @@ import javafx.stage.Stage;
 
 public class Main extends Application{
 
-    private final ActionCenter actionCenter = new ActionCenter();
-
-    public Main() {
-
-    }
+    private ActionCenter actionCenter;
 
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         Options options = new Options();
-
-        MainScene mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), actionCenter);
-
 
         String lastOpenPath = options.getLastOpen();
         String name = ActionCenter.nameFromPath(lastOpenPath);
@@ -36,16 +29,21 @@ public class Main extends Application{
         if(lastOpenPath.equals("")){
             treillis = new Treillis();
         }else{
-           treillis = Sauvegarde.getTreillis(lastOpenPath);
-           if(treillis == null){
-               name = "";
-               treillis = new Treillis();
-           }
+            treillis = Save.getTreillis(lastOpenPath);
+            if(treillis == null){
+                name = "";
+                treillis = new Treillis();
+            }
         }
+
+        actionCenter  = new ActionCenter(treillis);
+
+        MainScene mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), actionCenter);
+
 
         Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
 
-        actionCenter.init(mainScene, treillis, stage, lastOpenPath);
+        actionCenter.init(mainScene, stage, lastOpenPath);
 
         if(options.getTheme().equals("light")){
             scene.getStylesheets().add("stylesSheet/lightTheme/lightStyle.css");

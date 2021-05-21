@@ -17,8 +17,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-
-// class s'occupant principalement de tout ce qui se réfère au dessin sur le canvas
+//classe s'occupant principalement de tout ce qui se réfère au dessin sur le canvas
 public class Graphics {
 
     private GraphicsContext gc;
@@ -105,6 +104,15 @@ public class Graphics {
                 canvas.getWidth(),
                 canvas.getHeight());
 
+        //dessin de l'echelle
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(5);
+        gc.setFill(Color.BLACK);
+        gc.fillText("1 m", canvas.getWidth() - 30 - ac.getEchelle() / 2, canvas.getHeight() - 5);
+        gc.strokeLine(canvas.getWidth() - 20 - ac.getEchelle(), canvas.getHeight() - 20, canvas.getWidth() - 20, canvas.getHeight() - 20);
+
+
+
         //dessin du terrain
         Terrain terrain = ac.getTreillis().getTerrain();
         if(terrain != null) terrain.draw(gc, inDrawing, origin);
@@ -167,8 +175,11 @@ public class Graphics {
             }
         }
 
-        if(selectedButton != 0 && selectedButton != 30){
-            mousePoint.drawGhost(gc, origin);
+        if(selectedButton != 0 && selectedButton != 30) {
+            assert terrain != null;
+            if (terrain.containOutTriangle(mousePoint.getPosX(), mousePoint.getPosY()) && selectedButton != 40){
+                mousePoint.drawGhost(gc, origin);
+            }
         }
 
     }
@@ -197,6 +208,7 @@ public class Graphics {
 
     public void setMainScene(MainScene mainScene) {
         this.mainScene = mainScene;
+        this.infoWindow = mainScene.getInfos();
         this.gc = mainScene.getCanvas().getGraphicsContext();
     }
 
@@ -208,14 +220,6 @@ public class Graphics {
     public void updateLastOrigin() {
         this.lastOrigin.setPosX(origin.getPosX());
         this.lastOrigin.setPosY(origin.getPosY());
-    }
-
-    public double getScale() {
-        return scale;
-    }
-
-    public void setScale(double scale) {
-        this.scale = scale;
     }
 
     public Point getOrigin() {

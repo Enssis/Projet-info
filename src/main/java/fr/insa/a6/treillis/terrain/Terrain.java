@@ -39,6 +39,14 @@ public class Terrain {
         return x >= xMin && x <= xMax && y >= yMin && y <= yMax;
     }
 
+    //verifie si un point est dans la zone constructible mais pas dans les triangles
+    public boolean containOutTriangle(double x, double y){
+        for (Triangle triangle : triangles.values()) {
+            if(triangle.contain(x, y)) return false;
+        }
+        return contain(x, y);
+    }
+
     //get et set
     public void setSelected(boolean selected) {
         this.selected = selected;

@@ -3,6 +3,7 @@ package fr.insa.a6.utilities;
 import fr.insa.a6.graphic.Graphics;
 import fr.insa.a6.graphic.mainbox.MainCanvas;
 import fr.insa.a6.graphic.mainbox.MainScene;
+import fr.insa.a6.treillis.Barres;
 import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.Type;
 import fr.insa.a6.treillis.dessin.Forme;
@@ -20,9 +21,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
-import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -40,7 +39,6 @@ public class ActionCenter {
     //bouttons de selections : 0 -> select ; 1x -> noeud; 2x -> barre;  3x -> terrain; 4x -> triangle terrain
     //x : 0 -> Noeud Simple; 1 -> Appui double; 2 -> appui simple
     private int selectedButton = 0;
-    private int selectedNoeud = 0;
 
     private MainScene mainScene;
     private final Graphics graphics;
@@ -60,18 +58,21 @@ public class ActionCenter {
 
     private boolean inDrawing = true;
 
-    public ActionCenter() {
+    //1 m => 50 px
+    private double echelle = 50;
+
+    public ActionCenter(Treillis treillis) {
 
         graphics = new Graphics();
+        this.treillis = treillis;
 
     }
 
     //initialisation de la classe
     // impossible de le faire dans son constructeur car cette classe a besoin de "mainscene" qui a besoin de
     // cet "action center" pour etre initialisé
-    public void init(MainScene mainScene, Treillis treillis, Stage stage, String path){
+    public void init(MainScene mainScene, Stage stage, String path){
         this.mainScene = mainScene;
-        this.treillis = treillis;
         this.stage = stage;
         this.path = path;
         this.name = nameFromPath(path);
@@ -86,8 +87,7 @@ public class ActionCenter {
         addKeyboardEvent();
     }
 
-    public void reload(String path) throws IOException, ParseException {
-
+    public void reload(String path) {
 
         mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), this);
         Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
@@ -111,15 +111,17 @@ public class ActionCenter {
         addKeyboardEvent();
     }
 
-    public void load(String path) throws IOException, ParseException {
-        treillis = Sauvegarde.getTreillis(path);
+    public void load(String path){
+        treillis = Save.getTreillis(path);
         this.name = nameFromPath(path);
+        this.terrain = treillis.getTerrain();
 
         graphics.resetFormes();
         reload(path);
     }
 
-    public void newTreillis() throws IOException, ParseException {
+    //crée une nouvelle page avec un nouveau treillis
+    public void newTreillis() {
         treillis = new Treillis();
         this.name = "";
 
@@ -127,28 +129,32 @@ public class ActionCenter {
         reload("");
     }
 
+    //sauvegarde le treillis actuel
     public void saveAct(String path)
     {
-        Sauvegarde.saveTreillis(treillis, path);
+        Save.saveTreillis(treillis, path);
     }
 
     //ajout des fonctions appelés durant différentes actions de la souris
     private void addMouseEvent() {
         MainCanvas canvas = mainScene.getCanvas();
 
+        //actions quand la couris est déplacé dans le canvas
         canvas.setOnMouseMoved(mouseEvent -> {
             mouseX = mouseEvent.getX();
             mouseY = mouseEvent.getY();
-            switch (selectedButton/10) {
-                case 0, 2, 4 -> selection(selectedButton/10);
+            if(inDrawing && (selectedButton/10) % 2 == 0){
+                selection(selectedButton/10);
             }
             graphics.draw(selectedButton, inDrawing);
         });
 
+        //action quand on clic sur la souris
         canvas.setOnMousePressed(mouseEvent -> {
             mouseX = mouseEvent.getX();
             mouseY = mouseEvent.getY();
-            if(mouseEvent.getButton() == MouseButton.PRIMARY) {
+
+            if(mouseEvent.getButton() == MouseButton.PRIMARY && inDrawing) {
                 inMultSelect = false;
                 removeSelectedAll();
 
@@ -162,22 +168,20 @@ public class ActionCenter {
             }
         });
 
+        //action quand on arrete de cliquer sur la souris
         canvas.setOnMouseReleased(mouseEvent -> {
+            dragMouseX = -1;
+            dragMouseY = -1;
             if(mouseEvent.getButton() == MouseButton.PRIMARY) {
-                dragMouseX = -1;
-                dragMouseY = -1;
                 drag = false;
                 graphics.draw(selectedButton, inDrawing);
             }else if(mouseEvent.getButton() == MouseButton.SECONDARY) {
-                dragMouseX = -1;
-                dragMouseY = -1;
-
                 graphics.updateLastOrigin();
             }
         });
 
         canvas.setOnMouseDragged(mouseEvent -> {
-            if(mouseEvent.getButton() == MouseButton.PRIMARY) {
+            if(mouseEvent.getButton() == MouseButton.PRIMARY && inDrawing) {
                 if (selectedButton == 0) {
                     drag = true;
                     inMultSelect = true;
@@ -195,24 +199,25 @@ public class ActionCenter {
             }
         });
 
-        canvas.setOnScroll(scrollEvent -> {
-            System.out.println(scrollEvent.getDeltaY());
-            graphics.setScale(graphics.getScale() + scrollEvent.getDeltaY() * scrollEvent.getMultiplierY() / 4000);
-            graphics.draw(selectedButton, inDrawing);
-        });
     }
 
     private void addKeyboardEvent() {
         mainScene.setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ESCAPE){
                 cancelButton();
+            }else if(key.getCode() == KeyCode.DELETE){
+                deleteForme(currentSelect);
+                deleteAllFormes();
             }
         });
     }
 
+    //fonction s'activant quand on appui sur la touche 'echap'
     public void cancelButton(){
         currentClick = 0;
+        if(firstSegmentPoint != null)
         firstSegmentPoint.setSegmentSelected(false);
+        if(secondSegmentPoint != null)
         secondSegmentPoint.setSegmentSelected(false);
         removeSelected();
         removeSelectedAll();
@@ -358,6 +363,10 @@ public class ActionCenter {
         }
     }
 
+    public void drawCalculInfo(){
+        mainScene.getInfos().drawCalculInfo();
+    }
+
     public PointTerrain addPointTrn() {
         double px = mouseX - graphics.getOrigin().getPosX(), py = mouseY - graphics.getOrigin().getPosY();
         PointTerrain pt = null;
@@ -417,10 +426,6 @@ public class ActionCenter {
         this.selectedButton = selectedButton;
     }
 
-    public void setSelectedNoeud(int selectedNoeud) {
-        this.selectedNoeud = selectedNoeud;
-    }
-
     public void setInDrawing(boolean inDrawing){
         this.inDrawing = inDrawing;
     }
@@ -477,6 +482,16 @@ public class ActionCenter {
         if(t != null){
             t.setBorderNull();
         }
+    }
+
+    //calcul le prix final du treillis
+    public double getCost(){
+        double price = 0;
+        for (Barres barres : treillis.getBarres()) {
+            if(barres.getType() == null) continue;
+            price += barres.getType().getCout() * barres.length() / echelle;
+        }
+        return (double) ((int) price * 100) / 100;
     }
 
     public Graphics getGraphics() {
@@ -642,5 +657,9 @@ public class ActionCenter {
     public static String nameFromPath(String path){
         String[] nameS = path.split("\\\\");
         return nameS[nameS.length - 1].split("\\.")[0];
+    }
+
+    public double getEchelle() {
+        return echelle;
     }
 }

@@ -11,9 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 
 public class OptionWindow {
 
@@ -95,16 +93,9 @@ public class OptionWindow {
         applyBtn.setOnAction(e -> {
             tempOptions.setDefaultH(Long.parseLong(heightTF.getText()));
             tempOptions.setDefaultW(Long.parseLong(widthTF.getText()));
-
             tempOptions.setLanguage(languageCB.getSelectionModel().getSelectedItem().getValue());
-
             tempOptions.saveFile();
-
-            try {
-                actionCenter.reload(actionCenter.getPath());
-            } catch (IOException | ParseException ioException) {
-                ioException.printStackTrace();
-            }
+            actionCenter.reload(actionCenter.getPath());
         });
 
         Button cancelBtn = new Button(options.traduction("cancel"));
