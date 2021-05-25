@@ -1,6 +1,7 @@
 package fr.insa.a6.treillis;
 
 import fr.insa.a6.graphic.mainbox.IconBox;
+import fr.insa.a6.graphic.utils.MyButton;
 import fr.insa.a6.graphic.utils.MyLabel;
 import fr.insa.a6.graphic.utils.MyTextField;
 import fr.insa.a6.utilities.ActionCenter;
@@ -118,7 +119,7 @@ public class Type {
 
         //buttons
         //boutons d'ajout, ne fait rien si une case n'est pas remplie
-        Button addTypeBtn = new Button(options.traduction("add type"));
+        MyButton addTypeBtn = new MyButton(options.traduction("add type"));
         addTypeBtn.setOnAction(e -> {
             try {
                 Treillis treillis = ac.getTreillis();
@@ -136,7 +137,7 @@ public class Type {
         });
 
         //bouton pour annuler, ferme juste la fenetre
-        Button cancelBtn = new Button(options.traduction("cancel"));
+        MyButton cancelBtn = new MyButton(options.traduction("cancel"));
         cancelBtn.setOnAction(e -> typeChoice.close());
 
         HBox buttonHB = new HBox(10);
@@ -146,8 +147,15 @@ public class Type {
 
         VBox mainVB = new VBox(10);
         mainVB.getChildren().addAll(nameHB, costHB, lMinHB, lmaxHB, rTensionHB, rCompHB, buttonHB);
+        mainVB.setId("vBox");
 
-        Scene scene1 = new Scene(mainVB, 400, 250);
+        Scene scene1 = new Scene(mainVB, 560, 280);
+
+        if(options.getTheme().equals("light")){
+            scene1.getStylesheets().add("stylesSheet/lightTheme/popUpLightStyle.css");
+        }else{
+            scene1.getStylesheets().add("stylesSheet/darkTheme/popUpDarkStyle.css");
+        }
 
         typeChoice.setScene(scene1);
         typeChoice.showAndWait();

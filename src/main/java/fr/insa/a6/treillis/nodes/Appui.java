@@ -76,7 +76,13 @@ public abstract class Appui extends Noeud {
     public void draw(GraphicsContext gc, Point origin) {
         gc.save();
         // angle de rotation et point pivot
-        Rotate r = new Rotate(Maths.angle(segmentTerrain.getpB(), segmentTerrain.getpA()) * 360 / (2 * Math.PI), posX + origin.getPosX(), posY + origin.getPosY());
+        Point centerTriangle = associatedTriangle.getCenter();
+        double angleCenter = (double) ((int) (Maths.angle(segmentTerrain.getpB(), segmentTerrain.getpA(), centerTriangle) * 100)) / 100;
+        double angle = Maths.angle(segmentTerrain.getpB(), segmentTerrain.getpA()) * 360 / (2 * Math.PI);
+        if(angleCenter > 0){
+            angle = 180 + angle;
+        }
+        Rotate r = new Rotate(angle, posX + origin.getPosX(), posY + origin.getPosY());
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
         gc.drawImage(image, posX - image.getWidth()/2 + origin.getPosX(), posY + origin.getPosY());
         gc.restore();

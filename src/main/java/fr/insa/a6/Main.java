@@ -7,6 +7,7 @@ import fr.insa.a6.utilities.Options;
 import fr.insa.a6.utilities.Save;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 
@@ -52,6 +53,7 @@ public class Main extends Application{
         }
 
         if(name.equals("")) name = "~Nouveau~";
+        stage.getIcons().add(new Image("dessins/icon.PNG", 30, 30, true, true));
         stage.setTitle(name);
         stage.setScene(scene);
         stage.show();

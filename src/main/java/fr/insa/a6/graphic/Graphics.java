@@ -162,7 +162,7 @@ public class Graphics {
         }
         gc.setGlobalAlpha(1);
         if(selectedButton == 30 && ac.getCurrentClick() == 1){
-            drawTerrainZone(ac.getMouseX() - origin.getPosX(), ac.getMouseY() - origin.getPosY(), ac.getTerrainX(), ac.getTerrainY());
+            drawTerrainZone(ac.getMouseX() , ac.getMouseY() , ac.getTerrainX() + origin.getPosX(), ac.getTerrainY() + origin.getPosY());
         }
 
         if(selectedButton == 40 ) {
@@ -170,7 +170,9 @@ public class Graphics {
                 SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), mousePoint);
             }
             if(ac.getCurrentClick() == 2 && ac.getSecondSegmentPoint() != null && ac.getFirstSegmentPoint() != null){
-                SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), ac.getSecondSegmentPoint());
+                SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(),new Point(
+                        ac.getSecondSegmentPoint().getPosX() + origin.getPosX(),
+                        ac.getSecondSegmentPoint().getPosY() + origin.getPosY()));
                 SegmentTerrain.drawGhost(gc, origin, ac.getSecondSegmentPoint(), mousePoint);
             }
         }
@@ -178,7 +180,7 @@ public class Graphics {
         if(selectedButton != 0 && selectedButton != 30) {
             assert terrain != null;
             if (terrain.containOutTriangle(mousePoint.getPosX(), mousePoint.getPosY()) && selectedButton != 40){
-                mousePoint.drawGhost(gc, origin);
+                mousePoint.drawGhost(gc, new Point(0,0));
             }
         }
 
@@ -224,5 +226,12 @@ public class Graphics {
 
     public Point getOrigin() {
         return origin;
+    }
+
+    public void resetOrigin() {
+        origin.setPosX(0);
+        origin.setPosY(0);
+        lastOrigin.setPosX(0);
+        lastOrigin.setPosY(0);
     }
 }

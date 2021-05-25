@@ -43,7 +43,7 @@ public class ActionCenter {
     private MainScene mainScene;
     private final Graphics graphics;
     private Stage stage;
-    private final Options options = new Options();
+    private Options options = new Options();
     private String name;
     private String path;
 
@@ -89,10 +89,14 @@ public class ActionCenter {
 
     public void reload(String path) {
 
+        options = new Options();
+
         mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), this);
         Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
 
         graphics.setMainScene(mainScene);
+
+        graphics.resetOrigin();
 
         if(options.getTheme().equals("light")){
             scene.getStylesheets().add("stylesSheet/lightTheme/lightStyle.css");
@@ -123,6 +127,7 @@ public class ActionCenter {
     //crée une nouvelle page avec un nouveau treillis
     public void newTreillis() {
         treillis = new Treillis();
+        this.terrain = treillis.getTerrain();
         this.name = "";
 
         graphics.resetFormes();
@@ -350,12 +355,12 @@ public class ActionCenter {
         currentClick ++;
 
         if(currentClick == 1){
-            terrainX = mouseX;
-            terrainY = mouseY;
+            terrainX = mouseX - graphics.getOrigin().getPosX();
+            terrainY = mouseY - graphics.getOrigin().getPosY();
         }else{
             currentClick = 0;
-            treillis.updateTerrain(Math.min(terrainX, mouseX), Math.min(terrainY, mouseY),
-                    Math.max(terrainX,mouseX), Math.max(terrainY, mouseY));
+            treillis.updateTerrain(Math.min(terrainX, mouseX - graphics.getOrigin().getPosX()), Math.min(terrainY, mouseY- graphics.getOrigin().getPosY()),
+                    Math.max(terrainX,mouseX - graphics.getOrigin().getPosX()), Math.max(terrainY, mouseY- graphics.getOrigin().getPosY()));
 
             treillis.updateNoeuds(graphics);
             graphics.updateFormes(treillis);
@@ -414,6 +419,8 @@ public class ActionCenter {
             Triangle triangle = new Triangle((PointTerrain) firstSegmentPoint, (PointTerrain) secondSegmentPoint, p, treillis.getNumerateur().getNewTriangleId(), terrain);
             System.out.println(triangle.getId());
             terrain.addTriangle(triangle);
+
+            System.out.println(terrain.getTriangles());
 
             treillis.updateNoeuds(graphics);
             firstSegmentPoint.setSegmentSelected(false);
