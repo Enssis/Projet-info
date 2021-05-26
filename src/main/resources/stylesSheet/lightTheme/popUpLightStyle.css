@@ -44,8 +44,7 @@
     -fx-border-radius: 4px;
 }
 
-#languageCB {
-  -fx-font:bold 10pt"Arial";
+#languageCB, #colorPicker {
   -fx-background-color: #E4E7E6;
   -fx-border-width: 2px;
   -fx-border-style: solid;
@@ -53,7 +52,21 @@
   -fx-border-radius: 4px;
 }
 
-#languageCB:hover {
+#languageCB .label {
+  -fx-font:bold 10pt"Arial";
+}
+
+#colorPicker .label {
+  -fx-font:bold 10pt"Arial";
+}
+
+
+.custom-color-dialog, .color-picker {
+    -fx-control-inner-background: #E4E7E6 ;
+    -fx-background: #E4E7E6 ;
+}
+
+#languageCB:hover, #colorPicker:hover {
   -fx-background-color: #bbc3c1;
   -fx-border-width: 2px;
   -fx-border-style: solid;

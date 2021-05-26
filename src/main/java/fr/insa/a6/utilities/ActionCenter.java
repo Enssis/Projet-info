@@ -244,11 +244,19 @@ public class ActionCenter {
 
     //fonction de creation de noeud pour les barres
     //construit par defaut un noeud simple ou sinon un appui simple s'ilne ne peut
-    public Noeud createNoeudBarre(){
+    public Noeud createNoeudBarre(boolean distSup, Point firstSegmentPoint){
         Noeud noeudRes = null;
-        double posX = mouseX - graphics.getOrigin().getPosX(), posY = mouseY - graphics.getOrigin().getPosY();
+        double posX, posY;
+        if(distSup){
+            double angle = Maths.angle(firstSegmentPoint, (new Point(mouseX, mouseY)).substract(graphics.getOrigin()));
+            posX = firstSegmentPoint.getPosX() + barreType.getlMax() * echelle * Math.cos(angle);
+            posY = firstSegmentPoint.getPosY() + barreType.getlMax() * echelle * Math.sin(angle);
+        }else {
+            posX = mouseX - graphics.getOrigin().getPosX();
+            posY = mouseY - graphics.getOrigin().getPosY();
+        }
         if(terrain.contain(posX, posY)) {
-            noeudRes = addNoeudSimple();
+            noeudRes = addNoeudSimple(posX, posY);
             if(noeudRes == null){
                 noeudRes = testAppui(true, posX, posY);
             }
@@ -256,8 +264,8 @@ public class ActionCenter {
         return noeudRes;
     }
 
-    private NoeudSimple addNoeudSimple() {
-        return addNoeudSimple(mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY());
+    private void addNoeudSimple() {
+        addNoeudSimple(mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY());
     }
 
     private NoeudSimple addNoeudSimple(double posX, double posY) {
@@ -323,13 +331,36 @@ public class ActionCenter {
     //fonction de création d'une barre
     private void addBarre(){
         currentClick++;
-        Noeud p;
+        Noeud p = null;
         //test si on clique a coté d'un point ou pas
         //Besoin d'ajouter la vérification que le point est créable, et quel type de point
+        if(barreType == null){
+            System.err.println("TYPE NULL");
+            currentClick --;
+            return;
+        }
+
+        double lMin = barreType.getlMin() * echelle;
+        double lMax = barreType.getlMax() * echelle;
+
         if(nearest != null && nearest instanceof Noeud){
-            p = (Noeud) nearest;
-        }else{
-            p = createNoeudBarre();
+            boolean creable = true;
+            if(currentClick > 1 && firstSegmentPoint != null) {
+                double dist = Maths.dist((Point) nearest, firstSegmentPoint);
+                if(dist < lMin || dist > lMax){
+                    creable = false;
+                }
+            }
+            if(creable) p = (Noeud) nearest;
+        }
+        if(p == null){
+            double dist = 0;
+            if(currentClick > 1 && firstSegmentPoint != null) {
+                dist = Maths.dist(firstSegmentPoint, (new Point(mouseX, mouseY)).substract(graphics.getOrigin()));
+            }
+            if(dist >= lMin || currentClick == 1){
+                p = createNoeudBarre(dist > lMax, firstSegmentPoint);
+            }
             if(p == null){
                 currentClick --;
                 return;
@@ -339,6 +370,7 @@ public class ActionCenter {
             p.setSegmentSelected(true);
             firstSegmentPoint = p;
         }else{
+            assert firstSegmentPoint != null;
             if(firstSegmentPoint.equals(p)){
                 currentClick--;
                 return;
@@ -668,5 +700,9 @@ public class ActionCenter {
 
     public double getEchelle() {
         return echelle;
+    }
+
+    public Type getBarreType() {
+        return barreType;
     }
 }

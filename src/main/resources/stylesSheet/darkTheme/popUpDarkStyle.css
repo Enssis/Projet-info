@@ -48,13 +48,21 @@
     -fx-border-radius: 4px;
 }
 
-#languageCB {
-  -fx-font:bold 10pt"Arial";
+#languageCB, #colorPicker{
   -fx-background-color: #545454;
   -fx-border-width: 2px;
   -fx-border-style: solid;
   -fx-border-color: #3f41d1;
   -fx-border-radius: 4px;
+}
+
+#languageCB .label {
+  -fx-font:bold 10pt"Arial";
+  -fx-text-fill:white;
+}
+
+#colorPicker .label {
+  -fx-font:bold 10pt"Arial";
   -fx-text-fill:white;
 }
 
@@ -62,7 +70,12 @@
   -fx-text-fill:white;
 }
 
-#languageCB:hover {
+.custom-color-dialog, .color-picker {
+    -fx-control-inner-background: #545454 ;
+    -fx-background: #545454 ;
+}
+
+#languageCB:hover, #colorPicker:hover {
   -fx-background-color: #808080;
   -fx-border-width: 2px;
   -fx-border-style: solid;

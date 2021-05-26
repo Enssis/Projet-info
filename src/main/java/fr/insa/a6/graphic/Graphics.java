@@ -8,10 +8,14 @@ import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
+import fr.insa.a6.treillis.nodes.AppuiDouble;
+import fr.insa.a6.treillis.nodes.AppuiSimple;
 import fr.insa.a6.treillis.nodes.Noeud;
+import fr.insa.a6.treillis.nodes.NoeudSimple;
 import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.ActionCenter;
+import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -49,8 +53,8 @@ public class Graphics {
         infoWindow.removeInfos();
     }
 
-    public void drawInfosMultiplePoint(int nbPoint, int nbSegment) {
-        infoWindow.drawInfosMultiplePoint(nbPoint,nbSegment);
+    public void drawInfosMultiplePoint(int nbNoeud,int nbAppuiDouble, int nbAppuiSimple,int nbBarre) {
+        infoWindow.drawInfosMultiplePoint(nbNoeud, nbAppuiDouble, nbAppuiSimple, nbBarre);
     }
 
     public void drawInfos(Forme nearest){
@@ -131,13 +135,17 @@ public class Graphics {
         //dessin des noeuds et barres selectionné + des infos associées
         if(ac.isInMultSelect()){
             ArrayList<Forme> multipleSelect = ac.getMultipleSelect();
-            int nbPoint = 0;
-            int nbSeg = 0;
+            int nbNoeud = 0;
+            int nbAppuiSimple = 0;
+            int nbAppuiDouble = 0;
+            int nbBarre = 0;
             for (Forme f: multipleSelect) {
-                if(f instanceof Point) nbPoint ++;
-                else if(f instanceof Segment) nbSeg ++;
+                if(f instanceof NoeudSimple) nbNoeud ++;
+                else if(f instanceof Barres) nbBarre ++;
+                else if(f instanceof AppuiDouble) nbAppuiDouble ++;
+                else if(f instanceof AppuiSimple) nbAppuiSimple ++;
             }
-            drawInfosMultiplePoint(nbPoint, nbSeg);
+            drawInfosMultiplePoint(nbNoeud, nbAppuiDouble, nbAppuiSimple, nbBarre);
         }
 
         //dessin de la zone de selection
@@ -177,7 +185,30 @@ public class Graphics {
             }
         }
 
-        if(selectedButton != 0 && selectedButton != 30) {
+        if(selectedButton == 20 ) {
+            Point firstPoint = ac.getFirstSegmentPoint();
+            if (ac.getCurrentClick() >= 1 && firstPoint != null){
+                if(Maths.dist(firstPoint, mousePoint.substract(origin)) > ac.getBarreType().getlMin() * ac.getEchelle()){
+                    Point point = mousePoint;
+
+                    double lMax = ac.getBarreType().getlMax() * ac.getEchelle();
+                    if(Maths.dist(firstPoint, mousePoint.substract(origin)) > lMax ){
+                        double angle = Maths.angle(firstPoint, mousePoint.substract(origin));
+                        point = new Point(firstPoint.getPosX() + lMax * Math.cos(angle) + origin.getPosX(), firstPoint.getPosY() + lMax * Math.sin(angle) + origin.getPosY());
+                    }
+
+
+                    assert terrain != null;
+                    if (terrain.containOutTriangle(point.getPosX() - origin.getPosX(), point.getPosY() - origin.getPosY())){
+                        Barres.drawGhost(gc, ac.getFirstSegmentPoint(), point, origin);
+                        point.drawGhost(gc, new Point(0, 0));
+                    }
+                }
+
+            }
+        }
+
+        if(selectedButton != 0 && selectedButton != 30 && selectedButton != 20) {
             assert terrain != null;
             if (terrain.containOutTriangle(mousePoint.getPosX(), mousePoint.getPosY()) && selectedButton != 40){
                 mousePoint.drawGhost(gc, new Point(0,0));

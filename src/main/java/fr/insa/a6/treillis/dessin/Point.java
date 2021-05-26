@@ -97,6 +97,14 @@ public class Point extends Forme{
         return new ArrayList<>(Arrays.asList(str));
     }
 
+    public Point add(Point p){
+        return new Point(p.posX + posX, p.posY + posY);
+    }
+
+    public Point substract(Point p){
+        return new Point(- p.posX + posX, - p.posY + posY);
+    }
+
     public void setSegmentSelected(boolean segmentSelected) {
         this.segmentSelected = segmentSelected;
     }
