@@ -1,6 +1,7 @@
 package fr.insa.a6.utilities;
 
 import fr.insa.a6.treillis.dessin.Point;
+import javafx.scene.paint.Color;
 
 public class Maths {
 
@@ -72,5 +73,10 @@ public class Maths {
         double py = p.getPosX() * Math.sin(angle) + p.getPosY() * Math.cos(angle);
 
         return new Point(px, py);
+    }
+
+    //transform a color to an hexadecimal string
+    public static String colorToHexa(Color color){
+        return "#" + Integer.toHexString(color.hashCode()).substring(0, 6);
     }
 }

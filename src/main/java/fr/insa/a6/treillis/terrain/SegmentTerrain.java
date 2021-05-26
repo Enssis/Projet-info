@@ -40,7 +40,7 @@ public class SegmentTerrain extends Segment {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
         gc.strokeLine(pA.getPosX() + origin.getPosX(), pA.getPosY() + origin.getPosY(),
-                pB.getPosX() + origin.getPosX(), pB.getPosY() + origin.getPosY());
+                pB.getPosX(), pB.getPosY());
         gc.setGlobalAlpha(1);
     }
 
@@ -71,6 +71,13 @@ public class SegmentTerrain extends Segment {
         Point p = new Point(x, y);
 
         return distTo(p) < tolerance && distTo(p) != -1;
+    }
+
+    @Override
+    public ArrayList<String> getInfos() {
+        ArrayList<String> infos = super.getInfos();
+        infos.add("triangles : " + triangles.size());
+        return infos;
     }
 
     public double distTo(Point p){

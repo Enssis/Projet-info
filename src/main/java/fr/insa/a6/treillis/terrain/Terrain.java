@@ -69,6 +69,11 @@ public class Terrain {
     }
 
     public void addTriangle(Triangle t){
+        for (Triangle triangle: triangles.values()) {
+            if (triangle.isTriangle(t)) {
+                return;
+            }
+        }
         triangles.put(t.getId(), t);
     }
 
@@ -130,6 +135,8 @@ public class Terrain {
             ((SegmentTerrain) f).getTriangles().forEach(t -> remove(t, true));
         }
     }
+
+
 
     public ArrayList<String> getInfos(){
         ArrayList<String> infos = new ArrayList<>();

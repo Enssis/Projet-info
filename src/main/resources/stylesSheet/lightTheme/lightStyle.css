@@ -5,6 +5,29 @@
     -fx-border-color: #87929b;
 }
 
+#myMenuBar {
+    -fx-background-color : #E4E7E6;
+    -fx-border-width: 0px 0px 3px 0px;
+    -fx-border-down-style: solid;
+    -fx-border-color: #87929b;
+}
+
+#myMenuBar .label {
+  -fx-font-size:18pt;
+  -fx-font:bold 10pt"Arial";
+}
+
+.menuItem .label {
+  -fx-font-size:18pt;
+  -fx-font:bold 10pt"Arial";
+}
+
+.context-menu {
+  -fx-background-color : #E4E7E6;
+  -fx-font-size:18pt;
+  -fx-font:bold 10pt"Arial";
+}
+
 #infoBox {
     -fx-background-color : #E4E7E6;
     -fx-border-width: 0px 0px 0px 3px;
@@ -36,6 +59,8 @@
 
 
 #myBtn {
+    -fx-font-size:18pt;
+    -fx-font:bold 10pt"Arial";
     -fx-background-color: #E4E7E6;
     -fx-border-width: 2px;
     -fx-border-style: solid;
@@ -60,6 +85,7 @@
 }
 
 #typeCB {
+  -fx-font:bold 10pt"Arial";
   -fx-background-color: #E4E7E6;
   -fx-border-width: 2px;
   -fx-border-style: solid;

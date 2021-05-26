@@ -65,11 +65,13 @@ public class InfoWindow extends VBox {
     }
 
     //dessine des informations général des élements selectionné (nombre et possibilité de tout supprimer)
-    public void drawInfosMultiplePoint(int nbPoint, int nbSegment) {
+    public void drawInfosMultiplePoint(int nbNoeud,int nbAppuiDouble, int nbAppuiSimple,int nbBarre) {
         removeInfos();
 
-        MyLabel mLP = new MyLabel("nombre de points : " + nbPoint, "normal");
-        MyLabel mLS = new MyLabel("nombre de segments : " + nbSegment, "normal");
+        MyLabel mLN = new MyLabel("nombre de noeuds simple : " + nbNoeud, "normal");
+        MyLabel mLAD = new MyLabel("nombre d'appuis double : " + nbAppuiDouble, "normal");
+        MyLabel mLAS = new MyLabel("nombre d'appuis simple : " + nbAppuiSimple, "normal");
+        MyLabel mLB = new MyLabel("nombre de barres : " + nbBarre, "normal");
 
         Options optionsData = new Options();
         MyButton delete = new MyButton(optionsData.traduction("deleteAll"));
@@ -77,7 +79,7 @@ public class InfoWindow extends VBox {
             actionCenter.deleteAllFormes();
             removeInfos();
         });
-        this.getChildren().addAll(mLP, mLS, delete);
+        this.getChildren().addAll(mLN, mLAD, mLAS, mLB, delete);
 
     }
 

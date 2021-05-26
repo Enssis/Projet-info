@@ -140,6 +140,7 @@ public class IconBox extends VBox {
         VBox layout= new VBox(5);
         layout.getChildren().addAll(label, radioLayout, fin);
         layout.setAlignment(Pos.CENTER);
+        layout.setId("vBox");
 
         int width = switch (optionsData.getLanguage()) {
             case "en" -> 500;
@@ -147,7 +148,12 @@ public class IconBox extends VBox {
             default -> 600;
         };
         Scene scene = new Scene(layout, width, 100);
-        scene.getStylesheets().add("stylesSheet/lightTheme/popUpLightStyle.css");
+
+        if(optionsData.getTheme().equals("light")){
+            scene.getStylesheets().add("stylesSheet/lightTheme/popUpLightStyle.css");
+        }else{
+            scene.getStylesheets().add("stylesSheet/darkTheme/popUpDarkStyle.css");
+        }
 
         choixNoeud.setScene(scene);
         choixNoeud.showAndWait();

@@ -23,6 +23,8 @@ public class MyMenuBar extends MenuBar {
     public MyMenuBar(ActionCenter actionCenter){
         super();
 
+        this.setId("myMenuBar");
+
         this.actionCenter = actionCenter;
 
         addFilesItems();
