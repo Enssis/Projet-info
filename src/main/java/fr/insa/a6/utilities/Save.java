@@ -6,21 +6,19 @@ import fr.insa.a6.treillis.Type;
 import fr.insa.a6.treillis.nodes.Noeud;
 import fr.insa.a6.treillis.terrain.Triangle;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Sauvegarde {
+public class Save {
 
-    public static Treillis getTreillis(String path) throws IOException {
+    public static Treillis getTreillis(String path) {
         try {
             BNFReader reader = new BNFReader(new FileReader(path));
             return reader.getTreillis();
-        }catch (FileNotFoundException e){
-            return null;
+        }catch (IOException ioException){
+            return new Treillis();
         }
-
     }
 
     public static void saveTreillis(Treillis treillis, String savePath){

@@ -48,7 +48,7 @@ public class Segment extends Forme{
         gc.setGlobalAlpha(0.3);
         gc.setLineWidth(3);
         gc.strokeLine(pA.getPosX() + origin.getPosX(), pA.getPosY() + origin.getPosY(),
-                pB.getPosX() + origin.getPosX(), pB.getPosY() + origin.getPosY());
+                pB.getPosX(), pB.getPosY());
         gc.setGlobalAlpha(1);
     }
 

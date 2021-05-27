@@ -8,29 +8,24 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
 import javafx.stage.FileChooser;
-import org.json.simple.*;
-import org.json.simple.parser.*;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.ArrayList;
 
 public class MyMenuBar extends MenuBar {
 
-    // variables permettants la lecture des fichier json  de preference
-    private JSONObject jsonPreferences;
 
     private final Options optionsData = new Options();
     private final ActionCenter actionCenter;
 
     private MenuButton files;
 
-    public MyMenuBar(ActionCenter actionCenter) throws IOException, ParseException {
+    public MyMenuBar(ActionCenter actionCenter){
         super();
 
-        this.actionCenter = actionCenter;
+        this.setId("myMenuBar");
 
-        jsonInit();
+        this.actionCenter = actionCenter;
 
         addFilesItems();
 
@@ -40,11 +35,13 @@ public class MyMenuBar extends MenuBar {
         calculation.setOnAction(e -> {
             actionCenter.setInDrawing(false);
             actionCenter.redraw();
+            actionCenter.drawCalculInfo();
         });
 
         MenuItem drawing = new MenuItem(optionsData.traduction("design"));
         drawing.setOnAction(e -> {
             actionCenter.setInDrawing(true);
+            actionCenter.getGraphics().removeInfos();
             actionCenter.redraw();
         });
 
@@ -54,56 +51,32 @@ public class MyMenuBar extends MenuBar {
         
     }
 
-    //initialisation des variables permettants la lecture des fichier json de langue et de preference
-    private void jsonInit() throws IOException, ParseException {
-        JSONParser jsonParser = new JSONParser();
-        jsonPreferences = (JSONObject) jsonParser.parse(new FileReader("src/main/java/fr/insa/a6/ressources/preference.json"));
-    }
-
     //creation du menu File
     private void addFilesItems()
     {
-        //cree une nouvelle feuille de dessin (affiche une pop up de confirmation avant)
+        //cree une nouvelle feuille de dessin
         MenuItem newMI = new MenuItem(optionsData.traduction("new"));
-        newMI.setOnAction(e -> {
-            try {
-                actionCenter.newTreillis();
-            } catch (IOException | ParseException ioException) {
-                ioException.printStackTrace();
-            }
-        });
+        newMI.setOnAction(e -> actionCenter.newTreillis());
+
 
         //affiche le dossier contenant les projets
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(optionsData.traduction("open project"));
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-        fileChooser.initialDirectoryProperty().setValue(new File(optionsData.getSavePath()));
+        FileChooser fileChooser = optionsData.getFileChooser(optionsData.traduction("open project"));
 
         MenuItem open = new MenuItem(optionsData.traduction("open"));
         open.setOnAction(e -> {
-            try {
-                File file = fileChooser.showOpenDialog(actionCenter.getStage());
-                String path = file.getPath();
-                actionCenter.load(path);
-                optionsData.jsonInit(true);
-                optionsData.addOpenRecent(path);
-                optionsData.setLastOpen(path);
-                optionsData.saveFile();
-            } catch (IOException | ParseException exception) {
-                exception.printStackTrace();
-            }
+            File file = fileChooser.showOpenDialog(actionCenter.getStage());
+            String path = file.getPath();
+            actionCenter.load(path);
+            optionsData.updatePath(path, true);
         });
 
 
         //affiche les fichiers ouvert recemment
         Menu openRecent = openRecent();
 
-        //sauvegarde le fichier la ou on veux
+        //sauvegarde le fichier la ou on veut
 
-        FileChooser fileChooser2 = new FileChooser();
-        fileChooser2.setTitle(optionsData.traduction("save as"));
-        fileChooser2.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-        fileChooser2.initialDirectoryProperty().setValue(new File(optionsData.getSavePath()));
+        FileChooser fileChooser2 = optionsData.getFileChooser(optionsData.traduction("save as"));
 
         MenuItem saveAs = new MenuItem(optionsData.traduction("save as"));
 
@@ -112,15 +85,7 @@ public class MyMenuBar extends MenuBar {
             File file = fileChooser2.showSaveDialog(actionCenter.getStage());
             String path = file.getPath();
             actionCenter.saveAct(path);
-            try {
-                optionsData.jsonInit(true);
-            } catch (IOException | ParseException ioException) {
-                ioException.printStackTrace();
-            }
-            optionsData.setLastOpen(path);
-            optionsData.addOpenRecent(path);
-            optionsData.setSavePath(path);
-            optionsData.saveFile();
+            optionsData.updatePath(path, true);
         });
 
         //sauvegarde le fichier dans l'emplacement de sauvegarde par defaut
@@ -132,19 +97,7 @@ public class MyMenuBar extends MenuBar {
                 path = optionsData.getSavePath() + name +".txt";
             }
             actionCenter.saveAct(path);
-            try {
-                optionsData.jsonInit(true);
-            } catch (IOException | ParseException ioException) {
-                ioException.printStackTrace();
-            }
-            try {
-                optionsData.jsonInit(true);
-            } catch (IOException | ParseException ioException) {
-                ioException.printStackTrace();
-            }
-            optionsData.setLastOpen(path);
-            optionsData.addOpenRecent(path);
-            optionsData.saveFile();
+            optionsData.updatePath(path, true);
         });
 
         //affiche une pop up avec les options quand on clique dessus
@@ -161,30 +114,30 @@ public class MyMenuBar extends MenuBar {
     private Menu openRecent()
     {
         Menu openRecent = new Menu(optionsData.traduction("open recent"));
-        JSONArray recentString = (JSONArray) jsonPreferences.get("open recent");
-        for (Object path : recentString) {
-            File file = new File((String) path);
+        ArrayList<String> recentString = optionsData.getOpenRecent();
+
+        ArrayList<String> recentToRemove = new ArrayList<>();
+
+        for (String path : recentString) {
+            //test si le fichier existe toujours, si non, on le rajoute a la liste des chemin de fichier à enlever
+            File file = new File(path);
             if(!file.exists()){
-                optionsData.removeOpenRecent((String) path);
+                recentToRemove.add(path);
                 continue;
             }
-            MenuItem item = new MenuItem( ActionCenter.nameFromPath((String) path));
+
+            MenuItem item = new MenuItem(ActionCenter.nameFromPath(path));
             item.setOnAction(e -> {
-                try {
-                    actionCenter.load((String) path);
-                    optionsData.jsonInit(true);
-                    optionsData.addOpenRecent((String) path);
-                    optionsData.setLastOpen((String) path);
-                    optionsData.saveFile();
-                } catch (IOException | ParseException ioException) {
-                    System.err.println("ERREUR NOM DU FICHIER");
-                }
+                actionCenter.load(path);
+                optionsData.updatePath(path, false);
             });
             openRecent.getItems().add(item);
         }
 
+        for (String path : recentToRemove) {
+            optionsData.removeOpenRecent(path);
+        }
+
         return openRecent;
     }
-
-
 }

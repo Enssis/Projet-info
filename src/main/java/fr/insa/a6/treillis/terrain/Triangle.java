@@ -164,4 +164,18 @@ public class Triangle extends Forme {
 
         return pos[0] == pos[1] && pos[1] == pos[2] || colineaire || near;
     }
+
+    public boolean asPoint(PointTerrain point){
+        for (PointTerrain p : points) {
+            if(point.isPoint(p)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isTriangle(Triangle t){
+        PointTerrain[] tPoints = t.getPoints();
+        return asPoint(tPoints[0]) && asPoint(tPoints[1]) && asPoint(tPoints[2]);
+    }
 }
