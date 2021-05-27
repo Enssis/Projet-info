@@ -18,7 +18,6 @@ import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.treillis.terrain.Triangle;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
@@ -43,7 +42,6 @@ public class ActionCenter {
     private MainScene mainScene;
     private final Graphics graphics;
     private Stage stage;
-    private Options options = new Options();
     private String name;
     private String path;
 
@@ -59,13 +57,11 @@ public class ActionCenter {
     private boolean inDrawing = true;
 
     //1 m => 50 px
-    private double echelle = 50;
+    private final double echelle = 50;
 
     public ActionCenter(Treillis treillis) {
-
         graphics = new Graphics();
         this.treillis = treillis;
-
     }
 
     //initialisation de la classe
@@ -87,9 +83,10 @@ public class ActionCenter {
         addKeyboardEvent();
     }
 
+    //recharge la fenetre sans changer le treillis mais en changeant le style / la langue ...
     public void reload(String path) {
 
-        options = new Options();
+        Options options = new Options();
 
         mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), this);
         Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
@@ -115,6 +112,7 @@ public class ActionCenter {
         addKeyboardEvent();
     }
 
+    //charge un treillis
     public void load(String path){
         treillis = Save.getTreillis(path);
         this.name = nameFromPath(path);
@@ -167,7 +165,7 @@ public class ActionCenter {
                     case 0 -> setSelected();
                     case 1 -> addNoeud();
                     case 2 -> addBarre();
-                    case 3 -> addTerrain();
+                    case 3 -> addZoneConstructible();
                     case 4 -> addTriangleTrn();
                 }
             }
@@ -206,13 +204,22 @@ public class ActionCenter {
 
     }
 
+    //ajout des fonctions appelés durant différentes actions du clavier
     private void addKeyboardEvent() {
         mainScene.setOnKeyPressed(key -> {
-            if (key.getCode() == KeyCode.ESCAPE){
-                cancelButton();
-            }else if(key.getCode() == KeyCode.DELETE){
-                deleteForme(currentSelect);
-                deleteAllFormes();
+            switch (key.getCode()) {
+                case ESCAPE -> cancelButton();
+                case DELETE -> {
+                    deleteForme(currentSelect);
+                    deleteAllFormes();
+                }
+                case N -> mainScene.getIcons().setSelected(10);
+                case B -> mainScene.getIcons().setSelected(20);
+                case A -> mainScene.getIcons().setSelected(12);
+                case D -> mainScene.getIcons().setSelected(11);
+                case S -> mainScene.getIcons().setSelected(0);
+                case Z -> mainScene.getIcons().setSelected(30);
+                case T -> mainScene.getIcons().setSelected(40);
             }
         });
     }
@@ -231,6 +238,7 @@ public class ActionCenter {
         graphics.draw(selectedButton, inDrawing);
     }
 
+    //appele la bonne fonction d'ajout du noeud selon le type choisi
     private void addNoeud(){
         if(terrain.contain(mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY())) {
             switch (selectedButton) {
@@ -243,7 +251,7 @@ public class ActionCenter {
     }
 
     //fonction de creation de noeud pour les barres
-    //construit par defaut un noeud simple ou sinon un appui simple s'ilne ne peut
+    //construit par defaut un noeud simple ou sinon un appui simple s'il ne peut pas
     public Noeud createNoeudBarre(boolean distSup, Point firstSegmentPoint){
         Noeud noeudRes = null;
         double posX, posY;
@@ -264,6 +272,7 @@ public class ActionCenter {
         return noeudRes;
     }
 
+    //fonctions d'ajout de noeuds simple
     private void addNoeudSimple() {
         addNoeudSimple(mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY());
     }
@@ -278,6 +287,7 @@ public class ActionCenter {
         return null;
     }
 
+    //fonctions d'ajout d'un appui
     public void addAppui(boolean simple) {
         testAppui(simple, mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY());
     }
@@ -317,13 +327,6 @@ public class ActionCenter {
                 nearest.setSelected(true);
                 currentSelect = nearest;
                 graphics.drawInfos(nearest);
-            }
-        }else if(terrain != null){
-            currentSelect = null;
-
-            if(terrain.contain(mouseX, mouseY)){
-                terrain.setSelected(true);
-                graphics.drawInfos(terrain);
             }
         }
     }
@@ -383,7 +386,8 @@ public class ActionCenter {
         graphics.draw(selectedButton, inDrawing);
     }
 
-    private void addTerrain() {
+    //met en place la zone constructible
+    private void addZoneConstructible() {
         currentClick ++;
 
         if(currentClick == 1){
@@ -400,10 +404,12 @@ public class ActionCenter {
         }
     }
 
-    public void drawCalculInfo(){
+    //ecrit les infos lié au calcul
+    public void writeCalculInfo(){
         mainScene.getInfos().drawCalculInfo();
     }
 
+    //fonction de creation des points composant un triangle
     public PointTerrain addPointTrn() {
         double px = mouseX - graphics.getOrigin().getPosX(), py = mouseY - graphics.getOrigin().getPosY();
         PointTerrain pt = null;
@@ -418,6 +424,7 @@ public class ActionCenter {
         return pt;
     }
 
+    //fonction de creation de triangles
     public void addTriangleTrn(){
         currentClick++;
         PointTerrain p;
@@ -461,14 +468,6 @@ public class ActionCenter {
         redraw();
     }
 
-    public void setSelectedButton(int selectedButton) {
-        this.selectedButton = selectedButton;
-    }
-
-    public void setInDrawing(boolean inDrawing){
-        this.inDrawing = inDrawing;
-    }
-
     //retire le point selectionné
     public void removeSelected() {
         if (currentSelect != null) {
@@ -487,6 +486,8 @@ public class ActionCenter {
         multipleSelect.clear();
         graphics.removeInfos();
     }
+
+    //fonctions de suppressions :
 
     //supprime un element
     public void deleteForme(Forme f){
@@ -599,8 +600,9 @@ public class ActionCenter {
             }
 
             if (drag) {
-                if (p.getPosX() < Math.max(mouseX, dragMouseX) && p.getPosX() > Math.min(mouseX, dragMouseX) &&
-                        p.getPosY() < Math.max(mouseY, dragMouseY) && p.getPosY() > Math.min(mouseY, dragMouseY)) {
+                Point origin = graphics.getOrigin();
+                if (p.getPosX() + origin.getPosX() < Math.max(mouseX, dragMouseX) && p.getPosX() + origin.getPosX()> Math.min(mouseX, dragMouseX) &&
+                        p.getPosY() + origin.getPosY() < Math.max(mouseY, dragMouseY) && p.getPosY() + origin.getPosY() > Math.min(mouseY, dragMouseY)) {
                     if (!multipleSelect.contains(f)) {
                         multipleSelect.add(f);
                         f.setSelected(true);
@@ -677,10 +679,6 @@ public class ActionCenter {
         return secondSegmentPoint;
     }
 
-    public void setBarreType(Type barreType) {
-        this.barreType = barreType;
-    }
-
     public boolean isInDrawing() {
         return inDrawing;
     }
@@ -704,5 +702,17 @@ public class ActionCenter {
 
     public Type getBarreType() {
         return barreType;
+    }
+
+    public void setSelectedButton(int selectedButton) {
+        this.selectedButton = selectedButton;
+    }
+
+    public void setInDrawing(boolean inDrawing){
+        this.inDrawing = inDrawing;
+    }
+
+    public void setBarreType(Type barreType) {
+        this.barreType = barreType;
     }
 }

@@ -224,4 +224,29 @@ public class IconBox extends VBox {
         });
     }
 
+    public void setSelected(int id){
+        switch (id) {
+            case 0 -> selectBtn.setSelected(true);
+            case 10 -> {
+                noeudBtn.setSelected(true);
+                choixNoeud.setText(optionsData.traduction("simple node"));
+            }
+            case 11 -> {
+                noeudBtn.setSelected(true);
+                choixNoeud.setText(optionsData.traduction("double support"));
+            }
+            case 12 -> {
+                noeudBtn.setSelected(true);
+                choixNoeud.setText(optionsData.traduction("simple support"));
+            }
+            case 20 -> barreBtn.setSelected(true);
+            case 30 -> terrainBtn.setSelected(true);
+            case 40 -> triangleTerrainBtn.setSelected(true);
+        }
+        if(id != 0) {
+            actionCenter.removeSelected();
+        }
+        actionCenter.setSelectedButton(id);
+    }
+
 }

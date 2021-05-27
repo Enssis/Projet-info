@@ -35,7 +35,7 @@ public class MyMenuBar extends MenuBar {
         calculation.setOnAction(e -> {
             actionCenter.setInDrawing(false);
             actionCenter.redraw();
-            actionCenter.drawCalculInfo();
+            actionCenter.writeCalculInfo();
         });
 
         MenuItem drawing = new MenuItem(optionsData.traduction("design"));
