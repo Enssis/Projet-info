@@ -74,7 +74,7 @@ public class Type {
 
         HBox nameHB = new HBox(10);
         nameHB.getChildren().addAll(nameLbl, nameTF);
-        nameHB.setAlignment(Pos.CENTER_RIGHT);
+        nameHB.setAlignment(Pos.CENTER);
 
 
         //cout
@@ -83,7 +83,7 @@ public class Type {
 
         HBox costHB = new HBox(10);
         costHB.getChildren().addAll(costLbl, costTF);
-        costHB.setAlignment(Pos.CENTER_RIGHT);
+        costHB.setAlignment(Pos.CENTER);
 
 
         //lmin
@@ -92,7 +92,7 @@ public class Type {
 
         HBox lMinHB = new HBox(10);
         lMinHB.getChildren().addAll(lMinLbl, lMinTF);
-        lMinHB.setAlignment(Pos.CENTER_RIGHT);
+        lMinHB.setAlignment(Pos.CENTER);
 
 
         //lmax
@@ -101,7 +101,7 @@ public class Type {
 
         HBox lmaxHB = new HBox(10);
         lmaxHB.getChildren().addAll(lmaxLbl, lmaxTF);
-        lmaxHB.setAlignment(Pos.CENTER_RIGHT);
+        lmaxHB.setAlignment(Pos.CENTER);
 
 
         //rtension
@@ -110,7 +110,7 @@ public class Type {
 
         HBox rTensionHB = new HBox(10);
         rTensionHB.getChildren().addAll(rTensionLbl, rTensionTF);
-        rTensionHB.setAlignment(Pos.CENTER_RIGHT);
+        rTensionHB.setAlignment(Pos.CENTER);
 
 
         //rcomp
@@ -119,7 +119,7 @@ public class Type {
 
         HBox rCompHB = new HBox(10);
         rCompHB.getChildren().addAll(rCompLbl, rCompTF);
-        rCompHB.setAlignment(Pos.CENTER_RIGHT);
+        rCompHB.setAlignment(Pos.CENTER);
 
 
         //couleurs
@@ -129,7 +129,7 @@ public class Type {
 
         HBox colorHB = new HBox(10);
         colorHB.getChildren().addAll(colorLBL, colorPicker);
-        colorHB.setAlignment(Pos.CENTER_RIGHT);
+        colorHB.setAlignment(Pos.CENTER);
 
         //buttons
         //boutons d'ajout, ne fait rien si une case n'est pas remplie
@@ -156,7 +156,7 @@ public class Type {
 
         HBox buttonHB = new HBox(10);
         buttonHB.getChildren().addAll(addTypeBtn, cancelBtn);
-        buttonHB.setAlignment(Pos.CENTER_RIGHT);
+        buttonHB.setAlignment(Pos.CENTER);
 
 
         VBox mainVB = new VBox(10);

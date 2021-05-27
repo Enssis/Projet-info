@@ -7,6 +7,9 @@ import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * 
  */
@@ -65,5 +68,22 @@ public class NoeudSimple extends Noeud {
         }
         return creable;
     }
+
+    @Override
+    public ArrayList<String> getInfos(){
+        String[] str = new String[]{"posX : " + posX ,
+                "posY : " + posY,
+                "selected : " + selected
+        };
+        ArrayList<String> output = new ArrayList<>(Arrays.asList(str));
+
+        if(forceApplique != null){
+            output.add("Forces :");
+            output.addAll(forceApplique.getInfos());
+        }
+
+        return output;
+    }
+
 
 }
