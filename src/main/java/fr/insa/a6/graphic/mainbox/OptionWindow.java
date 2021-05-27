@@ -11,9 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 
 public class OptionWindow {
 
@@ -82,6 +80,8 @@ public class OptionWindow {
             case "fr" -> i = 1;
         }
 
+        languageCB.setId("languageCB");
+
         languageCB.getSelectionModel().select(i);
 
         HBox languageHB = new HBox(10);
@@ -91,23 +91,17 @@ public class OptionWindow {
 
 
         //boutons
-        Button applyBtn = new Button(options.traduction("apply"));
+        MyButton applyBtn = new MyButton(options.traduction("apply"));
         applyBtn.setOnAction(e -> {
             tempOptions.setDefaultH(Long.parseLong(heightTF.getText()));
             tempOptions.setDefaultW(Long.parseLong(widthTF.getText()));
-
             tempOptions.setLanguage(languageCB.getSelectionModel().getSelectedItem().getValue());
-
             tempOptions.saveFile();
-
-            try {
-                actionCenter.reload(actionCenter.getPath());
-            } catch (IOException | ParseException ioException) {
-                ioException.printStackTrace();
-            }
+            actionCenter.reload(actionCenter.getPath());
+            optionWindow.close();
         });
 
-        Button cancelBtn = new Button(options.traduction("cancel"));
+        MyButton cancelBtn = new MyButton(options.traduction("cancel"));
         cancelBtn.setOnAction(e -> optionWindow.close());
 
         HBox buttonHB = new HBox(20);
@@ -118,8 +112,15 @@ public class OptionWindow {
         VBox layout = new VBox(20);
         layout.getChildren().setAll(themeVB, sizeVB, languageHB, buttonHB);
         layout.setAlignment(Pos.CENTER);
+        layout.setId("vBox");
 
         Scene scene1 = new Scene(layout, 300, 300);
+
+        if(options.getTheme().equals("light")){
+            scene1.getStylesheets().add("stylesSheet/lightTheme/popUpLightStyle.css");
+        }else{
+            scene1.getStylesheets().add("stylesSheet/darkTheme/popUpDarkStyle.css");
+        }
 
         optionWindow.setScene(scene1);
         optionWindow.showAndWait();

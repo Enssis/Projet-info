@@ -9,6 +9,7 @@ import fr.insa.a6.treillis.terrain.PointTerrain;
 import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.treillis.terrain.Triangle;
+import javafx.scene.paint.Color;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -26,14 +27,13 @@ public class BNFReader extends BufferedReader {
 
     private ArrayList<HashMap<String, String>> file = new ArrayList<>();
 
-    public BNFReader(Reader in, int sz) throws IOException {
-        super(in, sz);
-        initFile();
-    }
-
-    public BNFReader(Reader in) throws IOException {
+    public BNFReader(Reader in) {
         super(in);
-        initFile();
+        try {
+            initFile();
+        }catch (IOException ioException){
+            ioException.printStackTrace();
+        }
     }
 
     private void initFile() throws IOException {
@@ -83,7 +83,8 @@ public class BNFReader extends BufferedReader {
         int id = Integer.parseInt(type[1]);
         catalogue.put(id, new Type(type[7], Double.parseDouble(type[2]), Double.parseDouble(type[3]),
                 Double.parseDouble(type[4]), Double.parseDouble(type[5]),
-                Double.parseDouble(type[6]), id));
+                Double.parseDouble(type[6]), id, Color.web(type[8])));
+        catalogueId ++;
     }
 
     private void addNoeud(String[] strNoeud){
@@ -115,7 +116,7 @@ public class BNFReader extends BufferedReader {
         barreId = Integer.parseInt(strBarre[1]);
 
         barres.add(new Barres(noeuds.get(Integer.parseInt(strBarre[3])), noeuds.get(Integer.parseInt(strBarre[4])),
-                catalogue.get(Integer.parseInt(strBarre[4])), barreId));
+                catalogue.get(Integer.parseInt(strBarre[2])), barreId));
 
     }
 

@@ -35,6 +35,15 @@ public class SegmentTerrain extends Segment {
         super.drawNear(gc, origin);
     }
 
+    public static void drawGhost(GraphicsContext gc, Point origin, Point pA, Point pB){
+        gc.setGlobalAlpha(0.5);
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2);
+        gc.strokeLine(pA.getPosX() + origin.getPosX(), pA.getPosY() + origin.getPosY(),
+                pB.getPosX(), pB.getPosY());
+        gc.setGlobalAlpha(1);
+    }
+
     public ArrayList<Triangle> getTriangles() {
         return triangles;
     }
@@ -64,6 +73,13 @@ public class SegmentTerrain extends Segment {
         return distTo(p) < tolerance && distTo(p) != -1;
     }
 
+    @Override
+    public ArrayList<String> getInfos() {
+        ArrayList<String> infos = super.getInfos();
+        infos.add("triangles : " + triangles.size());
+        return infos;
+    }
+
     public double distTo(Point p){
         Point p2 = Maths.rotation(pA, p, angle);
 
@@ -76,5 +92,6 @@ public class SegmentTerrain extends Segment {
     public boolean asOneTriangle() {
         return triangles.size() == 1;
     }
+
 
 }

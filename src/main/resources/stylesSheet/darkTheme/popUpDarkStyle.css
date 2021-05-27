@@ -1,5 +1,6 @@
 #myRB {
     -fx-font: 9pt"Arial";
+    -fx-text-fill:white;
 }
 
 #myRB .radio {
@@ -14,38 +15,41 @@
 
 #labelTitle {
     -fx-font:bold 13pt"Arial";
+    -fx-text-fill:white;
 
 }
 
 #labelNormal {
     -fx-font:10pt"Arial";
     -fx-padding:5;
+    -fx-text-fill:white;
 }
 
 #vBox {
-  -fx-background-color : #E4E7E6;
+  -fx-background-color : #545454;
 }
 
 #myBtn {
     -fx-font-size:18pt;
     -fx-font:bold 10pt"Arial";
-    -fx-background-color: #E4E7E6;
+    -fx-background-color: #545454;
     -fx-border-width: 2px;
     -fx-border-style: solid;
     -fx-border-color: #3f41d1;
     -fx-border-radius: 4px;
+    -fx-text-fill:white;
 }
 
 #myBtn:hover {
-    -fx-background-color: #bbc3c1;
+    -fx-background-color: #808080;
     -fx-border-width: 2px;
     -fx-border-style: solid;
     -fx-border-color: #3f41d1;
     -fx-border-radius: 4px;
 }
 
-#languageCB, #colorPicker {
-  -fx-background-color: #E4E7E6;
+#languageCB, #colorPicker{
+  -fx-background-color: #545454;
   -fx-border-width: 2px;
   -fx-border-style: solid;
   -fx-border-color: #3f41d1;
@@ -54,20 +58,25 @@
 
 #languageCB .label {
   -fx-font:bold 10pt"Arial";
+  -fx-text-fill:white;
 }
 
 #colorPicker .label {
   -fx-font:bold 10pt"Arial";
+  -fx-text-fill:white;
 }
 
+.combo-box-base {
+  -fx-text-fill:white;
+}
 
 .custom-color-dialog, .color-picker {
-    -fx-control-inner-background: #E4E7E6 ;
-    -fx-background: #E4E7E6 ;
+    -fx-control-inner-background: #545454 ;
+    -fx-background: #545454 ;
 }
 
 #languageCB:hover, #colorPicker:hover {
-  -fx-background-color: #bbc3c1;
+  -fx-background-color: #808080;
   -fx-border-width: 2px;
   -fx-border-style: solid;
   -fx-border-color: #3f41d1;
@@ -76,9 +85,10 @@
 
 #myTF {
   -fx-font:10pt"Arial";
-  -fx-background-color: #E4E7E6;
+  -fx-background-color: #545454;
   -fx-border-width: 1px;
   -fx-border-style: solid;
   -fx-border-color: #3f41d1;
   -fx-border-radius: 4px;
+  -fx-text-fill:white;
 }
