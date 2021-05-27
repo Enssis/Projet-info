@@ -169,10 +169,13 @@ public class Graphics {
             drawNear();
         }
         gc.setGlobalAlpha(1);
+
+        //dessin le fantome de la zone constructible
         if(selectedButton == 30 && ac.getCurrentClick() == 1){
             drawTerrainZone(ac.getMouseX() , ac.getMouseY() , ac.getTerrainX() + origin.getPosX(), ac.getTerrainY() + origin.getPosY());
         }
 
+        //dessin le fantome des triangles
         if(selectedButton == 40 ) {
             if (ac.getCurrentClick() >= 1 && ac.getFirstSegmentPoint() != null){
                 SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), mousePoint);
@@ -185,6 +188,7 @@ public class Graphics {
             }
         }
 
+        //dessin le fantome des barres
         if(selectedButton == 20 ) {
             Point firstPoint = ac.getFirstSegmentPoint();
             if (ac.getCurrentClick() >= 1 && firstPoint != null){
