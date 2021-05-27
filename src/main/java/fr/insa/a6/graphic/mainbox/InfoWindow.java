@@ -2,7 +2,10 @@ package fr.insa.a6.graphic.mainbox;
 
 import fr.insa.a6.graphic.utils.MyLabel;
 import fr.insa.a6.graphic.utils.*;
+import fr.insa.a6.treillis.Force;
+import fr.insa.a6.treillis.Type;
 import fr.insa.a6.treillis.dessin.Forme;
+import fr.insa.a6.treillis.nodes.NoeudSimple;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.*;
 import javafx.geometry.Pos;
@@ -38,21 +41,18 @@ public class InfoWindow extends VBox {
 
         Options optionsData = new Options();
 
-        MyButton addForceBtn = new MyButton(optionsData.traduction("add force"));
-        addForceBtn.setOnAction(actionEvent -> {
-
-        });
-
-
-
+        if(f instanceof NoeudSimple) {
+            MyButton addForceBtn = new MyButton(optionsData.traduction("add force"));
+            addForceBtn.setOnAction(actionEvent -> {
+                Force.createTypePopUp(actionCenter, (NoeudSimple) f);
+            });
+            this.getChildren().add(addForceBtn);
+        }
         MyButton deleteBtn = new MyButton(optionsData.traduction("delete"));
         deleteBtn.setOnAction(actionEvent -> {
-            ac.deleteForme(f);
+            actionCenter.deleteForme(f);
             removeInfos();
         });
-
-        HBox buttonHB = new HBox(20);
-        buttonHB.getChildren().addAll(deleteBtn, addForceBtn);
 
         this.getChildren().add(deleteBtn);
     }
@@ -69,7 +69,7 @@ public class InfoWindow extends VBox {
         Options optionsData = new Options();
         MyButton deleteBtn = new MyButton(optionsData.traduction("delete"));
         deleteBtn.setOnAction(actionEvent -> {
-            ac.deleteZoneConstru(t);
+            actionCenter.deleteZoneConstru(t);
             removeInfos();
         });
 
