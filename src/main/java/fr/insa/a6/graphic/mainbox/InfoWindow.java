@@ -6,6 +6,7 @@ import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.*;
 import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -35,12 +36,25 @@ public class InfoWindow extends VBox {
             this.getChildren().add(mL);
         }
 
-        MyButton delete = new MyButton(optionsData.traduction("delete"));
-        delete.setOnAction(actionEvent -> {
-            actionCenter.deleteForme(f);
+        Options optionsData = new Options();
+
+        MyButton addForceBtn = new MyButton(optionsData.traduction("add force"));
+        addForceBtn.setOnAction(actionEvent -> {
+
+        });
+
+
+
+        MyButton deleteBtn = new MyButton(optionsData.traduction("delete"));
+        deleteBtn.setOnAction(actionEvent -> {
+            ac.deleteForme(f);
             removeInfos();
         });
-        this.getChildren().add(delete);
+
+        HBox buttonHB = new HBox(20);
+        buttonHB.getChildren().addAll(deleteBtn, addForceBtn);
+
+        this.getChildren().add(deleteBtn);
     }
 
     //dessine les informations de l'élément sélectionné
@@ -52,12 +66,14 @@ public class InfoWindow extends VBox {
             this.getChildren().add(mL);
         }
 
-        MyButton delete = new MyButton(optionsData.traduction("delete"));
-        delete.setOnAction(actionEvent -> {
-            actionCenter.deleteZoneConstru(t);
+        Options optionsData = new Options();
+        MyButton deleteBtn = new MyButton(optionsData.traduction("delete"));
+        deleteBtn.setOnAction(actionEvent -> {
+            ac.deleteZoneConstru(t);
             removeInfos();
         });
-        this.getChildren().add(delete);
+
+        this.getChildren().add(deleteBtn);
     }
 
     public void removeInfos() {

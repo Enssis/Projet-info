@@ -1,6 +1,7 @@
 {
   "fr" : {
     "add type" : "Ajouter un type",
+    "add force" : "Ajouter une force",
     "apply" : "Appliquer",
     "calculation" : "Calculs",
     "cancel" : "Annuler",
@@ -51,6 +52,7 @@
   },
   "en" : {
     "add type" : "Add type",
+    "add force" : "Add force",
     "apply" : "Apply",
     "calculation" : "Calculation",
     "cancel" : "Cancel",
