@@ -1,6 +1,7 @@
 package fr.insa.a6.treillis;
 
 
+import fr.insa.a6.graphic.utils.MyButton;
 import fr.insa.a6.graphic.utils.MyLabel;
 import fr.insa.a6.graphic.utils.MyTextField;
 import fr.insa.a6.treillis.nodes.NoeudSimple;
@@ -17,6 +18,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Force {
 
@@ -64,25 +66,19 @@ public class Force {
 
         //buttons
         //boutons d'ajout, ne fait rien si une case n'est pas remplie
-        Button addTypeBtn = new Button(options.traduction("add force"));
+        MyButton addTypeBtn = new MyButton(options.traduction("add force"));
         addTypeBtn.setOnAction(e -> {
-          /*  try {
-                Treillis treillis = ac.getTreillis();
-                Type type = new Type(nameTF.getText(), Double.parseDouble(costTF.getText()), Double.parseDouble(lMinTF.getText()),
-                        Double.parseDouble(lmaxTF.getText()), Double.parseDouble(rTensionTF.getText()),
-                        Double.parseDouble(rCompTF.getText()), treillis.getNumerateur().getNewTypeId());
-                treillis.addType(type);
-                ArrayList<Type> catalogue = treillis.getCatalogue();
-                typeComboBox.setItems(FXCollections.observableArrayList(catalogue));
-                typeComboBox.getSelectionModel().select(catalogue.get(catalogue.indexOf(type)));
+            try {
+                Force force = new Force(Double.parseDouble(fxTF.getText()), Double.parseDouble(fyTF.getText()));
+                noeudSimple.setForceApplique(force);
                 addForce.close();
             }catch (NumberFormatException exception){
                 exception.printStackTrace();
-            } */
+            }
         });
 
         //bouton pour annuler, ferme juste la fenetre
-        Button cancelBtn = new Button(options.traduction("cancel"));
+        MyButton cancelBtn = new MyButton(options.traduction("cancel"));
         cancelBtn.setOnAction(e -> addForce.close());
 
         HBox buttonHB = new HBox(10);
@@ -91,13 +87,26 @@ public class Force {
 
 
         VBox mainVB = new VBox(10);
-      //  mainVB.getChildren().addAll(nameHB, costHB, lMinHB, lmaxHB, rTensionHB, rCompHB, buttonHB);
+        mainVB.getChildren().addAll(fxHB, fyHB, buttonHB);
 
         Scene scene1 = new Scene(mainVB, 400, 250);
+
+        if(options.getTheme().equals("light")){
+            scene1.getStylesheets().add("stylesSheet/lightTheme/popUpLightStyle.css");
+        }else{
+            scene1.getStylesheets().add("stylesSheet/darkTheme/popUpDarkStyle.css");
+        }
 
         addForce.setScene(scene1);
         addForce.showAndWait();
 
+    }
+
+    public ArrayList<String> getInfos(){
+        String[] str = new String[]{"Fx : " + fX ,
+                "Fy : " + fY
+        };
+        return new ArrayList<>(Arrays.asList(str));
     }
 
 }
