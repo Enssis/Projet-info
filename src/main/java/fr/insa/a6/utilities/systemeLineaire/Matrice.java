@@ -1,9 +1,9 @@
 package fr.insa.a6.utilities.systemeLineaire;
 
-public class Matrice<ne> {
+public class Matrice {
 
-    private static int nbrLig, nbrCol;
-    private static double[][] coeffs;
+    private int nbrLig, nbrCol;
+    private double[][] coeffs;
 
     public Matrice(int nl, int nc, double[][] coeffs){
         this.nbrLig = nl;
@@ -136,7 +136,7 @@ public class Matrice<ne> {
             Matrice mat = new Matrice(nMax - nMin + 1, nbrCol);
             for (int i = 0; i < mat.nbrLig; i++) {
                 for (int j = 0; j < mat.nbrCol; j++) {
-                    System.out.println(i + " puis " +j);
+                    System.out.println(i + " et " +j);
                     mat.coeffs[i][j] = coeffs[nMin + i][j];
                 }
             }
@@ -252,7 +252,7 @@ public class Matrice<ne> {
         }
     }
 
-    public static void transvection(int l1, int l2) {
+    public void transvection(int l1, int l2) {
         if (l1 > nbrCol) throw new Error("l1 > nbrCol");
         if (coeffs[l1][l1] == 0.0) throw new Error("Ml1l1 = 0");
 
@@ -268,9 +268,9 @@ public class Matrice<ne> {
         if(e >= nbrCol || e >= nbrLig ) throw new Error("e trop grand");
         double max = 0.0;
         int maxI = 0;
-        for (int i = 0; i < nbrLig; i++) {
-            if( max < coeffs[i][e]) {
-                max = coeffs[i][e];
+        for (int i = e; i < nbrLig; i++) {
+            if( max < Math.abs(coeffs[i][e])) {
+                max = Math.abs(coeffs[i][e]);
                 maxI = i;
             }
         }
@@ -278,43 +278,50 @@ public class Matrice<ne> {
         else return -1;
     }
 
+    public int min (int a, int b){
+        if (a<b) return a;
+        else return b;
+    }
 
-    public static Matrice descenteGauss(Matrice M, int nl, int nc) {
-        int ne = 0;
-        Matrice N = M;
-        int nbl = nl;
-        for (int i = 0; i < nl; i++) {
-            M.permuteLigne(i,M.lignePlusGrandPivot(nbl-1));
-            if(i+1 <nl) N = M.subLignes(i+1, nbl-1);
-            nbl = nbl  - 1;
+    public ResGauss descenteGauss() {
+        Matrice N;
+        int nbl = this.nbrLig;
+        int signature = 1;
+        Matrice matricecol = new Matrice(this.nbrLig,1);
+        int rang = min(this.nbrCol,this.nbrLig);
 
-           /* for (int j = 0; j < i; j++) {
-                if (coeffs[i][i] == 0 && (i + 1) < nl) {
-                    M.permuteLigne(i, (i + 1));
-                }
-                else if (coeffs[i][i] == 0 && (i + 1) > nl) {
-                    M.permuteLigne((i - 1), i);
-                }
+        for (int i = 0; i < this.nbrLig; i++) {
+            if (permuteLigne(i, lignePlusGrandPivot(nbl - 1)) == -1) signature = -signature;
 
-                if ((i + 1) < nl && coeffs[i + 1][j] != 0) {
-                    transvection((i+1),i);
-                }
-                else if ((i + 1) > nl && coeffs[i + 1][j] != 0){
-                    transvection(i,(i-1));
-                }
-            }*/
+           N = subLignes(1, nbl - 1);
+            nbl = nbl - 1;
         }
-            return (M);
+
+
+
+        for (int j = 0; j < this.nbrLig; j++) {
+            for (int i = j; i>0; i=i-1) {
+                if (subCol(j, j) == matricecol) rang = rang - 1;
+            }
+            for (int i =0; i< j; i=i+1) {
+               if (i>1 && coeffs[i][j] != 0) transvection((i-1),i);
+               else if (i<2 && coeffs[i][j] != 0) transvection((i-1),i);
+            }
+        }
+            return new ResGauss(rang,signature);
         }
 
 
 
     public static void main(String[] args) {
 
-       double[][] coeffs = {{0, 1, 0,2}, {5, 1, 0,7}, {1, 5, 1, 2}};
+       double[][] coeffs = {{1,2,3,4},{4, 3, 2,1}, {2,3,1,4}};
+        Matrice lamatrice = new Matrice(3,4, coeffs);
 
+
+        System.out.println(lamatrice.descenteGauss());
         System.out.println("matrice avec la descente");
-        System.out.println(descenteGauss(new Matrice(3, 4, coeffs),3,4));
+        System.out.println(lamatrice);
 
     }
 }
