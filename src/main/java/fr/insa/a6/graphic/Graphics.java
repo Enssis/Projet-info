@@ -8,16 +8,20 @@ import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
+import fr.insa.a6.treillis.nodes.AppuiDouble;
+import fr.insa.a6.treillis.nodes.AppuiSimple;
 import fr.insa.a6.treillis.nodes.Noeud;
+import fr.insa.a6.treillis.nodes.NoeudSimple;
+import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.ActionCenter;
+import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-
-// class s'occupant principalement de tout ce qui se réfère au dessin sur le canvas
+//classe s'occupant principalement de tout ce qui se réfère au dessin sur le canvas
 public class Graphics {
 
     private GraphicsContext gc;
@@ -49,8 +53,8 @@ public class Graphics {
         infoWindow.removeInfos();
     }
 
-    public void drawInfosMultiplePoint(int nbPoint, int nbSegment) {
-        infoWindow.drawInfosMultiplePoint(nbPoint,nbSegment);
+    public void drawInfosMultiplePoint(int nbNoeud,int nbAppuiDouble, int nbAppuiSimple,int nbBarre) {
+        infoWindow.drawInfosMultiplePoint(nbNoeud, nbAppuiDouble, nbAppuiSimple, nbBarre);
     }
 
     public void drawInfos(Forme nearest){
@@ -92,6 +96,7 @@ public class Graphics {
 
     //fonction de dessin principale
     public void draw(int selectedButton, boolean inDrawing) {
+        Point mousePoint = new Point(ac.getMouseX(), ac.getMouseY());
 
         MainCanvas canvas = mainScene.getCanvas();
 
@@ -102,6 +107,15 @@ public class Graphics {
                 0,
                 canvas.getWidth(),
                 canvas.getHeight());
+
+        //dessin de l'echelle
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(5);
+        gc.setFill(Color.BLACK);
+        gc.fillText("1 m", canvas.getWidth() - 30 - ac.getEchelle() / 2, canvas.getHeight() - 5);
+        gc.strokeLine(canvas.getWidth() - 20 - ac.getEchelle(), canvas.getHeight() - 20, canvas.getWidth() - 20, canvas.getHeight() - 20);
+
+
 
         //dessin du terrain
         Terrain terrain = ac.getTreillis().getTerrain();
@@ -121,13 +135,17 @@ public class Graphics {
         //dessin des noeuds et barres selectionné + des infos associées
         if(ac.isInMultSelect()){
             ArrayList<Forme> multipleSelect = ac.getMultipleSelect();
-            int nbPoint = 0;
-            int nbSeg = 0;
+            int nbNoeud = 0;
+            int nbAppuiSimple = 0;
+            int nbAppuiDouble = 0;
+            int nbBarre = 0;
             for (Forme f: multipleSelect) {
-                if(f instanceof Point) nbPoint ++;
-                else if(f instanceof Segment) nbSeg ++;
+                if(f instanceof NoeudSimple) nbNoeud ++;
+                else if(f instanceof Barres) nbBarre ++;
+                else if(f instanceof AppuiDouble) nbAppuiDouble ++;
+                else if(f instanceof AppuiSimple) nbAppuiSimple ++;
             }
-            drawInfosMultiplePoint(nbPoint, nbSeg);
+            drawInfosMultiplePoint(nbNoeud, nbAppuiDouble, nbAppuiSimple, nbBarre);
         }
 
         //dessin de la zone de selection
@@ -151,8 +169,54 @@ public class Graphics {
             drawNear();
         }
         gc.setGlobalAlpha(1);
+
+        //dessin le fantome de la zone constructible
         if(selectedButton == 30 && ac.getCurrentClick() == 1){
-            drawTerrainZone(ac.getMouseX() - origin.getPosX(), ac.getMouseY() - origin.getPosY(), ac.getTerrainX(), ac.getTerrainY());
+            drawTerrainZone(ac.getMouseX() , ac.getMouseY() , ac.getTerrainX() + origin.getPosX(), ac.getTerrainY() + origin.getPosY());
+        }
+
+        //dessin le fantome des triangles
+        if(selectedButton == 40 ) {
+            if (ac.getCurrentClick() >= 1 && ac.getFirstSegmentPoint() != null){
+                SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), mousePoint);
+            }
+            if(ac.getCurrentClick() == 2 && ac.getSecondSegmentPoint() != null && ac.getFirstSegmentPoint() != null){
+                SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(),new Point(
+                        ac.getSecondSegmentPoint().getPosX() + origin.getPosX(),
+                        ac.getSecondSegmentPoint().getPosY() + origin.getPosY()));
+                SegmentTerrain.drawGhost(gc, origin, ac.getSecondSegmentPoint(), mousePoint);
+            }
+        }
+
+        //dessin le fantome des barres
+        if(selectedButton == 20 ) {
+            Point firstPoint = ac.getFirstSegmentPoint();
+            if (ac.getCurrentClick() >= 1 && firstPoint != null){
+                if(Maths.dist(firstPoint, mousePoint.substract(origin)) > ac.getBarreType().getlMin() * ac.getEchelle()){
+                    Point point = mousePoint;
+
+                    double lMax = ac.getBarreType().getlMax() * ac.getEchelle();
+                    if(Maths.dist(firstPoint, mousePoint.substract(origin)) > lMax ){
+                        double angle = Maths.angle(firstPoint, mousePoint.substract(origin));
+                        point = new Point(firstPoint.getPosX() + lMax * Math.cos(angle) + origin.getPosX(), firstPoint.getPosY() + lMax * Math.sin(angle) + origin.getPosY());
+                    }
+
+
+                    assert terrain != null;
+                    if (terrain.containOutTriangle(point.getPosX() - origin.getPosX(), point.getPosY() - origin.getPosY())){
+                        Barres.drawGhost(gc, ac.getFirstSegmentPoint(), point, origin);
+                        point.drawGhost(gc, new Point(0, 0));
+                    }
+                }
+
+            }
+        }
+
+        if(selectedButton != 0 && selectedButton != 30 && selectedButton != 20) {
+            assert terrain != null;
+            if (terrain.containOutTriangle(mousePoint.getPosX(), mousePoint.getPosY()) && selectedButton != 40){
+                mousePoint.drawGhost(gc, new Point(0,0));
+            }
         }
 
     }
@@ -181,6 +245,7 @@ public class Graphics {
 
     public void setMainScene(MainScene mainScene) {
         this.mainScene = mainScene;
+        this.infoWindow = mainScene.getInfos();
         this.gc = mainScene.getCanvas().getGraphicsContext();
     }
 
@@ -194,15 +259,14 @@ public class Graphics {
         this.lastOrigin.setPosY(origin.getPosY());
     }
 
-    public double getScale() {
-        return scale;
-    }
-
-    public void setScale(double scale) {
-        this.scale = scale;
-    }
-
     public Point getOrigin() {
         return origin;
+    }
+
+    public void resetOrigin() {
+        origin.setPosX(0);
+        origin.setPosY(0);
+        lastOrigin.setPosX(0);
+        lastOrigin.setPosY(0);
     }
 }

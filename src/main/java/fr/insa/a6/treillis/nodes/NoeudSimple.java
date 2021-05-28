@@ -1,8 +1,14 @@
 package fr.insa.a6.treillis.nodes;
 
+import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Point;
+import fr.insa.a6.treillis.terrain.Triangle;
+import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * 
@@ -51,5 +57,33 @@ public class NoeudSimple extends Noeud {
         gc.setFill(Color.BLUE);
         gc.fillOval(posX - 2, posY - 2,5, 5);
     }
+
+    public static boolean isCreable(Treillis treillis, double posX, double posY){
+        boolean creable = true;
+        for (Noeud p : treillis.getNoeuds()) {
+            if(Maths.dist(p, new Point(posX, posY)) < 15) creable = false;
+        }
+        for (Triangle triangle : treillis.getTerrain().getTriangles()) {
+            if (triangle.contain(posX, posY)) creable = false;
+        }
+        return creable;
+    }
+
+    @Override
+    public ArrayList<String> getInfos(){
+        String[] str = new String[]{"posX : " + posX ,
+                "posY : " + posY,
+                "selected : " + selected
+        };
+        ArrayList<String> output = new ArrayList<>(Arrays.asList(str));
+
+        if(forceApplique != null){
+            output.add("Forces :");
+            output.addAll(forceApplique.getInfos());
+        }
+
+        return output;
+    }
+
 
 }

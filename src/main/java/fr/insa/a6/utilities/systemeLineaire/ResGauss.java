@@ -2,6 +2,7 @@ package fr.insa.a6.utilities.systemeLineaire;
 
 public class ResGauss {
     public int rang, signature;
+
     ResGauss(int rang, int signature)
     {
         this.rang = rang;

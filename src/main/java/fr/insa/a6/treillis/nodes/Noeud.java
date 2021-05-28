@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public abstract class Noeud extends Point {
 
-    private Force forceApplique;
+    protected Force forceApplique;
     private ArrayList<Barres> linkedBarres;
 
     public Noeud(int id, Force forceApplique, ArrayList<Barres> linkedBarres) {
@@ -37,4 +37,7 @@ public abstract class Noeud extends Point {
 
     public abstract String saveString();
 
+    public void setForceApplique(Force forceApplique) {
+        this.forceApplique = forceApplique;
+    }
 }

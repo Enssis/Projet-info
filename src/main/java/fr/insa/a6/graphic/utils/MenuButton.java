@@ -10,7 +10,7 @@ public class MenuButton extends Menu {
 
     public MenuButton(String title) {
         super(title);
-
+        this.setId("menuButton");
     }
 
 }
