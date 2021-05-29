@@ -111,6 +111,11 @@ public class Triangle extends Forme {
         return infos;
     }
 
+    @Override
+    public void drawResult(double result, GraphicsContext gc, Point origin) {
+
+    }
+
     public String saveString() {
         StringBuilder save = new StringBuilder("Triangle;" + id);
         for (PointTerrain point: points) {

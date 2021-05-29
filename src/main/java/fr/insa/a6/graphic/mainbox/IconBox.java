@@ -19,25 +19,21 @@ import javafx.stage.Stage;
 
 public class IconBox extends VBox {
 
-    private Options optionsData = new Options();
+    private final Options optionsData = new Options();
 
-    private ToggleGroup group= new ToggleGroup();
+    private final ToggleGroup group= new ToggleGroup();
 
     private MyRadioButton selectBtn;
 
-    private MyLabel treillisLbl;
     private MyRadioButton barreBtn;
     private VBox typeBox;
-    private MyButton choixNoeud;
+    private final MyButton choixNoeud;
     private MyRadioButton noeudBtn;
 
-    private MyLabel terrainLbl;
     private MyRadioButton terrainBtn;
     private MyRadioButton triangleTerrainBtn;
-    private MainScene mainScene;
 
-    private MainCanvas mainCanvas;
-    private ActionCenter actionCenter;
+    private final ActionCenter actionCenter;
 
     //types : 0 -> simple, 1 -> appuiDouble, 2 -> appuiSimple, 3 -> appuiEncastre
     private String typeNoeud = "0";
@@ -49,13 +45,12 @@ public class IconBox extends VBox {
         this.setAlignment(Pos.CENTER);
         this.setId("iconBox");
 
-        this.mainScene = mainScene;
-        this.mainCanvas = mainScene.getCanvas();
+        MainCanvas mainCanvas = mainScene.getCanvas();
         this.actionCenter = mainScene.getActionCenter();
 
         initSelect();
 
-        treillisLbl = new MyLabel("      " + optionsData.traduction("treillis") + "      ", "title");
+        MyLabel treillisLbl = new MyLabel("      " + optionsData.traduction("treillis") + "      ", "title");
 
         choixNoeud = new MyButton(optionsData.traduction("simple node"));
         choixNoeud.setOnAction(a -> {
@@ -66,7 +61,7 @@ public class IconBox extends VBox {
         initBarre();
         initTypeBarre();
 
-        terrainLbl = new MyLabel("      " + optionsData.traduction("ground") + "      ", "title");
+        MyLabel terrainLbl = new MyLabel("      " + optionsData.traduction("ground") + "      ", "title");
 
         initTrn();
         initTriangleTrn();
@@ -77,7 +72,7 @@ public class IconBox extends VBox {
     }
 
     private void initNoeud() {
-        noeudBtn = new MyRadioButton("Noeud");
+        noeudBtn = new MyRadioButton(optionsData.traduction("node"));
         noeudBtn.setToggleGroup(group);
 
         noeudBtn.setOnAction(actionEvent -> {
@@ -161,7 +156,7 @@ public class IconBox extends VBox {
     }
 
     private void initSelect() {
-        selectBtn = new MyRadioButton("Selection");
+        selectBtn = new MyRadioButton(optionsData.traduction("selection"));
         selectBtn.setToggleGroup(group);
         selectBtn.setSelected(true);
 
@@ -222,6 +217,31 @@ public class IconBox extends VBox {
             actionCenter.removeSelected();
             actionCenter.setSelectedButton(40);
         });
+    }
+
+    public void setSelected(int id){
+        switch (id) {
+            case 0 -> selectBtn.setSelected(true);
+            case 10 -> {
+                noeudBtn.setSelected(true);
+                choixNoeud.setText(optionsData.traduction("simple node"));
+            }
+            case 11 -> {
+                noeudBtn.setSelected(true);
+                choixNoeud.setText(optionsData.traduction("double support"));
+            }
+            case 12 -> {
+                noeudBtn.setSelected(true);
+                choixNoeud.setText(optionsData.traduction("simple support"));
+            }
+            case 20 -> barreBtn.setSelected(true);
+            case 30 -> terrainBtn.setSelected(true);
+            case 40 -> triangleTerrainBtn.setSelected(true);
+        }
+        if(id != 0) {
+            actionCenter.removeSelected();
+        }
+        actionCenter.setSelectedButton(id);
     }
 
 }

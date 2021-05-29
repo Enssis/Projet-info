@@ -108,6 +108,8 @@ public class Treillis {
         }
         Barres b = new Barres(pA, pB, type, numerateur.getNewBarreId());
         barres.add(b);
+        pA.addBarres(b);
+        pB.addBarres(b);
     }
 
     public void removeElement(Forme f){

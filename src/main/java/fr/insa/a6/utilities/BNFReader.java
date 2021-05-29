@@ -12,6 +12,7 @@ import fr.insa.a6.treillis.terrain.Triangle;
 import javafx.scene.paint.Color;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -31,12 +32,12 @@ public class BNFReader extends BufferedReader {
         super(in);
         try {
             initFile();
-        }catch (IOException ioException){
+        }catch (IOException | InvocationTargetException ioException){
             ioException.printStackTrace();
         }
     }
 
-    private void initFile() throws IOException {
+    private void initFile() throws IOException, InvocationTargetException {
         String line;
         while ((line = this.readLine()) != null){
             String[] lineArr = line.split(";");
@@ -114,9 +115,15 @@ public class BNFReader extends BufferedReader {
 
     public void addBarre(String[] strBarre){
         barreId = Integer.parseInt(strBarre[1]);
+        Noeud pA = noeuds.get(Integer.parseInt(strBarre[3]));
+        Noeud pB = noeuds.get(Integer.parseInt(strBarre[4]));
+        Barres barre = new Barres(pA, pB, catalogue.get(Integer.parseInt(strBarre[2])), barreId);
 
-        barres.add(new Barres(noeuds.get(Integer.parseInt(strBarre[3])), noeuds.get(Integer.parseInt(strBarre[4])),
-                catalogue.get(Integer.parseInt(strBarre[2])), barreId));
+        pA.addBarres(barre);
+        pB.addBarres(barre);
+
+        barres.add(barre);
+
 
     }
 

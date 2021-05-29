@@ -14,6 +14,8 @@ public abstract class Forme {
 
     public abstract ArrayList<String> getInfos();
 
+    public abstract void drawResult(double result, GraphicsContext gc, Point origin);
+
     public void setSelected(boolean selected) {
         this.selected = selected;
     }

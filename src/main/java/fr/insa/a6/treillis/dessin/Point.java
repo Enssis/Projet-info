@@ -1,7 +1,9 @@
 package fr.insa.a6.treillis.dessin;
 
+import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +99,15 @@ public class Point extends Forme{
         return new ArrayList<>(Arrays.asList(str));
     }
 
+    @Override
+    public void drawResult(double result, GraphicsContext gc, Point origin) {
+
+
+        String resultat = String.format("%+4.2E",result);
+        gc.setFill(Color.BLACK);
+        gc.fillText(resultat, posX + origin.posX + 5, posY + origin.posY);
+    }
+
     public Point add(Point p){
         return new Point(p.posX + posX, p.posY + posY);
     }
@@ -108,4 +119,6 @@ public class Point extends Forme{
     public void setSegmentSelected(boolean segmentSelected) {
         this.segmentSelected = segmentSelected;
     }
+
+
 }

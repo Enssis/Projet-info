@@ -204,4 +204,12 @@ public class Type {
 
         return infos;
     }
+
+    public double getrComp() {
+        return rComp;
+    }
+
+    public double getrTension() {
+        return rTension;
+    }
 }

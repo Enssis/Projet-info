@@ -8,10 +8,7 @@ import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
-import fr.insa.a6.treillis.nodes.AppuiDouble;
-import fr.insa.a6.treillis.nodes.AppuiSimple;
-import fr.insa.a6.treillis.nodes.Noeud;
-import fr.insa.a6.treillis.nodes.NoeudSimple;
+import fr.insa.a6.treillis.nodes.*;
 import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.utilities.ActionCenter;
@@ -20,6 +17,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 //classe s'occupant principalement de tout ce qui se réfère au dessin sur le canvas
 public class Graphics {
@@ -170,52 +169,84 @@ public class Graphics {
         }
         gc.setGlobalAlpha(1);
 
-        //dessin le fantome de la zone constructible
-        if(selectedButton == 30 && ac.getCurrentClick() == 1){
-            drawTerrainZone(ac.getMouseX() , ac.getMouseY() , ac.getTerrainX() + origin.getPosX(), ac.getTerrainY() + origin.getPosY());
-        }
-
-        //dessin le fantome des triangles
-        if(selectedButton == 40 ) {
-            if (ac.getCurrentClick() >= 1 && ac.getFirstSegmentPoint() != null){
-                SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), mousePoint);
+        if(ac.isInDrawing()) {
+            //dessin le fantome de la zone constructible
+            if (selectedButton == 30 && ac.getCurrentClick() == 1) {
+                drawTerrainZone(ac.getMouseX(), ac.getMouseY(), ac.getTerrainX() + origin.getPosX(), ac.getTerrainY() + origin.getPosY());
             }
-            if(ac.getCurrentClick() == 2 && ac.getSecondSegmentPoint() != null && ac.getFirstSegmentPoint() != null){
-                SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(),new Point(
-                        ac.getSecondSegmentPoint().getPosX() + origin.getPosX(),
-                        ac.getSecondSegmentPoint().getPosY() + origin.getPosY()));
-                SegmentTerrain.drawGhost(gc, origin, ac.getSecondSegmentPoint(), mousePoint);
+
+            //dessin le fantome des triangles
+            if (selectedButton == 40) {
+                if (ac.getCurrentClick() >= 1 && ac.getFirstSegmentPoint() != null) {
+                    SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), mousePoint);
+                }
+                if (ac.getCurrentClick() == 2 && ac.getSecondSegmentPoint() != null && ac.getFirstSegmentPoint() != null) {
+                    SegmentTerrain.drawGhost(gc, origin, ac.getFirstSegmentPoint(), new Point(
+                            ac.getSecondSegmentPoint().getPosX() + origin.getPosX(),
+                            ac.getSecondSegmentPoint().getPosY() + origin.getPosY()));
+                    SegmentTerrain.drawGhost(gc, origin, ac.getSecondSegmentPoint(), mousePoint);
+                }
             }
-        }
 
-        //dessin le fantome des barres
-        if(selectedButton == 20 ) {
-            Point firstPoint = ac.getFirstSegmentPoint();
-            if (ac.getCurrentClick() >= 1 && firstPoint != null){
-                if(Maths.dist(firstPoint, mousePoint.substract(origin)) > ac.getBarreType().getlMin() * ac.getEchelle()){
-                    Point point = mousePoint;
+            //dessin le fantome des barres
+            if (selectedButton == 20) {
+                Point firstPoint = ac.getFirstSegmentPoint();
+                if (ac.getCurrentClick() >= 1 && firstPoint != null) {
+                    if (Maths.dist(firstPoint, mousePoint.substract(origin)) > ac.getBarreType().getlMin() * ac.getEchelle()) {
+                        Point point = mousePoint;
 
-                    double lMax = ac.getBarreType().getlMax() * ac.getEchelle();
-                    if(Maths.dist(firstPoint, mousePoint.substract(origin)) > lMax ){
-                        double angle = Maths.angle(firstPoint, mousePoint.substract(origin));
-                        point = new Point(firstPoint.getPosX() + lMax * Math.cos(angle) + origin.getPosX(), firstPoint.getPosY() + lMax * Math.sin(angle) + origin.getPosY());
+                        double lMax = ac.getBarreType().getlMax() * ac.getEchelle();
+                        if (Maths.dist(firstPoint, mousePoint.substract(origin)) > lMax) {
+                            double angle = Maths.angle(firstPoint, mousePoint.substract(origin));
+                            point = new Point(firstPoint.getPosX() + lMax * Math.cos(angle) + origin.getPosX(), firstPoint.getPosY() + lMax * Math.sin(angle) + origin.getPosY());
+                        }
+
+
+                        assert terrain != null;
+                        SegmentTerrain segment = Appui.isCreable(terrain, mousePoint.getPosX() - origin.getPosX(), mousePoint.getPosY() - origin.getPosY());
+                        if (segment != null) {
+                            Point point1 = Appui.drawGhost(gc, origin, segment, Maths.dist(segment.getpA(), mousePoint.getPosX() - origin.getPosX(), mousePoint.getPosY() - origin.getPosY()) / segment.length());
+                            Barres.drawGhost(gc, ac.getFirstSegmentPoint(), point1, origin);
+                        } else if (terrain.containOutTriangle(point.getPosX() - origin.getPosX(), point.getPosY() - origin.getPosY())) {
+                            Barres.drawGhost(gc, ac.getFirstSegmentPoint(), point, origin);
+                            point.drawGhost(gc, new Point(0, 0));
+                        }
                     }
 
+                }
+            }
 
-                    assert terrain != null;
-                    if (terrain.containOutTriangle(point.getPosX() - origin.getPosX(), point.getPosY() - origin.getPosY())){
-                        Barres.drawGhost(gc, ac.getFirstSegmentPoint(), point, origin);
-                        point.drawGhost(gc, new Point(0, 0));
+            //dessin du fantome des noeuds
+            if (!(selectedButton == 0 || selectedButton == 30) && (selectedButton != 20 || ac.getCurrentClick() == 0)) {
+                assert terrain != null;
+
+                SegmentTerrain segment = Appui.isCreable(terrain, mousePoint.getPosX() - origin.getPosX(), mousePoint.getPosY() - origin.getPosY());
+                if (selectedButton == 10 || (segment == null && (selectedButton != 11 && selectedButton != 12))) {
+                    if (terrain.containOutTriangle(mousePoint.getPosX() - origin.getPosX(), mousePoint.getPosY() - origin.getPosY())) {
+                        mousePoint.drawGhost(gc, new Point(0, 0));
                     }
+                } else if (segment != null) {
+                   Appui.drawGhost(gc, origin, segment, Maths.dist(segment.getpA(), mousePoint.getPosX() - origin.getPosX(), mousePoint.getPosY() - origin.getPosY()) / segment.length());
                 }
 
             }
-        }
+        }else{
+            HashMap<Integer, double[]> results = ac.getResultCalcul();
+            HashMap<Forme, Integer> formeId = ac.getFormeId();
 
-        if(selectedButton != 0 && selectedButton != 30 && selectedButton != 20) {
-            assert terrain != null;
-            if (terrain.containOutTriangle(mousePoint.getPosX(), mousePoint.getPosY()) && selectedButton != 40){
-                mousePoint.drawGhost(gc, new Point(0,0));
+            if(results.size() > 0) {
+                for (Forme value : formeId.keySet()) {
+                    int id = formeId.get(value);
+                    if (value instanceof AppuiDouble) {
+                        value.drawResult(results.get(id)[0], gc, origin);
+                        value.drawResult(results.get(id)[1], gc, new Point(origin.getPosX() + 5, origin.getPosY() + 10));
+
+                    } else if (value instanceof Barres) {
+                        value.drawResult(results.get(id)[0], gc, origin);
+                    }else {
+                        value.drawResult(results.get(id)[0], gc, origin);
+                    }
+                }
             }
         }
 

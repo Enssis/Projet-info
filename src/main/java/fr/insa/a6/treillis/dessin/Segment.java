@@ -3,6 +3,7 @@ package fr.insa.a6.treillis.dessin;
 import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
 
 import java.util.ArrayList;
 
@@ -65,6 +66,21 @@ public class Segment extends Forme{
 
     }
 
+    @Override
+    public void drawResult(double result, GraphicsContext gc, Point origin) {
+        gc.save();
+
+        double angle = Maths.angle(pA, pB) * 360 / (2 * Math.PI);
+        Rotate r = new Rotate(angle, getCenter().posX + origin.getPosX(), getCenter().posY + origin.getPosY());
+        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+
+        //dessine le resultat
+        double resultat = ((double)((int) result * 100) / 100);
+        String stringRes = String.valueOf(resultat);
+        gc.setFill(Color.BLACK);
+        gc.fillText(stringRes, getCenter().posX + origin.posX - (int)(stringRes.length() * 3 / 2), getCenter().posY + origin.posY - 10);
+        gc.restore();
+    }
 
     public Point getCenter(){
         double posX = (pA.getPosX() + pB.getPosX()) / 2;

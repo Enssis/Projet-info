@@ -34,8 +34,10 @@ public class MyMenuBar extends MenuBar {
         MenuItem calculation = new MenuItem(optionsData.traduction("calculation"));
         calculation.setOnAction(e -> {
             actionCenter.setInDrawing(false);
+            actionCenter.removeSelectedAll();
+            actionCenter.removeSelected();
             actionCenter.redraw();
-            actionCenter.drawCalculInfo();
+            actionCenter.calculs();
         });
 
         MenuItem drawing = new MenuItem(optionsData.traduction("design"));
@@ -47,7 +49,16 @@ public class MyMenuBar extends MenuBar {
 
         mode.getItems().addAll(calculation, drawing);
 
-        this.getMenus().addAll(files, mode);
+        //creation du bouton menu aide
+        MenuButton aide = new MenuButton(optionsData.traduction("help"));
+
+        MenuItem help = new MenuItem(optionsData.traduction("manual"));
+
+        MenuItem report = new MenuItem(optionsData.traduction("report"));
+
+        aide.getItems().addAll(help, report);
+
+        this.getMenus().addAll(files, mode, aide);
         
     }
 
@@ -86,6 +97,7 @@ public class MyMenuBar extends MenuBar {
             String path = file.getPath();
             actionCenter.saveAct(path);
             optionsData.updatePath(path, true);
+            actionCenter.reload(path);
         });
 
         //sauvegarde le fichier dans l'emplacement de sauvegarde par defaut
@@ -94,8 +106,9 @@ public class MyMenuBar extends MenuBar {
             String path = actionCenter.getPath();
             if(path.equals("")){
                 String name = "untiled" + (int) (Math.random() * 50);
-                path = optionsData.getSavePath() + name +".txt";
+                path = optionsData.getSavePath() + name +".treillis";
             }
+            System.out.println(path);
             actionCenter.saveAct(path);
             optionsData.updatePath(path, true);
         });
