@@ -4,6 +4,7 @@ package fr.insa.a6.treillis;
 import fr.insa.a6.graphic.utils.MyButton;
 import fr.insa.a6.graphic.utils.MyLabel;
 import fr.insa.a6.graphic.utils.MyTextField;
+import fr.insa.a6.treillis.nodes.Noeud;
 import fr.insa.a6.treillis.nodes.NoeudSimple;
 import fr.insa.a6.utilities.ActionCenter;
 import fr.insa.a6.utilities.Options;
@@ -19,8 +20,8 @@ import java.util.Arrays;
 
 public class Force {
 
-    public double fX;
-    public double fY;
+    private double fX;
+    private double fY;
 
     public Force() {
         fX = 0;
@@ -32,12 +33,12 @@ public class Force {
         this.fY = fy;
     }
 
-    static public void createTypePopUp(ActionCenter ac, NoeudSimple noeudSimple){
+    static public void createTypePopUp(ActionCenter ac, Noeud noeud){
         Stage addForce = new Stage();
         Options options = new Options();
 
         addForce.initModality(Modality.APPLICATION_MODAL);
-        addForce.setTitle(options.traduction("create type"));
+        addForce.setTitle(options.traduction("add force"));
         addForce.setResizable(false);
 
 
@@ -64,7 +65,7 @@ public class Force {
         addTypeBtn.setOnAction(e -> {
             try {
                 Force force = new Force(Double.parseDouble(fxTF.getText()), Double.parseDouble(fyTF.getText()));
-                noeudSimple.setForceApplique(force);
+                noeud.setForceApplique(force);
                 addForce.close();
             }catch (NumberFormatException exception){
                 exception.printStackTrace();
@@ -82,8 +83,9 @@ public class Force {
 
         VBox mainVB = new VBox(10);
         mainVB.getChildren().addAll(fxHB, fyHB, buttonHB);
+        mainVB.setId("vBox");
 
-        Scene scene1 = new Scene(mainVB, 400, 250);
+        Scene scene1 = new Scene(mainVB, 400, 130);
 
         if(options.getTheme().equals("light")){
             scene1.getStylesheets().add("stylesSheet/lightTheme/popUpLightStyle.css");
@@ -103,4 +105,11 @@ public class Force {
         return new ArrayList<>(Arrays.asList(str));
     }
 
+    public double getfX() {
+        return fX;
+    }
+
+    public double getfY() {
+        return fY;
+    }
 }

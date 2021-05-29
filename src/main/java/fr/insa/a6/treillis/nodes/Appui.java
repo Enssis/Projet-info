@@ -9,6 +9,7 @@ import fr.insa.a6.treillis.terrain.Triangle;
 import fr.insa.a6.utilities.Maths;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
 /**
@@ -86,5 +87,16 @@ public abstract class Appui extends Noeud {
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
         gc.drawImage(image, posX - image.getWidth()/2 + origin.getPosX(), posY + origin.getPosY());
         gc.restore();
+    }
+
+    public static Point drawGhost(GraphicsContext gc, Point origin, SegmentTerrain segment, double posSegment){
+        PointTerrain segmentPoint = segment.getpA();
+        double posX = segmentPoint.getPosX() + (segment.getpB().getPosX() - segmentPoint.getPosX()) * posSegment;
+        double posY = segmentPoint.getPosY() + (segment.getpB().getPosY() - segmentPoint.getPosY()) * posSegment;
+
+        gc.setStroke(Color.DARKGRAY);
+        gc.setLineWidth(2);
+        gc.strokeOval(posX - 5 + origin.getPosX(), posY - 5 + origin.getPosY(), 11, 11);
+        return new Point(posX + origin.getPosX(), posY + origin.getPosY());
     }
 }

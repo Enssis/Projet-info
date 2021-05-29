@@ -9,19 +9,19 @@ import fr.insa.a6.treillis.Type;
 import fr.insa.a6.treillis.dessin.Forme;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.dessin.Segment;
-import fr.insa.a6.treillis.nodes.Appui;
-import fr.insa.a6.treillis.nodes.Noeud;
-import fr.insa.a6.treillis.nodes.NoeudSimple;
+import fr.insa.a6.treillis.nodes.*;
 import fr.insa.a6.treillis.terrain.PointTerrain;
 import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.treillis.terrain.Triangle;
+import fr.insa.a6.utilities.systemeLineaire.Matrice;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class ActionCenter {
@@ -46,6 +46,9 @@ public class ActionCenter {
     private String path;
 
     private Treillis treillis;
+
+    private final HashMap<Integer, double[]> formesRes = new HashMap<>();
+    private final HashMap<Forme, Integer> formeId = new HashMap<>();
 
     private int currentClick = 0;
     private Point firstSegmentPoint = null, secondSegmentPoint = null;
@@ -91,6 +94,7 @@ public class ActionCenter {
         mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), this);
         Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
 
+        inDrawing = true;
         graphics.setMainScene(mainScene);
 
         graphics.resetOrigin();
@@ -107,6 +111,7 @@ public class ActionCenter {
         stage.setTitle(name);
         graphics.updateFormes(treillis);
         graphics.draw(selectedButton, inDrawing);
+        this.path = path;
 
         addMouseEvent();
         addKeyboardEvent();
@@ -405,8 +410,8 @@ public class ActionCenter {
     }
 
     //ecrit les infos lié au calcul
-    public void writeCalculInfo(){
-        mainScene.getInfos().drawCalculInfo();
+    public void writeCalculInfo(HashMap<Forme, Integer> formeId, HashMap<Integer, double[]> idValues){
+        mainScene.getInfos().drawCalculInfo(formeId, idValues);
     }
 
     //fonction de creation des points composant un triangle
@@ -456,16 +461,130 @@ public class ActionCenter {
             }
             currentClick = 0;
             Triangle triangle = new Triangle((PointTerrain) firstSegmentPoint, (PointTerrain) secondSegmentPoint, p, treillis.getNumerateur().getNewTriangleId(), terrain);
-            System.out.println(triangle.getId());
             terrain.addTriangle(triangle);
-
-            System.out.println(terrain.getTriangles());
 
             treillis.updateNoeuds(graphics);
             firstSegmentPoint.setSegmentSelected(false);
             secondSegmentPoint.setSegmentSelected(false);
         }
         redraw();
+    }
+
+
+    public void calculs(){
+        int id = 0;
+        int ns = treillis.getNoeuds().size(), nb = treillis.getBarres().size(), nas = 0, nad = 0;
+        //liste les formes et les associes à un identifiant
+        formeId.clear();
+        HashMap<Integer, Forme> idForme = new HashMap<>();
+        for (Barres barre : treillis.getBarres()) {
+            formeId.put(barre, id);
+            idForme.put(id, barre);
+            id ++;
+        }
+        for (Noeud noeud : treillis.getNoeuds()) {
+            if(noeud instanceof AppuiSimple){
+                formeId.put(noeud, id);
+                idForme.put(id, noeud);
+                id ++;
+                nas ++;
+            }else if(noeud instanceof AppuiDouble){
+                formeId.put(noeud, id);
+                idForme.put(id, noeud);
+                id += 2;
+                nad ++;
+            }
+        }
+
+        System.out.println(2 * ns + " " + nb + nas + 2 * nad);
+        if(2 * ns != nb + nas + 2 * nad) {
+            inDrawing = true;
+            throw new Error("treillis hyperstatique");
+        }
+        Matrice systeme = fillMatrice(formeId, id);
+        System.out.println(systeme);
+
+        Matrice res = systeme.resolution();
+        System.out.println(systeme.resolution());
+        if(res == null) {
+            inDrawing = true;
+            throw new Error("Matrice non inversible");
+        }
+        res = res.subCol(systeme.getNbrCol() - 1, systeme.getNbrCol() - 1);
+        System.out.println(res);
+
+        formesRes.clear();
+        for (int value : formeId.values()) {
+            if(idForme.get(value) instanceof AppuiDouble){
+                formesRes.put(value, new double[]{res.get(value, 0), res.get(value + 1, 0)});
+            }else{
+                formesRes.put(value, new double[]{res.get(value, 0)});
+            }
+        }
+        System.out.println(formesRes);
+
+        writeCalculInfo(formeId, formesRes);
+    }
+
+    public Matrice fillMatrice(HashMap<Forme, Integer> formeToId, int lastId){
+
+        /*
+        double[][] coeffs = {
+                {0.707, 0, 0, 1, 0, 0},
+                {-0.707, 0, -1, 0, 1, 0},
+                {0, 0.707, 0, 0, 0, 1},
+                {0, 0.707, 1, 0, 0, 0},
+                {-0.707, -0.707, 0, 0, 0, 0},
+                {0.707, -0.707, 0, 0, 0, 0}
+        };
+
+        Matrice systeme = new Matrice(6, 6, coeffs);
+        double[] vecResult = {0, 0, 0, 0, 0, 1000};
+        */
+        int size = treillis.getNoeuds().size() * 2;
+        Matrice systeme = new Matrice(size, lastId);
+        double[] vecResult = new double[size];
+
+        //rempli la matrice
+        for (int i = 0; i < treillis.getNoeuds().size() * 2; i += 2) {
+            Noeud noeud = treillis.getNoeuds().get(i/2);
+            System.out.println(noeud);
+            //ajout des valeurs liées aux barres
+            for (Barres barre : noeud.getLinkedBarres()) {
+                int col = formeToId.get(barre);
+                double angle;
+                if(noeud == barre.getpA()){
+                    angle = Maths.angle(noeud, barre.getpB());
+                }else if(noeud == barre.getpB()){
+                    angle = Maths.angle(noeud, barre.getpA());
+                }else{
+                    angle = 0;
+                    System.err.println("euuuuh");
+                }
+                systeme.set(i, col, Math.cos(angle));
+                systeme.set(i + 1, col, Math.sin(angle));
+            }
+            //ajout des forces
+            vecResult[i] = - noeud.getForceApplique().getfX();
+            vecResult[i + 1] = - noeud.getForceApplique().getfY();
+
+
+            if(noeud instanceof AppuiSimple){
+                int col = formeToId.get(noeud);
+                double angle = Maths.angle(((AppuiSimple) noeud).getSegmentTerrain().getpA(), ((AppuiSimple) noeud).getSegmentTerrain().getpB());
+                systeme.set(i, col, Math.cos(Math.PI /2 + angle));
+                systeme.set(i + 1, col, Math.sin(angle));
+
+            }else if(noeud instanceof AppuiDouble){
+                int col = formeToId.get(noeud);
+                systeme.set(i, col, 1);
+                systeme.set(i + 1, col + 1, 1);
+            }
+
+        }
+
+        System.out.println(formeToId);
+        return Matrice.concatCol(systeme, Matrice.creeVecteur(vecResult));
     }
 
     //retire le point selectionné
@@ -702,6 +821,14 @@ public class ActionCenter {
 
     public Type getBarreType() {
         return barreType;
+    }
+
+    public HashMap<Integer, double[]> getResultCalcul() {
+        return formesRes;
+    }
+
+    public HashMap<Forme, Integer> getFormeId() {
+        return formeId;
     }
 
     public void setSelectedButton(int selectedButton) {

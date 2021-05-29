@@ -35,8 +35,9 @@ public class MyMenuBar extends MenuBar {
         calculation.setOnAction(e -> {
             actionCenter.setInDrawing(false);
             actionCenter.removeSelectedAll();
+            actionCenter.removeSelected();
             actionCenter.redraw();
-            actionCenter.writeCalculInfo();
+            actionCenter.calculs();
         });
 
         MenuItem drawing = new MenuItem(optionsData.traduction("design"));
@@ -107,6 +108,7 @@ public class MyMenuBar extends MenuBar {
                 String name = "untiled" + (int) (Math.random() * 50);
                 path = optionsData.getSavePath() + name +".treillis";
             }
+            System.out.println(path);
             actionCenter.saveAct(path);
             optionsData.updatePath(path, true);
         });
