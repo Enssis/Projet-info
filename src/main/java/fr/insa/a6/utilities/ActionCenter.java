@@ -22,7 +22,9 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import javafx.scene.control.Alert;
 import java.util.HashMap;
+
 
 
 public class ActionCenter {
@@ -253,12 +255,16 @@ public class ActionCenter {
                 case 12 -> addAppui(true);
                 default -> System.out.println(selectedButton);
             }
+
         }else{
+
             Alert alerteZoneConstructible = new Alert(Alert.AlertType.ERROR);
             alerteZoneConstructible.setTitle("Erreur");
             alerteZoneConstructible.setContentText("Noeud hors zone constructible!");
             alerteZoneConstructible.showAndWait();
+
         }
+
     }
 
     //fonction de creation de noeud pour les barres
@@ -274,11 +280,19 @@ public class ActionCenter {
             posX = mouseX - graphics.getOrigin().getPosX();
             posY = mouseY - graphics.getOrigin().getPosY();
         }
+        if (!terrain.contain(posX, posY)){
+            Alert alerteZoneConstructible = new Alert(Alert.AlertType.WARNING);
+            alerteZoneConstructible.setTitle("Erreur");
+            alerteZoneConstructible.setHeaderText("CREATION BARRE IMPOSSIBLE");
+            alerteZoneConstructible.setContentText("Point hors zone constructible!");
+            alerteZoneConstructible.showAndWait(); 
+        }
         if(terrain.contain(posX, posY)) {
             noeudRes = addNoeudSimple(posX, posY);
             if(noeudRes == null){
                 noeudRes = testAppui(true, posX, posY);
             }
+
         }else{
             Alert alerteZoneConstructible = new Alert(Alert.AlertType.WARNING);
             alerteZoneConstructible.setTitle("Erreur");
@@ -287,6 +301,7 @@ public class ActionCenter {
             alerteZoneConstructible.showAndWait();
         }
         return noeudRes;
+
     }
 
     //fonctions d'ajout de noeuds simple
@@ -295,14 +310,17 @@ public class ActionCenter {
     }
 
     private NoeudSimple addNoeudSimple(double posX, double posY) {
+
         boolean distCreable = NoeudSimple.isDistCreable(treillis, posX, posY);
         boolean triangleCreable = NoeudSimple.isTriangleCreable(treillis, posX, posY);
         if(distCreable && triangleCreable) {
+
             NoeudSimple ns = treillis.createNoeudSimple(posX, posY);
             graphics.updateFormes(treillis);
             graphics.draw(selectedButton, inDrawing);
             return ns;
         }
+
 
         String textError = "";
 
@@ -318,6 +336,7 @@ public class ActionCenter {
         alerteTriangleTerrain.setTitle("Erreur création noeud");
         alerteTriangleTerrain.setContentText(textError);
         alerteTriangleTerrain.showAndWait();
+
 
         return null;
     }
@@ -337,6 +356,12 @@ public class ActionCenter {
             alerteNoeudAppui.setTitle("Erreur création noeud");
             alerteNoeudAppui.setContentText("Noeud non positionné sur un segment de terrain!");
             alerteNoeudAppui.showAndWait();
+        }
+        else {
+          Alert alerteNoeudAppui = new Alert(Alert.AlertType.WARNING);
+          alerteNoeudAppui.setTitle("Erreur création noeud");
+          alerteNoeudAppui.setContentText("Noeud non positionné sur un segment de terrain!");
+          alerteNoeudAppui.showAndWait();  
         }
         return null;
     }
@@ -414,7 +439,7 @@ public class ActionCenter {
                 return;
             }
         }
-        if(currentClick == 1){
+          if(currentClick == 1){
             p.setSegmentSelected(true);
             firstSegmentPoint = p;
         }else{

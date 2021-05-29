@@ -13,10 +13,10 @@ import java.util.HashMap;
 
 public class Terrain {
 
-    private double xMin;
-    private double xMax;
-    private double yMin;
-    private double yMax;
+    public double xMin;
+    public double xMax;
+    public double yMin;
+    public double yMax;
     private boolean selected = false;
 
     private HashMap<Integer, Triangle> triangles = new HashMap<>();
@@ -36,7 +36,7 @@ public class Terrain {
     }
 
     public boolean contain(double x, double y){
-        return x >= xMin && x <= xMax && y >= yMin && y <= yMax;
+        return (x >= xMin && x <= xMax && y >= yMin && y <= yMax);
     }
 
     //verifie si un point est dans la zone constructible mais pas dans les triangles
