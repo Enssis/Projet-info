@@ -17,6 +17,7 @@ import fr.insa.a6.treillis.terrain.Triangle;
 import fr.insa.a6.utilities.systemeLineaire.Matrice;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
@@ -252,6 +253,11 @@ public class ActionCenter {
                 case 12 -> addAppui(true);
                 default -> System.out.println(selectedButton);
             }
+        }else{
+            Alert alerteZoneConstructible = new Alert(Alert.AlertType.ERROR);
+            alerteZoneConstructible.setTitle("Erreur");
+            alerteZoneConstructible.setContentText("Noeud hors zone constructible!");
+            alerteZoneConstructible.showAndWait();
         }
     }
 
@@ -273,6 +279,12 @@ public class ActionCenter {
             if(noeudRes == null){
                 noeudRes = testAppui(true, posX, posY);
             }
+        }else{
+            Alert alerteZoneConstructible = new Alert(Alert.AlertType.WARNING);
+            alerteZoneConstructible.setTitle("Erreur");
+            alerteZoneConstructible.setHeaderText("CREATION BARRE IMPOSSIBLE");
+            alerteZoneConstructible.setContentText("Point hors zone constructible!");
+            alerteZoneConstructible.showAndWait();
         }
         return noeudRes;
     }
@@ -283,12 +295,30 @@ public class ActionCenter {
     }
 
     private NoeudSimple addNoeudSimple(double posX, double posY) {
-        if(NoeudSimple.isCreable(treillis, posX, posY)) {
+        boolean distCreable = NoeudSimple.isDistCreable(treillis, posX, posY);
+        boolean triangleCreable = NoeudSimple.isTriangleCreable(treillis, posX, posY);
+        if(distCreable && triangleCreable) {
             NoeudSimple ns = treillis.createNoeudSimple(posX, posY);
             graphics.updateFormes(treillis);
             graphics.draw(selectedButton, inDrawing);
             return ns;
         }
+
+        String textError = "";
+
+        if(!distCreable){
+            textError = "Noeuds trop proches!";
+        }
+        if(!triangleCreable){
+            if(textError.length() > 0) textError += " et ";
+            textError += "Noeud simple compris dans un triangle terrain!";
+        }
+
+        Alert alerteTriangleTerrain = new Alert(Alert.AlertType.WARNING);
+        alerteTriangleTerrain.setTitle("Erreur création noeud");
+        alerteTriangleTerrain.setContentText(textError);
+        alerteTriangleTerrain.showAndWait();
+
         return null;
     }
 
@@ -302,6 +332,11 @@ public class ActionCenter {
         SegmentTerrain segment = Appui.isCreable(terrain, posX, posY);
         if(segment != null) {
             return createAppui(simple, posX, posY, segment);
+        }else {
+            Alert alerteNoeudAppui = new Alert(Alert.AlertType.WARNING);
+            alerteNoeudAppui.setTitle("Erreur création noeud");
+            alerteNoeudAppui.setContentText("Noeud non positionné sur un segment de terrain!");
+            alerteNoeudAppui.showAndWait();
         }
         return null;
     }
@@ -344,6 +379,11 @@ public class ActionCenter {
         //Besoin d'ajouter la vérification que le point est créable, et quel type de point
         if(barreType == null){
             System.err.println("TYPE NULL");
+            Alert alerteTypeNull = new Alert(Alert.AlertType.INFORMATION);
+            alerteTypeNull.setTitle("");
+            alerteTypeNull.setHeaderText("CREATION BARRE IMPOSSIBLE");
+            alerteTypeNull.setContentText("Type nul!");
+            alerteTypeNull.showAndWait();
             currentClick --;
             return;
         }
