@@ -98,6 +98,8 @@ public class Matrice {
         coeffs[i][j] = value;
     }
 
+
+
     public Matrice concatLig(Matrice mat2) {
         if (this.nbrCol != mat2.nbrCol) {
             throw new Error("nombre de colonnes non égal : "+ this.nbrCol + " et " + mat2.nbrCol);
@@ -134,6 +136,7 @@ public class Matrice {
             Matrice mat = new Matrice(nMax - nMin + 1, nbrCol);
             for (int i = 0; i < mat.nbrLig; i++) {
                 for (int j = 0; j < mat.nbrCol; j++) {
+                    System.out.println(i + " et " +j);
                     mat.coeffs[i][j] = coeffs[nMin + i][j];
                 }
             }
@@ -168,6 +171,12 @@ public class Matrice {
     public Matrice metAuCarre()  {
         return concatCol(this.concatLig(identite(nbrCol)), identite(nbrLig).concatLig(this.transposee()));
     }
+
+    public static int intAlea(int bmin, int bmax){
+        int a = (int)(bmin + Math.random()*(bmax-bmin));
+        return a;
+    }
+
 
     public Matrice add(Matrice mat2){
         if(this.nbrLig != mat2.nbrLig || this.nbrCol != mat2.nbrCol){
@@ -251,7 +260,7 @@ public class Matrice {
 
         for (int i = 0; i < nbrCol; i++) {
             if (i == l1) coeffs[l2][l1] = 0.0;
-            else coeffs[l2][i] -= p * coeffs[l1][i];
+            else coeffs[l2][i] = coeffs[l2][i] - p * coeffs[l1][i];
         }
     }
 
@@ -259,9 +268,9 @@ public class Matrice {
         if(e >= nbrCol || e >= nbrLig ) throw new Error("e trop grand");
         double max = 0.0;
         int maxI = 0;
-        for (int i = 0; i < nbrLig; i++) {
-            if( max < coeffs[i][e]) {
-                max = coeffs[i][e];
+        for (int i = e; i < nbrLig; i++) {
+            if( max < Math.abs(coeffs[i][e])) {
+                max = Math.abs(coeffs[i][e]);
                 maxI = i;
             }
         }
@@ -269,9 +278,50 @@ public class Matrice {
         else return -1;
     }
 
+    public int min (int a, int b){
+        if (a<b) return a;
+        else return b;
+    }
+
+    public ResGauss descenteGauss() {
+        Matrice N;
+        int nbl = this.nbrLig;
+        int signature = 1;
+        Matrice matricecol = new Matrice(this.nbrLig,1);
+        int rang = min(this.nbrCol,this.nbrLig);
+
+        for (int i = 0; i < this.nbrLig; i++) {
+            if (permuteLigne(i, lignePlusGrandPivot(nbl - 1)) == -1) signature = -signature;
+
+           N = subLignes(1, nbl - 1);
+            nbl = nbl - 1;
+        }
+
+
+
+        for (int j = 0; j < this.nbrLig; j++) {
+            for (int i = j; i>0; i=i-1) {
+                if (subCol(j, j) == matricecol) rang = rang - 1;
+            }
+            for (int i =0; i< j; i=i+1) {
+               if (i>1 && coeffs[i][j] != 0) transvection((i-1),i);
+               else if (i<2 && coeffs[i][j] != 0) transvection((i-1),i);
+            }
+        }
+            return new ResGauss(rang,signature);
+        }
+
+
 
     public static void main(String[] args) {
-        double[][] coeffs = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
-        System.out.println((new Matrice(3, 3, coeffs).lignePlusGrandPivot(0)));
+
+       double[][] coeffs = {{1,2,3,4},{4, 3, 2,1}, {2,3,1,4}};
+        Matrice lamatrice = new Matrice(3,4, coeffs);
+
+
+        System.out.println(lamatrice.descenteGauss());
+        System.out.println("matrice avec la descente");
+        System.out.println(lamatrice);
+
     }
 }
