@@ -132,11 +132,13 @@ public class Options {
         this.keys = keys;
     }
 
-    public void setOpenRecent(ArrayList<String> openRecent) {
-        this.openRecent = openRecent;
-    }
-
     public void setSavePath(String savePath) {
+        String[] saveArray = savePath.split("\\\\");
+        savePath = "";
+        for (int i = 0; i < saveArray.length - 1; i++) {
+            savePath += saveArray[i] + "\\";
+        }
+
         this.savePath = savePath;
     }
 
@@ -199,7 +201,7 @@ public class Options {
     public FileChooser getFileChooser(String title){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.treillis"));
         fileChooser.initialDirectoryProperty().setValue(new File(getSavePath()));
         return fileChooser;
     }

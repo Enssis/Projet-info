@@ -24,6 +24,7 @@ public class Main extends Application{
 
         Options options = new Options();
 
+        //ouvre le dernier treillis ouvert s'il existe
         String lastOpenPath = options.getLastOpen();
         String name = ActionCenter.nameFromPath(lastOpenPath);
         Treillis treillis;
@@ -41,11 +42,11 @@ public class Main extends Application{
 
         MainScene mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), actionCenter);
 
-
         Scene scene = new Scene(mainScene, options.getWidth(), options.getHeight());
 
         actionCenter.init(mainScene, stage, lastOpenPath);
 
+        //mise en place du theme selon celui choisi
         if(options.getTheme().equals("light")){
             scene.getStylesheets().add("stylesSheet/lightTheme/lightStyle.css");
         }else{

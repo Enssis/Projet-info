@@ -1,5 +1,6 @@
 package fr.insa.a6.treillis.nodes;
 
+import fr.insa.a6.treillis.Force;
 import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.terrain.Terrain;
@@ -15,6 +16,7 @@ import java.util.Arrays;
  * 
  */
 public class NoeudSimple extends Noeud {
+
 
 
     public NoeudSimple(double posX, double posY, int id) {

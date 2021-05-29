@@ -16,6 +16,7 @@ public class MainScene extends BorderPane {
     private final MainCanvas canvas;
     private final InfoWindow infos;
     private final ActionCenter actionCenter;
+    private final IconBox icons;
 
     public MainScene(int w, int h, ActionCenter actionCenter) {
         super();
@@ -31,7 +32,7 @@ public class MainScene extends BorderPane {
         infos = new InfoWindow(this);
         this.setRight(infos);
 
-        IconBox icons = new IconBox(this);
+        icons = new IconBox(this);
         this.setLeft(icons);
 
         this.setCenter(canvas);
@@ -50,4 +51,7 @@ public class MainScene extends BorderPane {
         return actionCenter;
     }
 
+    public IconBox getIcons() {
+        return icons;
+    }
 }
