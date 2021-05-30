@@ -38,7 +38,7 @@ public class Main extends Application{
             }
         }
 
-        actionCenter  = new ActionCenter(treillis);
+        actionCenter  = new ActionCenter(treillis, getHostServices());
 
         MainScene mainScene = new MainScene((int) options.getWidth(), (int) options.getHeight(), actionCenter);
 

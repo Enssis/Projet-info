@@ -3,6 +3,7 @@ package fr.insa.a6.graphic.mainbox;
 import fr.insa.a6.graphic.utils.MenuButton;
 import fr.insa.a6.utilities.*;
 
+import javafx.application.HostServices;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -10,6 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MyMenuBar extends MenuBar {
@@ -53,6 +55,13 @@ public class MyMenuBar extends MenuBar {
         MenuButton aide = new MenuButton(optionsData.traduction("help"));
 
         MenuItem help = new MenuItem(optionsData.traduction("manual"));
+        help.setOnAction(e -> {
+            try {
+                openPdf();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
 
         MenuItem report = new MenuItem(optionsData.traduction("report"));
 
@@ -60,6 +69,13 @@ public class MyMenuBar extends MenuBar {
 
         this.getMenus().addAll(files, mode, aide);
         
+    }
+
+    private void openPdf() throws IOException {
+        File file = new File("src/main/resources/pdfs/Manuel Info v1.pdf");
+        HostServices hostServices = actionCenter.getHostServices();
+        hostServices.showDocument(file.getAbsolutePath());
+
     }
 
     //creation du menu File

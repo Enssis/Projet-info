@@ -15,6 +15,7 @@ import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.treillis.terrain.Triangle;
 import fr.insa.a6.utilities.systemeLineaire.Matrice;
+import javafx.application.HostServices;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
@@ -60,12 +61,17 @@ public class ActionCenter {
 
     private boolean inDrawing = true;
 
+    private final HostServices hostServices;
+
     //1 m => 50 px
     private final double echelle = 50;
 
-    public ActionCenter(Treillis treillis) {
+
+
+    public ActionCenter(Treillis treillis, HostServices hostServices) {
         graphics = new Graphics();
         this.treillis = treillis;
+        this.hostServices = hostServices;
     }
 
     //initialisation de la classe
@@ -881,5 +887,9 @@ public class ActionCenter {
 
     public void setBarreType(Type barreType) {
         this.barreType = barreType;
+    }
+
+    public HostServices getHostServices() {
+        return hostServices;
     }
 }
