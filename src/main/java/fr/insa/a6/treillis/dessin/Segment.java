@@ -56,9 +56,9 @@ public class Segment extends Forme{
     @Override
     public ArrayList<String> getInfos() {
         ArrayList<String> infos = new ArrayList<>();
-        infos.add("Premiere extrémitée : ");
+        infos.add("Premiere extrémité : ");
         infos.addAll(pA.getInfos());
-        infos.add("Deuxieme extrémitée : ");
+        infos.add("Deuxieme extrémité : ");
         infos.addAll(pB.getInfos());
         infos.add("Longueur : " + lengthInfo());
 
