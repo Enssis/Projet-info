@@ -1,6 +1,5 @@
 package fr.insa.a6.treillis.nodes;
 
-import fr.insa.a6.treillis.Force;
 import fr.insa.a6.treillis.Treillis;
 import fr.insa.a6.treillis.dessin.Point;
 import fr.insa.a6.treillis.terrain.Terrain;
@@ -12,12 +11,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * 
- */
 public class NoeudSimple extends Noeud {
-
-
 
     public NoeudSimple(double posX, double posY, int id) {
         super(posX, posY, id);
@@ -61,11 +55,17 @@ public class NoeudSimple extends Noeud {
         gc.fillOval(posX - 2, posY - 2,5, 5);
     }
 
-    public static boolean isCreable1(Treillis treillis, double posX, double posY){
+    public static boolean isDistCreable(Treillis treillis, double posX, double posY) {
         boolean creable = true;
         for (Noeud p : treillis.getNoeuds()) {
-            if(Maths.dist(p, new Point(posX, posY)) < 15) creable = false;
+            if (Maths.dist(p, new Point(posX, posY)) < 15) creable = false;
         }
+
+        return creable;
+    }
+
+    public static boolean isTriangleCreable(Treillis treillis, double posX, double posY){
+        boolean creable = true;
         
         return creable;
     }
@@ -78,7 +78,8 @@ public class NoeudSimple extends Noeud {
         }
         return creable;
     }
-     
+
+  
     @Override
     public ArrayList<String> getInfos(){
         String[] str = new String[]{"posX : " + posX ,

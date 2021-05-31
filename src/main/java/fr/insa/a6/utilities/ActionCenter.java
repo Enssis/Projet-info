@@ -15,8 +15,10 @@ import fr.insa.a6.treillis.terrain.SegmentTerrain;
 import fr.insa.a6.treillis.terrain.Terrain;
 import fr.insa.a6.treillis.terrain.Triangle;
 import fr.insa.a6.utilities.systemeLineaire.Matrice;
+import javafx.application.HostServices;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
@@ -61,12 +63,17 @@ public class ActionCenter {
 
     private boolean inDrawing = true;
 
+    private final HostServices hostServices;
+
     //1 m => 50 px
     private final double echelle = 50;
 
-    public ActionCenter(Treillis treillis) {
+
+
+    public ActionCenter(Treillis treillis, HostServices hostServices) {
         graphics = new Graphics();
         this.treillis = treillis;
+        this.hostServices = hostServices;
     }
 
     //initialisation de la classe
@@ -254,14 +261,16 @@ public class ActionCenter {
                 case 12 -> addAppui(true);
                 default -> System.out.println(selectedButton);
             }
-            //noeud simple hors zone constructible
-        } else if (!terrain.contain(mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY())) {
-        
+
+        }else{
+
             Alert alerteZoneConstructible = new Alert(Alert.AlertType.ERROR);
             alerteZoneConstructible.setTitle("Erreur");
             alerteZoneConstructible.setContentText("Noeud hors zone constructible!");
             alerteZoneConstructible.showAndWait();
-        } 
+
+        }
+
     }
 
     //fonction de creation de noeud pour les barres
@@ -289,9 +298,16 @@ public class ActionCenter {
             if(noeudRes == null){
                 noeudRes = testAppui(true, posX, posY);
             }
-        } 
-        return noeudRes; 
-        
+
+        }else{
+            Alert alerteZoneConstructible = new Alert(Alert.AlertType.WARNING);
+            alerteZoneConstructible.setTitle("Erreur");
+            alerteZoneConstructible.setHeaderText("CREATION BARRE IMPOSSIBLE");
+            alerteZoneConstructible.setContentText("Point hors zone constructible!");
+            alerteZoneConstructible.showAndWait();
+        }
+        return noeudRes;
+
     }
 
     //fonctions d'ajout de noeuds simple
@@ -300,32 +316,34 @@ public class ActionCenter {
     }
 
     private NoeudSimple addNoeudSimple(double posX, double posY) {
-        if(NoeudSimple.isCreable1(treillis, posX, posY) && NoeudSimple.isCreable2(treillis, posX, posY)) {
+
+        boolean distCreable = NoeudSimple.isDistCreable(treillis, posX, posY);
+        boolean triangleCreable = NoeudSimple.isTriangleCreable(treillis, posX, posY);
+        if(distCreable && triangleCreable) {
+
             NoeudSimple ns = treillis.createNoeudSimple(posX, posY);
             graphics.updateFormes(treillis);
             graphics.draw(selectedButton, inDrawing);
             return ns;
         }
-        
-        //noeud simple dans un triangle terrain
-        if(!NoeudSimple.isCreable2(treillis, posX, posY)) {
-            
-            Alert alerteTriangleTerrain = new Alert(Alert.AlertType.WARNING);
-            alerteTriangleTerrain.setTitle("Erreur création noeud");
-            alerteTriangleTerrain.setContentText("Noeud simple compris dans un triangle terrain!");
-            alerteTriangleTerrain.showAndWait();
+
+
+        String textError = "";
+
+        if(!distCreable){
+            textError = "Noeuds trop proches!";
         }
-        
-        //noeuds simples trop proches
-        if(!NoeudSimple.isCreable1(treillis, posX, posY)) {
-             
-            Alert alerteTriangleTerrain = new Alert(Alert.AlertType.WARNING);
-            alerteTriangleTerrain.setTitle("Erreur création noeud");
-            alerteTriangleTerrain.setContentText("Noeuds trop proches!");
-            alerteTriangleTerrain.showAndWait();
+        if(!triangleCreable){
+            if(textError.length() > 0) textError += " et ";
+            textError += "Noeud simple compris dans un triangle terrain!";
         }
-        
-        
+
+        Alert alerteTriangleTerrain = new Alert(Alert.AlertType.WARNING);
+        alerteTriangleTerrain.setTitle("Erreur création noeud");
+        alerteTriangleTerrain.setContentText(textError);
+        alerteTriangleTerrain.showAndWait();
+
+
         return null;
     }
 
@@ -339,6 +357,11 @@ public class ActionCenter {
         SegmentTerrain segment = Appui.isCreable(terrain, posX, posY);
         if(segment != null) {
             return createAppui(simple, posX, posY, segment);
+        }else {
+            Alert alerteNoeudAppui = new Alert(Alert.AlertType.WARNING);
+            alerteNoeudAppui.setTitle("Erreur création noeud");
+            alerteNoeudAppui.setContentText("Noeud non positionné sur un segment de terrain!");
+            alerteNoeudAppui.showAndWait();
         }
         else {
           Alert alerteNoeudAppui = new Alert(Alert.AlertType.WARNING);
@@ -889,5 +912,9 @@ public class ActionCenter {
 
     public void setBarreType(Type barreType) {
         this.barreType = barreType;
+    }
+
+    public HostServices getHostServices() {
+        return hostServices;
     }
 }
