@@ -1,0 +1,84 @@
+#myRB {
+    -fx-font: 9pt"Arial";
+}
+
+#myRB .radio {
+    -fx-background-color: #AEB6BF;
+    -fx-border-color : transparent;
+}
+
+#myRB:selected .radio {
+    -fx-background-color: #5D6D7E;
+    -fx-border-color : transparent;
+}
+
+#labelTitle {
+    -fx-font:bold 13pt"Arial";
+
+}
+
+#labelNormal {
+    -fx-font:10pt"Arial";
+    -fx-padding:5;
+}
+
+#vBox {
+  -fx-background-color : #E4E7E6;
+}
+
+#myBtn {
+    -fx-font-size:18pt;
+    -fx-font:bold 10pt"Arial";
+    -fx-background-color: #E4E7E6;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+    -fx-border-color: #3f41d1;
+    -fx-border-radius: 4px;
+}
+
+#myBtn:hover {
+    -fx-background-color: #bbc3c1;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+    -fx-border-color: #3f41d1;
+    -fx-border-radius: 4px;
+}
+
+#languageCB, #colorPicker {
+  -fx-background-color: #E4E7E6;
+  -fx-border-width: 2px;
+  -fx-border-style: solid;
+  -fx-border-color: #3f41d1;
+  -fx-border-radius: 4px;
+}
+
+#languageCB .label {
+  -fx-font:bold 10pt"Arial";
+}
+
+#colorPicker .label {
+  -fx-font:bold 10pt"Arial";
+}
+
+
+.custom-color-dialog, .color-picker {
+    -fx-control-inner-background: #E4E7E6 ;
+    -fx-background: #E4E7E6 ;
+}
+
+#languageCB:hover, #colorPicker:hover {
+  -fx-background-color: #bbc3c1;
+  -fx-border-width: 2px;
+  -fx-border-style: solid;
+  -fx-border-color: #3f41d1;
+  -fx-border-radius: 4px;
+}
+
+#myTF {
+  -fx-font:10pt"Arial";
+  -fx-background-color: #E4E7E6;
+  -fx-border-width: 1px;
+  -fx-border-style: solid;
+  -fx-border-color: #3f41d1;
+  -fx-border-radius: 4px;
+}

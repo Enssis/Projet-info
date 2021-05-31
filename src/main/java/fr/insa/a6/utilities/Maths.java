@@ -48,7 +48,7 @@ public class Maths {
         return Math.PI - ((angle1 - angle2 + 2 * Math.PI) % (2 * Math.PI));
     }
 
-    //retourne si un point est comprit entre deux points ou non
+    //retourne si un point est compris entre deux points ou non
     public static boolean between(Point p, Point p1, Point p2){
         return (p.getPosX() <= Math.max(p1.getPosX(), p2.getPosX())
                 && p.getPosX() >= Math.min(p1.getPosX(), p2.getPosX())

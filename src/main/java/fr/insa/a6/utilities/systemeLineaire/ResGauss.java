@@ -9,6 +9,8 @@ public class ResGauss {
         this.signature = signature;
     }
 
+    public int getsignature() {return(signature); }
+
     @Override
     public String toString() {
         return "ResGauss{" +

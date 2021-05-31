@@ -1,5 +1,7 @@
 package fr.insa.a6.utilities.systemeLineaire;
 
+import java.sql.SQLOutput;
+
 public class Matrice {
 
     private int nbrLig, nbrCol;
@@ -284,43 +286,77 @@ public class Matrice {
     }
 
     public ResGauss descenteGauss() {
-        Matrice N;
-        int nbl = this.nbrLig;
         int signature = 1;
-        Matrice matricecol = new Matrice(this.nbrLig,1);
         int rang = min(this.nbrCol,this.nbrLig);
 
         for (int i = 0; i < this.nbrLig; i++) {
-            if (permuteLigne(i, lignePlusGrandPivot(nbl - 1)) == -1) signature = -signature;
-
-           N = subLignes(1, nbl - 1);
-            nbl = nbl - 1;
+            for (int j = 0; j < this.nbrLig; j++) {
+                int lppp = lignePlusGrandPivot(j);
+                if (lppp!= -1){
+                    permuteLigne(j, lppp);
+                }
+                else signature= -signature;
+            }
         }
 
-
-
-        for (int j = 0; j < this.nbrLig; j++) {
-            for (int i = j; i>0; i=i-1) {
-                if (subCol(j, j) == matricecol) rang = rang - 1;
-            }
-            for (int i =0; i< j; i=i+1) {
-               if (i>1 && coeffs[i][j] != 0) transvection((i-1),i);
-               else if (i<2 && coeffs[i][j] != 0) transvection((i-1),i);
+        for (int i = 0; i < this.nbrLig; i++) {
+            for (int j =0; j< i; j++) {
+                if (coeffs[i][j] != 0) transvection(j, i);
             }
         }
             return new ResGauss(rang,signature);
         }
 
+    public double determinant (int signature){
+        double determinant = signature;
+                for(int i=0; i<this.nbrCol; i++){
+                    determinant = determinant * this.coeffs[i][i];
+                }
+        return(determinant);
+    }
 
+    public Matrice pivotsaun (){
+        for(int i=0; i<this.nbrCol; i++){
+            for(int j=i; j<this.nbrLig;j++){
+                double pivot = this.coeffs[i][i];
+                this.coeffs[i][j] = this.coeffs[i][j] / pivot;
+            }
+        }
+        return new Matrice(this.nbrLig, this.nbrCol, coeffs);
+    }
+
+    public Matrice remonteeGauss (){
+       /* for (int i = this.nbrLig ; i >0 ; i--) {
+            for (int j =0; j< i; j++) {
+                if (coeffs[i][j] != 0) transvection(j, i);
+            }
+        } */
+        for (int j =0; j< this.nbrLig; j++) {
+            for (int i = 0; i < j; i++) {
+                if (coeffs[i][j] != 0) transvection(j, i);
+            }
+        }
+        return new Matrice(this.nbrLig, this.nbrCol, coeffs);
+    }
 
     public static void main(String[] args) {
 
-       double[][] coeffs = {{1,2,3,4},{4, 3, 2,1}, {2,3,1,4}};
+        double[][] coeffs = {{0,1,2,1},{3,-4,5,2}, {6,7,-8,3}};
         Matrice lamatrice = new Matrice(3,4, coeffs);
 
 
         System.out.println(lamatrice.descenteGauss());
+
         System.out.println("matrice avec la descente");
+        System.out.println(lamatrice);
+
+
+        System.out.println("pivots a un :");
+        System.out.println(lamatrice.pivotsaun());
+        System.out.println(lamatrice);
+
+        System.out.println("matrice inversée :");
+        System.out.println(lamatrice.remonteeGauss());
         System.out.println(lamatrice);
 
     }

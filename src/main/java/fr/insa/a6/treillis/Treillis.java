@@ -56,9 +56,7 @@ public class Treillis {
         this.terrain = terrain;
     }
 
-    public ArrayList<Noeud> getNoeuds() {
-        return noeuds;
-    }
+    public ArrayList<Noeud> getNoeuds() { return noeuds; }
 
     public ArrayList<Barres> getBarres() {
         return barres;
