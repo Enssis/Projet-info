@@ -164,7 +164,7 @@ public class IconBox extends VBox {
     }
 
     private void initBarre() {
-        barreBtn = new MyRadioButton("Barre");
+        barreBtn = new MyRadioButton(optionsData.traduction("rods"));
         barreBtn.setToggleGroup(group);
 
         barreBtn.setOnAction(actionEvent -> {

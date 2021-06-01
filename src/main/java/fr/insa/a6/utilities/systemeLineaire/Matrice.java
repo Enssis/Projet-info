@@ -2,7 +2,7 @@ package fr.insa.a6.utilities.systemeLineaire;
 
 public class Matrice {
 
-    private int nbrLig, nbrCol;
+    private final int nbrLig, nbrCol;
     private double[][] coeffs;
 
     public Matrice(int nl, int nc, double[][] coeffs){
