@@ -566,7 +566,7 @@ public class ActionCenter {
         if(2 * ns != nb + nas + 2 * nad) {
             Alert alerteHyperstatique = new Alert(Alert.AlertType.ERROR);
             alerteHyperstatique.setTitle("Erreur calcul");
-            alerteHyperstatique.setContentText("Le treillis est hyperstatique!");
+            alerteHyperstatique.setContentText("Le treillis n'est pas isostatique!");
             alerteHyperstatique.showAndWait();
             inDrawing = true;
             throw new Error("treillis hyperstatique");
