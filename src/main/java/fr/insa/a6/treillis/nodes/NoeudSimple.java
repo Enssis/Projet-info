@@ -66,19 +66,11 @@ public class NoeudSimple extends Noeud {
 
     public static boolean isTriangleCreable(Treillis treillis, double posX, double posY){
         boolean creable = true;
-        
-        return creable;
-    }
-    
-    public static boolean isCreable2(Treillis treillis, double posX, double posY){
-        boolean creable = true;
-        
         for (Triangle triangle : treillis.getTerrain().getTriangles()) {
             if (triangle.contain(posX, posY)) creable = false;
         }
         return creable;
     }
-
   
     @Override
     public ArrayList<String> getInfos(){

@@ -319,6 +319,7 @@ public class ActionCenter {
 
         boolean distCreable = NoeudSimple.isDistCreable(treillis, posX, posY);
         boolean triangleCreable = NoeudSimple.isTriangleCreable(treillis, posX, posY);
+        System.out.println(distCreable + " " + triangleCreable);
         if(distCreable && triangleCreable) {
 
             NoeudSimple ns = treillis.createNoeudSimple(posX, posY);
