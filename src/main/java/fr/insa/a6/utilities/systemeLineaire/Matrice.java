@@ -1,10 +1,8 @@
 package fr.insa.a6.utilities.systemeLineaire;
 
-import java.sql.SQLOutput;
-
 public class Matrice {
 
-    private int nbrLig, nbrCol;
+    private final int nbrLig, nbrCol;
     private double[][] coeffs;
 
     public Matrice(int nl, int nc, double[][] coeffs){
@@ -303,7 +301,7 @@ public class Matrice {
 
     public double determinant (int signature){
         double determinant = signature;
-        for(int i=0; i<this.nbrCol; i++){
+        for(int i=0; i<this.nbrLig; i++){
             determinant = determinant * this.coeffs[i][i];
         }
         return(determinant);
