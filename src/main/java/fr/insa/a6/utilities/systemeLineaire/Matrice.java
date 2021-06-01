@@ -303,7 +303,7 @@ public class Matrice {
 
     public double determinant (int signature){
         double determinant = signature;
-        for(int i=0; i<this.nbrCol; i++){
+        for(int i=0; i<this.nbrLig; i++){
             determinant = determinant * this.coeffs[i][i];
         }
         return(determinant);
