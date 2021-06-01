@@ -363,12 +363,6 @@ public class ActionCenter {
             alerteNoeudAppui.setContentText("Noeud non positionné sur un segment de terrain!");
             alerteNoeudAppui.showAndWait();
         }
-        else {
-          Alert alerteNoeudAppui = new Alert(Alert.AlertType.WARNING);
-          alerteNoeudAppui.setTitle("Erreur création noeud");
-          alerteNoeudAppui.setContentText("Noeud non positionné sur un segment de terrain!");
-          alerteNoeudAppui.showAndWait();  
-        }
         return null;
     }
 
