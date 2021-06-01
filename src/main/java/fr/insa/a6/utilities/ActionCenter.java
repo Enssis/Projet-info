@@ -78,7 +78,7 @@ public class ActionCenter {
 
     //initialisation de la classe
     // impossible de le faire dans son constructeur car cette classe a besoin de "mainscene" qui a besoin de
-    // cet "action center" pour etre initialisé
+    // cet "action center" pour etre initialisÃ©
     public void init(MainScene mainScene, Stage stage, String path){
         this.mainScene = mainScene;
         this.stage = stage;
@@ -136,7 +136,7 @@ public class ActionCenter {
         reload(path);
     }
 
-    //crée une nouvelle page avec un nouveau treillis
+    //crÃ©e une nouvelle page avec un nouveau treillis
     public void newTreillis() {
         treillis = new Treillis();
         this.terrain = treillis.getTerrain();
@@ -152,11 +152,11 @@ public class ActionCenter {
         Save.saveTreillis(treillis, path);
     }
 
-    //ajout des fonctions appelés durant différentes actions de la souris
+    //ajout des fonctions appelÃ©s durant diffÃ©rentes actions de la souris
     private void addMouseEvent() {
         MainCanvas canvas = mainScene.getCanvas();
 
-        //actions quand la couris est déplacé dans le canvas
+        //actions quand la couris est dÃ©placÃ© dans le canvas
         canvas.setOnMouseMoved(mouseEvent -> {
             mouseX = mouseEvent.getX();
             mouseY = mouseEvent.getY();
@@ -218,7 +218,7 @@ public class ActionCenter {
 
     }
 
-    //ajout des fonctions appelés durant différentes actions du clavier
+    //ajout des fonctions appelÃ©s durant diffÃ©rentes actions du clavier
     private void addKeyboardEvent() {
         mainScene.setOnKeyPressed(key -> {
             switch (key.getCode()) {
@@ -352,7 +352,7 @@ public class ActionCenter {
         testAppui(simple, mouseX - graphics.getOrigin().getPosX(), mouseY - graphics.getOrigin().getPosY());
     }
 
-    //test si il est possible de creer un appui, et si oui alors il le crée
+    //test si il est possible de creer un appui, et si oui alors il le crÃ©e
     public Appui testAppui(boolean simple, double posX, double posY){
         SegmentTerrain segment = Appui.isCreable(terrain, posX, posY);
         if(segment != null) {
@@ -396,12 +396,12 @@ public class ActionCenter {
         }
     }
 
-    //fonction de création d'une barre
+    //fonction de crÃ©ation d'une barre
     private void addBarre(){
         currentClick++;
         Noeud p = null;
-        //test si on clique a coté d'un point ou pas
-        //Besoin d'ajouter la vérification que le point est créable, et quel type de point
+        //test si on clique a cotÃ© d'un point ou pas
+        //Besoin d'ajouter la vÃ©rification que le point est crÃ©able, et quel type de point
         if(barreType == null){
             System.err.println("TYPE NULL");
             Alert alerteTypeNull = new Alert(Alert.AlertType.INFORMATION);
@@ -474,7 +474,7 @@ public class ActionCenter {
         }
     }
 
-    //ecrit les infos lié au calcul
+    //ecrit les infos liÃ© au calcul
     public void writeCalculInfo(HashMap<Forme, Integer> formeId, HashMap<Integer, double[]> idValues){
         mainScene.getInfos().drawCalculInfo(formeId, idValues);
     }
@@ -498,8 +498,8 @@ public class ActionCenter {
     public void addTriangleTrn(){
         currentClick++;
         PointTerrain p;
-        //test si on clique a coté d'un point ou pas
-        //Besoin d'ajouter la vérification que le point est créable, et quel type de point
+        //test si on clique a cotÃ© d'un point ou pas
+        //Besoin d'ajouter la vÃ©rification que le point est crÃ©able, et quel type de point
         if(nearest != null && nearest instanceof PointTerrain){
             p = (PointTerrain) nearest;
         }else{
@@ -539,7 +539,7 @@ public class ActionCenter {
     public void calculs(){
         int id = 0;
         int ns = treillis.getNoeuds().size(), nb = treillis.getBarres().size(), nas = 0, nad = 0;
-        //liste les formes et les associes à un identifiant
+        //liste les formes et les associes Ã  un identifiant
         formeId.clear();
         HashMap<Integer, Forme> idForme = new HashMap<>();
         for (Barres barre : treillis.getBarres()) {
@@ -559,10 +559,15 @@ public class ActionCenter {
                 id += 2;
                 nad ++;
             }
+            
         }
 
         System.out.println(2 * ns + " " + nb + nas + 2 * nad);
         if(2 * ns != nb + nas + 2 * nad) {
+            Alert alerteHyperstatique = new Alert(Alert.AlertType.ERROR);
+            alerteHyperstatique.setTitle("Erreur calcul");
+            alerteHyperstatique.setContentText("Le treillis est hyperstatique!");
+            alerteHyperstatique.showAndWait();
             inDrawing = true;
             throw new Error("treillis hyperstatique");
         }
@@ -614,7 +619,7 @@ public class ActionCenter {
         for (int i = 0; i < treillis.getNoeuds().size() * 2; i += 2) {
             Noeud noeud = treillis.getNoeuds().get(i/2);
             System.out.println(noeud);
-            //ajout des valeurs liées aux barres
+            //ajout des valeurs liÃ©es aux barres
             for (Barres barre : noeud.getLinkedBarres()) {
                 int col = formeToId.get(barre);
                 double angle;
@@ -652,7 +657,7 @@ public class ActionCenter {
         return Matrice.concatCol(systeme, Matrice.creeVecteur(vecResult));
     }
 
-    //retire le point selectionné
+    //retire le point selectionnÃ©
     public void removeSelected() {
         if (currentSelect != null) {
             currentSelect.setSelected(false);
@@ -664,7 +669,7 @@ public class ActionCenter {
         currentSelect = null;
     }
 
-    //retire tout les points selectionnés
+    //retire tout les points selectionnÃ©s
     public void removeSelectedAll() {
         multipleSelect.forEach(p -> p.setSelected(false));
         multipleSelect.clear();
@@ -689,7 +694,7 @@ public class ActionCenter {
         }
     }
 
-    //supprime les élements selectionés
+    //supprime les Ã©lements selectionÃ©s
     public void deleteAllFormes() {
         multipleSelect.forEach(f -> {
             graphics.remove(f);
