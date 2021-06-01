@@ -1,7 +1,5 @@
 package fr.insa.a6.utilities.systemeLineaire;
 
-import java.sql.SQLOutput;
-
 public class Matrice {
 
     private int nbrLig, nbrCol;
